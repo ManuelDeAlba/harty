@@ -14,3 +14,8 @@ Instalar las dependencias
 Levantar servidor
 
 4. `npm run dev`
+
+## Obtener los cambios del repositorio remoto
+Actualizar los archivos locales
+
+1. `git pull origin main`
