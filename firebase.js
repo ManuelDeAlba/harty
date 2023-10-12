@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDocs, collection, query, orderBy } from "firebase/firestore";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -20,3 +20,71 @@ export const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 
 //! Funciones de la base de datos
+
+//! Soportar las imagenes y videos, disponibilidad, convertir las etiquetas, etc.
+export async function crearPublicacion({
+    nombreTerraza, // string
+    descripcion, // string
+    reglamento, // string - opcional
+    direccion, //? string por ahora
+    telefono, // string
+    redes, //? string (ver como poner en el HTML) - opcional
+    precio, // number
+    horarios, //? string (ver como poner en el HTML)
+    tamano, // string
+    capacidad, // number
+    servicios, // string - opcional
+    etiquetas, // string - opcional
+
+    multimedia, // files
+    disponibilidad, // ? (ver como poner en el HTML)
+}){
+    // Validación de datos
+    let errores = [];
+    if(!nombreTerraza) errores.push({ name: "nombreTerraza", msg: "Proporcione un nombre" });
+    if(!descripcion) errores.push({ name: "descripcion", msg: "Proporcione una descripción" });
+    if(!direccion) errores.push({ name: "direccion", msg: "Proporcione una dirección" });
+    if(!telefono || !/^\d{10}$/.test(telefono)) errores.push({ name: "telefono", msg: "Proporcione un teléfono válido" });
+    if(!precio) errores.push({ name: "precio", msg: "Proporcione un precio" });
+    if(!horarios) errores.push({ name: "horarios", msg: "Proporcione el horario" });
+    if(!tamano) errores.push({ name: "tamano", msg: "Proporcione el tamaño" });
+    if(!capacidad) errores.push({ name: "capacidad", msg: "Proporcione la capacidad de personas" });
+
+    // Si existen errores no se crea el documento
+    if(errores.length) throw new Error(JSON.stringify(errores));
+    
+    // Creación del documento
+    const id = Date.now().toString();
+    const publicacion = {
+        id,
+        nombreTerraza,
+        descripcion,
+        reglamento,
+        direccion,
+        telefono,
+        redes,
+        precio,
+        horarios,
+        tamano,
+        capacidad,
+        servicios,
+        etiquetas,
+        multimedia,
+        disponibilidad
+    }
+    const docRef = doc(db, "publicaciones", id);
+
+    await setDoc(docRef, publicacion);
+}
+
+//! Cambiar para obtener los cambios en tiempo real y no solo al cargar la página
+export async function obtenerPublicaciones(){
+    // Se crea la consulta ordenando por fecha de más reciente a menos reciente
+    const q = query(collection(db, "publicaciones"), orderBy("id", "desc"));
+
+    // Se obtienen los documentos
+    const querySnapshot = await getDocs(q);
+    
+    // Se recorre para obtener la información de cada documento
+    return querySnapshot.docs.map(doc => doc.data());
+}
