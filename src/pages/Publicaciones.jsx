@@ -1,17 +1,16 @@
 import { useEffect, useState } from "react";
-import { obtenerPublicaciones } from "../../firebase";
+import { obtenerPublicacionesTiempoReal } from "../../firebase";
 
 function Publicaciones(){
     const [publicaciones, setPublicaciones] = useState(null);
 
-    //! Cambiar para obtener los cambios en tiempo real y no solo al cargar la página
     useEffect(() => {
-        const obtenerPublicacionesDB = async () => {
-            let publicacionesDB = await obtenerPublicaciones();
+        const unsubscribe = obtenerPublicacionesTiempoReal(publicaciones => {
+            // Cada que cambien los datos, se actualiza la página
+            setPublicaciones(publicaciones);
+        });
 
-            setPublicaciones(publicacionesDB);
-        }
-        obtenerPublicacionesDB();
+        return unsubscribe;
     }, [])
 
     return(

@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getFirestore, doc, setDoc, getDocs, collection, query, orderBy } from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDocs, collection, query, orderBy, onSnapshot } from "firebase/firestore";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -77,7 +77,6 @@ export async function crearPublicacion({
     await setDoc(docRef, publicacion);
 }
 
-//! Cambiar para obtener los cambios en tiempo real y no solo al cargar la página
 export async function obtenerPublicaciones(){
     // Se crea la consulta ordenando por fecha de más reciente a menos reciente
     const q = query(collection(db, "publicaciones"), orderBy("id", "desc"));
@@ -87,4 +86,19 @@ export async function obtenerPublicaciones(){
     
     // Se recorre para obtener la información de cada documento
     return querySnapshot.docs.map(doc => doc.data());
+}
+
+export function obtenerPublicacionesTiempoReal(callback) {
+    // Se crea la consulta ordenando por fecha de más reciente a menos reciente
+    const q = query(collection(db, "publicaciones"), orderBy("id", "desc"));
+
+    // Establecer una suscripción a los cambios en la base de datos
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const publicaciones = querySnapshot.docs.map(doc => doc.data());
+
+        callback(publicaciones);
+    });
+
+    // Retorna una función para detener la suscripción cuando sea necesario
+    return unsubscribe;
 }
