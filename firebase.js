@@ -1,6 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getFirestore, doc, setDoc, getDocs, collection, query, orderBy, onSnapshot } from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDocs, collection, query, orderBy, onSnapshot, getDoc } from "firebase/firestore";
+import { getAuth } from 'firebase/auth';
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -18,8 +19,15 @@ const firebaseConfig = {
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
+export const auth = getAuth(app);
 
 //! Funciones de la base de datos
+
+export async function obtenerUsuario(uid){
+    const docRef = doc(db, "usuarios", uid);
+
+    return await getDoc(docRef);
+}
 
 //! Soportar las imagenes y videos, disponibilidad, convertir las etiquetas, etc.
 export async function crearPublicacion({
