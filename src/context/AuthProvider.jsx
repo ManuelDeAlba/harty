@@ -1,7 +1,8 @@
-import { createUserWithEmailAndPassword, onAuthStateChanged, sendEmailVerification, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { createUserWithEmailAndPassword, onAuthStateChanged, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { createContext, useContext, useEffect, useState } from "react";
 import { auth, db, obtenerUsuario } from "../../firebase";
 import { doc, setDoc } from "firebase/firestore";
+import { ERRORES_HARTY } from "../utils";
 
 const authContext = createContext();
 
@@ -36,6 +37,15 @@ function AuthProvider({ children }){
 
     // Funciones públicas
     const registrarUsuario = async ({ nombre, correo, contrasena }) => {
+        // Validaciones que no hace firebase (manuales)
+        if(!nombre) throw ERRORES_HARTY.MISSING_NAME;
+
+        // Se registra al usuario y se regresan los datos de la cuenta
+        const credenciales = await createUserWithEmailAndPassword(auth, correo, contrasena);
+
+        // Se envia la verificación con el usuario que se acaba de registrar
+        await enviarVerificacion();
+
         // Se registra al usuario en nuestra base de datos
         const usuarioDB = await registrarUsuarioDB({
             id: credenciales.user.uid,
@@ -43,11 +53,8 @@ function AuthProvider({ children }){
             correo
         });
 
-        // Se registra al usuario y se regresan los datos de la cuenta
-        const credenciales = await createUserWithEmailAndPassword(auth, correo, contrasena);
-
-        // Se envia la verificación con el usuario que se acaba de registrar
-        await enviarVerificacion();
+        // Se cargan los datos del usuario en la sesión activa
+        setUsuario(usuarioDB);
 
         return { usuarioAuth: credenciales.user, usuarioDB };
     }
@@ -60,6 +67,10 @@ function AuthProvider({ children }){
     
     const cerrarSesion = async () => {
         await signOut(auth);
+    }
+
+    const restablecerContrasena = async (correo) => {
+        await sendPasswordResetEmail(auth, correo);
     }
 
     const actualizarUsuario = async uid => {
@@ -92,6 +103,7 @@ function AuthProvider({ children }){
             registrarUsuario,
             iniciarSesion,
             cerrarSesion,
+            restablecerContrasena,
             actualizarUsuario,
         }}>
             {

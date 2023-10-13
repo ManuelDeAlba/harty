@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthProvider";
+import { ERRORES_FIREBASE } from "../utils";
 
 function FormularioRegistrarse(){
     const { registrarUsuario } = useAuth();
@@ -21,10 +22,11 @@ function FormularioRegistrarse(){
                 correo: datos.correo,
                 contrasena: datos.contrasena
             });
+            console.log("Correo de verificación enviado");
 
             navigate("/");
         } catch(error){
-            console.log({ error });
+            console.log(ERRORES_FIREBASE.AUTH[error.code] || error.message);
         }
     }
 

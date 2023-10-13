@@ -1,15 +1,25 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthProvider";
+import { ERRORES_FIREBASE } from "../utils";
 
 function FormularioIniciarSesion(){
-    const { iniciarSesion } = useAuth();
+    const { iniciarSesion, restablecerContrasena } = useAuth();
     const navigate = useNavigate();
 
     const [datos, setDatos] = useState({
         correo: "",
         contrasena: ""
     });
+
+    const restablecer = async () => {
+        try{
+            await restablecerContrasena(datos.correo);
+            console.log("Correo para restablecer la contraseña enviado");
+        } catch(error){
+            console.log(ERRORES_FIREBASE.AUTH[error.code] || error.message);
+        }
+    }
     
     const handleSubmit = async e => {
         e.preventDefault();
@@ -22,7 +32,7 @@ function FormularioIniciarSesion(){
 
             navigate("/");
         } catch(error){
-            console.log({ error });
+            console.log(ERRORES_FIREBASE.AUTH[error.code] || error.message);
         }
     }
 
@@ -62,6 +72,8 @@ function FormularioIniciarSesion(){
             </div>
 
             <input type="submit" value="Iniciar sesión" />
+
+            <span onClick={restablecer}>Olvidé mi contraseña</span>
         </form>
     )
 }
