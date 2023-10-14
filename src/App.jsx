@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 
 // Contextos
 import AuthProvider from "./context/AuthProvider";
@@ -18,6 +19,7 @@ function App(){
         <AuthProvider>
             <Router>
                 <Navbar />
+                <Toaster />
                 <Routes>
                     <Route path="/" element={<Inicio />} />
                     <Route path="/publicaciones" element={<Publicaciones />} />

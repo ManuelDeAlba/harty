@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthProvider";
 import { ERRORES_FIREBASE } from "../utils";
+import toast from "react-hot-toast";
 
 function FormularioIniciarSesion(){
     const { iniciarSesion, restablecerContrasena } = useAuth();
@@ -12,28 +13,29 @@ function FormularioIniciarSesion(){
         contrasena: ""
     });
 
-    const restablecer = async () => {
-        try{
-            await restablecerContrasena(datos.correo);
-            console.log("Correo para restablecer la contraseña enviado");
-        } catch(error){
-            console.log(ERRORES_FIREBASE.AUTH[error.code] || error.message);
-        }
+    const restablecer = () => {
+        // Se envia el correo para restablecer la contraseña
+        toast.promise(restablecerContrasena(datos.correo), {
+            loading: "Enviando correo...",
+            success: "Correo para restablecer la contraseña enviado",
+            error: (error) => ERRORES_FIREBASE.AUTH[error.code] || error.message
+        });
     }
     
     const handleSubmit = async e => {
         e.preventDefault();
 
-        try{
-            await iniciarSesion({
-                correo: datos.correo,
-                contrasena: datos.contrasena
-            });
-
-            navigate("/");
-        } catch(error){
-            console.log(ERRORES_FIREBASE.AUTH[error.code] || error.message);
-        }
+        toast.promise(iniciarSesion({
+            correo: datos.correo,
+            contrasena: datos.contrasena
+        }), {
+            loading: "Iniciando sesión...",
+            success: () => {
+                navigate("/");
+                return "Sesión iniciada";
+            },
+            error: (error) => ERRORES_FIREBASE.AUTH[error.code] || error.message
+        });
     }
 
     const handleInput = e => {

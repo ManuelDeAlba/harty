@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthProvider";
 import { ERRORES_FIREBASE } from "../utils";
+import toast from "react-hot-toast";
 
 function FormularioRegistrarse(){
     const { registrarUsuario } = useAuth();
@@ -16,18 +17,23 @@ function FormularioRegistrarse(){
     const handleSubmit = async e => {
         e.preventDefault();
 
-        try{
-            await registrarUsuario({
-                nombre: datos.nombre,
-                correo: datos.correo,
-                contrasena: datos.contrasena
-            });
-            console.log("Correo de verificación enviado");
-
-            navigate("/");
-        } catch(error){
-            console.log(ERRORES_FIREBASE.AUTH[error.code] || error.message);
-        }
+        toast.promise(registrarUsuario({
+            nombre: datos.nombre,
+            correo: datos.correo,
+            contrasena: datos.contrasena
+        }), {
+            loading: 'Registrando usuario...',
+            success: () => {
+                navigate("/");
+                return (
+                    <div>
+                        <div>Usuario registrado.</div>
+                        <div>Correo de verificación enviado.</div>
+                    </div>
+                )
+            },
+            error: (error) => ERRORES_FIREBASE.AUTH[error.code] || error.message
+        })
     }
 
     const handleInput = e => {
