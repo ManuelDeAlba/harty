@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { crearPublicacion } from "../../firebase";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+
+import { crearPublicacion } from "../../firebase";
 
 const datosDefault = {
     nombreTerraza: "", // string
@@ -141,6 +142,7 @@ function FormularioPublicarTerraza(){
                     id="precio"
                     type="number"
                     inputMode="numeric"
+                    min={0}
                     onInput={handleInput}
                     value={datos.precio}
                     required

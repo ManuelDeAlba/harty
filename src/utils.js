@@ -1,3 +1,9 @@
+export const EXPRESIONES = {
+    TELEFONO: /^\d{10}$/,
+    PRECIO: /^\d+(\.\d+)?$/,
+    CAPACIDAD: /^\d+$/,
+}
+
 export class HartyError extends Error{
     constructor({ code, message }){
         super(message);
@@ -10,6 +16,7 @@ export class HartyError extends Error{
 // throw ERRORES_HARTY.NOMBRE_ERROR
 export const ERRORES_HARTY = {
     MISSING_NAME: new HartyError({ code: "harty/missing-name", message: "Escribe el nombre" }),
+    INVALID_DATA: (message) => new HartyError({ code: "harty/invalid-data", message }),
 }
 
 export const ERRORES_FIREBASE = {
