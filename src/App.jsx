@@ -13,6 +13,7 @@ import FormularioIniciarSesion from "./pages/FormularioIniciarSesion";
 
 // Componentes
 import Navbar from "./components/Navbar";
+import Protegido from "./components/Protegido";
 
 function App(){
     return(
@@ -23,7 +24,11 @@ function App(){
                 <Routes>
                     <Route path="/" element={<Inicio />} />
                     <Route path="/publicaciones" element={<Publicaciones />} />
-                    <Route path="/publicar-terraza" element={<FormularioPublicarTerraza />} />
+                        <Route path="/publicar-terraza" element={
+                            <Protegido name="publicar-terraza" redirect="/iniciar-sesion">
+                                <FormularioPublicarTerraza />
+                            </Protegido>
+                        } />
 
                     {/* Sesión de usuario */}
                     <Route path="/registrarse" element={<FormularioRegistrarse />} />

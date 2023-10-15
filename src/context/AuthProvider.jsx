@@ -1,6 +1,6 @@
 import { createUserWithEmailAndPassword, onAuthStateChanged, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { createContext, useContext, useEffect, useState } from "react";
-import { auth, db, obtenerUsuario } from "../../firebase";
+import { auth, db, obtenerUsuario, obtenerPermisos } from "../../firebase";
 import { doc, setDoc } from "firebase/firestore";
 import { ERRORES_HARTY } from "../utils";
 
@@ -14,6 +14,7 @@ export const useAuth = () => {
 function AuthProvider({ children }){
     const [usuarioAuth, setUsuarioAuth] = useState(null);
     const [usuario, setUsuario] = useState(null);
+    const [permisos, setPermisos] = useState(null);
 
     // Funciones privadas
     const registrarUsuarioDB = async ({ id, nombre, correo }) => {
@@ -82,7 +83,11 @@ function AuthProvider({ children }){
     }
 
     // Al cargar la página se suscribe al evento para obtener los cambios en el auth
+    // También se obtienen los permisos (no se obtienen en tiempo real porque no cambian constantemente)
     useEffect(() => {
+        obtenerPermisos()
+        .then(setPermisos)
+
         const unsubscribe = onAuthStateChanged(auth, async currentUser => {
             if(currentUser){
                 // Se obtienen los datos del usuario (auth y db)
@@ -100,6 +105,7 @@ function AuthProvider({ children }){
         <authContext.Provider value={{
             usuarioAuth, // Usuario de firebase/auth
             usuario, // Datos de la página
+            permisos, // Acciones que puede realizar cada rol
             registrarUsuario,
             iniciarSesion,
             cerrarSesion,

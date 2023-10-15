@@ -31,6 +31,17 @@ export async function obtenerUsuario(uid){
     return await getDoc(docRef);
 }
 
+export async function obtenerPermisos(){
+    const { docs } = await getDocs(collection(db, "permisos"));
+
+    const permisos = {}
+    
+    // Por cada documento, guardamos los permisos con la id (rol) como clave
+    docs.forEach(doc => permisos[doc.id] = doc.data());
+
+    return permisos;
+}
+
 //! Soportar las imagenes y videos, disponibilidad, convertir las etiquetas, etc.
 export async function crearPublicacion({
     nombreTerraza, // string
