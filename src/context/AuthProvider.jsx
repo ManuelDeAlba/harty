@@ -50,6 +50,7 @@ function AuthProvider({ children }){
         // Se registra al usuario en nuestra base de datos
         const usuarioDB = await registrarUsuarioDB({
             id: credenciales.user.uid,
+            rol: "usuario", // Si no está verificado, automaticamente baja a anonimo
             nombre,
             correo
         });
