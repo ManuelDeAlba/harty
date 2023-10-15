@@ -23,10 +23,11 @@ function Protegido({ name, type="route", redirect="/", children }){
             setCargando(true);
 
             // Se obtiene el rol del usuario actual
-            let rol = usuario?.rol; // (admin o usuario, si no existe, undefined)
+            let rol = usuario?.rol ?? "anonimo"; // (admin o usuario, si no existe, es anonimo)
 
             // Si el email no está verificado, se regresa a anonimo en lugar de usuario
-            if(!usuarioAuth?.emailVerified || rol == undefined) rol = "anonimo";
+            // Solo puede bajar el rol a anonimo si no es admin (admin tiene más peso que la verificación)
+            if(rol != "admin" && !usuarioAuth?.emailVerified) rol = "anonimo";
 
             // Obtenemos el permiso de firebase (true o false), si no existe pone permisoDefault por defecto
             let autorizado = permisos[rol]?.[name] ?? permisoDefault;
