@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { obtenerPublicacionesTiempoReal } from "../../firebase";
+import { obtenerPublicacionesTiempoReal } from "../firebase";
 
 function Publicaciones(){
     const [publicaciones, setPublicaciones] = useState(null);

@@ -1,6 +1,6 @@
 import { createUserWithEmailAndPassword, onAuthStateChanged, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { createContext, useContext, useEffect, useState } from "react";
-import { auth, db, obtenerUsuario, obtenerPermisos } from "../../firebase";
+import { auth, db, obtenerUsuario, obtenerPermisos } from "../firebase";
 import { doc, setDoc } from "firebase/firestore";
 import { ERRORES_HARTY } from "../utils";
 
