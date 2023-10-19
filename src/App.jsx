@@ -14,10 +14,13 @@ import FormularioIniciarSesion from "./pages/FormularioIniciarSesion";
 // Componentes
 import Navbar from "./components/Navbar";
 import Protegido from "./components/Protegido";
+import Head from './components/Head';
+import ScriptImports from './components/ScriptImports';
 
 function App(){
     return(
         <AuthProvider>
+            <Head />
             <Router>
                 <Navbar />
                 <Toaster />
@@ -34,6 +37,7 @@ function App(){
                     <Route path="/registrarse" element={<FormularioRegistrarse />} />
                     <Route path="/iniciar-sesion" element={<FormularioIniciarSesion />} />
                 </Routes>
+                <ScriptImports />
             </Router>
         </AuthProvider>
     )
