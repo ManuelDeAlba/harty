@@ -17,12 +17,13 @@ function AuthProvider({ children }){
     const [permisos, setPermisos] = useState(null);
 
     // Funciones privadas
-    const registrarUsuarioDB = async ({ id, nombre, correo }) => {
+    const registrarUsuarioDB = async ({ id, rol, nombre, correo }) => {
         // Se registran los datos del perfil de cada usuario, las contraseñas no se guardan porque firebase/auth ya las maneja de una forma segura
         const docRef = doc(db, "usuarios", id);
 
         const datosUsuario = {
             id,
+            rol,
             nombre,
             correo,
         }
