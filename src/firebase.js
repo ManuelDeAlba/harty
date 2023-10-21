@@ -1,6 +1,9 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getFirestore, doc, setDoc, getDocs, collection, query, orderBy, onSnapshot } from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDocs, collection, query, orderBy, onSnapshot, getDoc } from "firebase/firestore";
+import { getAuth } from 'firebase/auth';
+
+import { EXPRESIONES, ERRORES_HARTY } from "./utils";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -18,8 +21,26 @@ const firebaseConfig = {
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
+export const auth = getAuth(app);
 
 //! Funciones de la base de datos
+
+export async function obtenerUsuario(uid){
+    const docRef = doc(db, "usuarios", uid);
+
+    return await getDoc(docRef);
+}
+
+export async function obtenerPermisos(){
+    const { docs } = await getDocs(collection(db, "permisos"));
+
+    const permisos = {}
+    
+    // Por cada documento, guardamos los permisos con la id (rol) como clave
+    docs.forEach(doc => permisos[doc.id] = doc.data());
+
+    return permisos;
+}
 
 //! Soportar las imagenes y videos, disponibilidad, convertir las etiquetas, etc.
 export async function crearPublicacion({
@@ -41,17 +62,17 @@ export async function crearPublicacion({
 }){
     // Validación de datos
     let errores = [];
-    if(!nombreTerraza) errores.push({ name: "nombreTerraza", msg: "Proporcione un nombre" });
-    if(!descripcion) errores.push({ name: "descripcion", msg: "Proporcione una descripción" });
-    if(!direccion) errores.push({ name: "direccion", msg: "Proporcione una dirección" });
-    if(!telefono || !/^\d{10}$/.test(telefono)) errores.push({ name: "telefono", msg: "Proporcione un teléfono válido" });
-    if(!precio) errores.push({ name: "precio", msg: "Proporcione un precio" });
-    if(!horarios) errores.push({ name: "horarios", msg: "Proporcione el horario" });
-    if(!tamano) errores.push({ name: "tamano", msg: "Proporcione el tamaño" });
-    if(!capacidad) errores.push({ name: "capacidad", msg: "Proporcione la capacidad de personas" });
+    if(!nombreTerraza) errores.push({ name: "nombreTerraza", msg: "Escribe un nombre válido" });
+    if(!descripcion) errores.push({ name: "descripcion", msg: "Escribe la descripción" });
+    if(!direccion) errores.push({ name: "direccion", msg: "Escribe la dirección" });
+    if(!telefono || !EXPRESIONES.TELEFONO.test(telefono)) errores.push({ name: "telefono", msg: "Escribe un teléfono válido (10 dígitos)" });
+    if(!precio || !EXPRESIONES.PRECIO.test(precio)) errores.push({ name: "precio", msg: "Escribe un precio válido" });
+    if(!horarios) errores.push({ name: "horarios", msg: "Escribe el horario" });
+    if(!tamano) errores.push({ name: "tamano", msg: "Escribe el tamaño de la terraza" });
+    if(!capacidad || !EXPRESIONES.CAPACIDAD) errores.push({ name: "capacidad", msg: "Escribe la capacidad de personas" });
 
     // Si existen errores no se crea el documento
-    if(errores.length) throw new Error(JSON.stringify(errores));
+    if(errores.length) throw ERRORES_HARTY.INVALID_DATA(JSON.stringify(errores));
     
     // Creación del documento
     const id = Date.now().toString();

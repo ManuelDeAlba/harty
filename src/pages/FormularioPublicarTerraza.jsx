@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { crearPublicacion } from "../../firebase";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+
+import { crearPublicacion } from "../firebase";
 
 const datosDefault = {
     nombreTerraza: "", // string
@@ -26,23 +28,20 @@ function FormularioPublicarTerraza(){
     const [datos, setDatos] = useState({ ...datosDefault });
     const [errores, setErrores] = useState(null);
 
-    const limpiarDatos = () => {
-        setDatos({ ...datosDefault });
-    }
-
     const handleSubmit = async e => {
         e.preventDefault();
 
-        try{
-            await crearPublicacion(datos);
-            limpiarDatos();
-            setErrores(null);
-
-            navigate("/publicaciones"); // Redirige a ver las publicaciones
-        } catch(error){
-            console.log(JSON.parse(error.message));
-            setErrores(JSON.parse(error.message));
-        }
+        toast.promise(crearPublicacion(datos), {
+            loading: "Publicando terraza...",
+            success: () => {
+                navigate("/publicaciones"); // Redirige a ver las publicaciones
+                return "Terraza publicada";
+            },
+            error: (error) => {
+                setErrores(JSON.parse(error.message));
+                return "Verifique los datos";
+            }
+        });
     }
 
     const handleInput = e => {
@@ -143,6 +142,7 @@ function FormularioPublicarTerraza(){
                     id="precio"
                     type="number"
                     inputMode="numeric"
+                    min={0}
                     onInput={handleInput}
                     value={datos.precio}
                     required
