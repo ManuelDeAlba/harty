@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthProvider";
 import { ERRORES_FIREBASE } from "../utils";
 import toast from "react-hot-toast";
+import LoadScripts from '../components/LoadScripts';
+
 
 function FormularioRegistrarse(){
     const { registrarUsuario } = useAuth();
@@ -45,6 +47,8 @@ function FormularioRegistrarse(){
 
     return(
         <form onSubmit={handleSubmit}>
+            {LoadScripts()}
+            <br/><br/><br/><br/>
             <h1>Registro</h1>
 
             <div>
