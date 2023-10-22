@@ -14,6 +14,7 @@ export const useAuth = () => {
 function AuthProvider({ children }){
     const [usuarioAuth, setUsuarioAuth] = useState(null);
     const [usuario, setUsuario] = useState(null);
+    const [cargandoUsuario, setCargandoUsuario] = useState(true);
     const [permisos, setPermisos] = useState(null);
 
     // Funciones privadas
@@ -32,6 +33,7 @@ function AuthProvider({ children }){
 
     // Funciones públicas
     const registrarUsuario = async ({ nombre, correo, contrasena }) => {
+        setCargandoUsuario(true);
         // Validaciones que no hace firebase (manuales)
         if(!nombre) throw ERRORES_HARTY.MISSING_NAME;
 
@@ -71,7 +73,7 @@ function AuthProvider({ children }){
 
     const actualizarUsuario = async uid => {
         // Al cargar la página o al editar el perfil se obtienen los datos del usuario y se guardan en el contexto
-        const usuario = (await obtenerUsuario(uid)).data();
+        const usuario = await obtenerUsuario(uid);
 
         setUsuarioAuth(auth.currentUser);
         setUsuario(usuario);
@@ -84,6 +86,8 @@ function AuthProvider({ children }){
         .then(setPermisos)
 
         const unsubscribe = onAuthStateChanged(auth, async currentUser => {
+            setCargandoUsuario(true);
+
             if(currentUser){
                 // Se obtienen los datos del usuario (auth y db)
                 await actualizarUsuario(currentUser.uid);
@@ -96,10 +100,15 @@ function AuthProvider({ children }){
         return () => unsubscribe();
     }, [])
 
+    useEffect(() => {
+        if(usuario) setCargandoUsuario(false);
+    }, [usuario])
+
     return(
         <authContext.Provider value={{
             usuarioAuth, // Usuario de firebase/auth
             usuario, // Datos de la página
+            cargandoUsuario,
             permisos, // Acciones que puede realizar cada rol
             registrarUsuario,
             iniciarSesion,
