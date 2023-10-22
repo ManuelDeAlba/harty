@@ -1,16 +1,22 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 
 import { useAuth } from "../context/AuthProvider";
 
 /*
-    name - nombre de la acción
+    names - arreglo con los nombres de permisos o acciones
     type ("route", "component") - Si se protege una ruta, redirige a otro lugar, si se protege un componente, simplemente no lo muestra
     redirect - Ruta a donde redirige si no se tienen los permisos
+    param - Parametro para comparar con la id del usuario y establecer permisos
 */
 const permisoDefault = false;
-function Protegido({ name, type="route", redirect="/", children }){
+function Protegido({ names, type="route", redirect="/", param="id", children }){
+    const params = useParams();
+    // Parametro para comparar con el id del usuario
+    // Por defecto busca id y si no, busca el parametro que se pase, por ejemplo :id, :etc
+    const parametro = params[param];
+
     const { usuario, usuarioAuth, permisos } = useAuth();
     const navigate = useNavigate();
 
@@ -29,8 +35,20 @@ function Protegido({ name, type="route", redirect="/", children }){
             // Solo puede bajar el rol a anonimo si no es admin (admin tiene más peso que la verificación)
             if(rol != "admin" && !usuarioAuth?.emailVerified) rol = "anonimo";
 
-            // Obtenemos el permiso de firebase (true o false), si no existe pone permisoDefault por defecto
-            let autorizado = permisos[rol]?.[name] ?? permisoDefault;
+            // Obtenemos los permisos de firebase (true o false), si no existe pone permisoDefault por defecto
+            // Si hay algún permiso que cumpla, entonces autoriza (permiso de usuario o por rol)
+            let autorizado = names.some(name => {
+                if(name.startsWith("usuario/")){
+                    // Si el tipo de permiso es solo para paginas del usuario compara por el rol y por la id del usuario
+                    console.log("Permiso de usuario", name);
+                    console.log({permiso: permisos[rol]?.[name], id: usuario.id, parametro});
+                    return permisos[rol]?.[name] && usuario.id == parametro;
+                } else {
+                    console.log("Permiso de admin", name);
+                    console.log({permiso: permisos[rol]?.[name]});
+                    return permisos[rol]?.[name];
+                }
+            }) ?? permisoDefault;
 
             // Actualizamos el estado para el renderizado
             setAutorizado(autorizado);
