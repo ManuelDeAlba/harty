@@ -28,7 +28,9 @@ export const auth = getAuth(app);
 export async function obtenerUsuario(uid){
     const docRef = doc(db, "usuarios", uid);
 
-    return await getDoc(docRef);
+    let documento = await getDoc(docRef);
+
+    return documento.data();
 }
 
 export async function obtenerPermisos(){
