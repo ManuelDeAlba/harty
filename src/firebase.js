@@ -2,6 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, doc, setDoc, getDocs, collection, query, orderBy, onSnapshot, getDoc } from "firebase/firestore";
 import { getAuth } from 'firebase/auth';
+import { getStorage, ref, uploadBytes, getDownloadURL, listAll } from 'firebase/storage';
 
 import { EXPRESIONES, ERRORES_HARTY } from "./utils";
 
@@ -22,6 +23,7 @@ const firebaseConfig = {
 export const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const auth = getAuth(app);
+export const storage = getStorage(app);
 
 //! Funciones de la base de datos
 
@@ -92,10 +94,12 @@ export async function crearPublicacion({
         capacidad,
         servicios,
         etiquetas,
-        multimedia,
         disponibilidad
     }
     const docRef = doc(db, "publicaciones", id);
+
+    // Subida de imagenes a storage
+    await subirMultimedia(nombreTerraza, multimedia);
 
     await setDoc(docRef, publicacion);
 }
@@ -125,3 +129,36 @@ export function obtenerPublicacionesTiempoReal(callback) {
     // Retorna una función para detener la suscripción cuando sea necesario
     return unsubscribe;
 }
+
+//! STORAGE
+export async function subirMultimedia(carpeta, multimedia){
+    const promesas = multimedia.map(file => {
+        return new Promise(async res => {
+            const referencia = ref(storage, `${carpeta.toString()}/${file.name}`);
+    
+            let snapshot = await uploadBytes(referencia, file);
+            
+            res(snapshot.metadata);
+        })
+    })
+
+    return await Promise.all(promesas);
+}
+
+export async function obtenerMultimedia(carpeta){
+    const referenciaLista = ref(storage, carpeta.toString());
+
+    // Obtenemos la lista de todos los archivos en el directorio
+    let { items: referencias } = await listAll(referenciaLista);
+
+    // Por cada referencia obtenemos su URL
+    let imagenes = referencias.map(async referencia => {
+        return await getDownloadURL(referencia);
+    })
+
+    imagenes = await Promise.all(imagenes);
+
+    return imagenes;
+}
+
+// Funcion para obtener previsualizaciones (solo la primera imagen o una aleatoria para evitar cargar tanto)

@@ -18,7 +18,6 @@ const datosDefault = {
     servicios: "", // string - opcional
     etiquetas: "", // string - opcional
 
-    multimedia: "", // files
     disponibilidad: "", // ? (ver como poner en el HTML)
 }
 
@@ -26,12 +25,18 @@ function FormularioPublicarTerraza(){
     const navigate = useNavigate();
 
     const [datos, setDatos] = useState({ ...datosDefault });
+    const [multimedia, setMultimedia] = useState([]);
     const [errores, setErrores] = useState(null);
 
     const handleSubmit = async e => {
         e.preventDefault();
 
-        toast.promise(crearPublicacion(datos), {
+        const publicacion = {
+            ...datos,
+            multimedia: multimedia.map(imagen => imagen.file), // Solo se envian los archivos y no los src temporales
+        }
+
+        toast.promise(crearPublicacion(publicacion), {
             loading: "Publicando terraza...",
             success: () => {
                 navigate("/publicaciones"); // Redirige a ver las publicaciones
@@ -45,10 +50,49 @@ function FormularioPublicarTerraza(){
     }
 
     const handleInput = e => {
+        if(e.target.name == "multimedia"){
+            handleImagenes(e);
+            return;
+        }
+
         setDatos({
             ...datos,
             [e.target.name]: e.target.value
         })
+    }
+
+    const handleImagenes = async e => {
+        let imagenes = [];
+        // Obtenemos todos los archivos
+        let files = e.target.files;
+        
+        // Por cada archivo, se guardan sus rutas
+        for(let i = 0; i < files.length; i++){
+            let file = files[i];
+
+            // Esperamos a que se termine de leer
+            const imagen = await new Promise((res) => {
+                const reader = new FileReader();
+
+                reader.onload = (e) => res({file, src: e.target.result});
+                
+                reader.readAsDataURL(file);
+            })
+
+            // Si no existe esa imagen en multimedia, se agrega
+            if(!multimedia.some(mult => mult.file.name == imagen.file.name)) imagenes.push(imagen);
+            else console.log("YA EXISTE WEY");
+        }
+
+        setMultimedia([
+            ...multimedia,
+            ...imagenes
+        ]);
+    }
+
+    const handleBorrarMultimedia = name => {
+        // Borramos las imagenes para no enviarlas y no subirlas a storage
+        setMultimedia(prevState => prevState.filter(img => img.file.name !== name));
     }
 
     return(
@@ -214,17 +258,19 @@ function FormularioPublicarTerraza(){
             </div>
 
             <div>
-                <h4>Falta multimedia</h4>
-                {/* <label htmlFor="multimedia">Multimedia:</label>
+                <label htmlFor="multimedia">Multimedia:</label>
                 <input
                     name="multimedia"
                     id="multimedia"
                     type="file"
                     multiple
                     onInput={handleInput}
-                    value={datos.multimedia}
-                    required
-                /> */}
+                />
+                {
+                    multimedia.map(imagen => (
+                        <img src={imagen.src} key={imagen.file.name} onClick={() => handleBorrarMultimedia(imagen.file.name)} />
+                    ))
+                }
             </div>
 
             <div>

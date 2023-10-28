@@ -40,12 +40,8 @@ function Protegido({ names, type="route", redirect="/", param="id", children }){
             let autorizado = names.some(name => {
                 if(name.startsWith("usuario/")){
                     // Si el tipo de permiso es solo para paginas del usuario compara por el rol y por la id del usuario
-                    console.log("Permiso de usuario", name);
-                    console.log({permiso: permisos[rol]?.[name], id: usuario.id, parametro});
                     return permisos[rol]?.[name] && usuario.id == parametro;
                 } else {
-                    console.log("Permiso de admin", name);
-                    console.log({permiso: permisos[rol]?.[name]});
                     return permisos[rol]?.[name];
                 }
             }) ?? permisoDefault;
