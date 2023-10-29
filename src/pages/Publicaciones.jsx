@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
-import { obtenerMultimedia, obtenerPublicacionesTiempoReal } from "../firebase";
+import { Link } from "react-router-dom";
+
 import { useAuth } from "../context/AuthProvider";
+import { obtenerMultimedia, obtenerPublicacionesTiempoReal } from "../firebase";
 
 function Publicaciones(){
     const { usuario } = useAuth();
@@ -39,7 +41,7 @@ function Publicaciones(){
                         {
                             // Solo muestra el boton para editar si es admin o el dueño de la publicación
                             usuario && (publicacion.idUsuario == usuario.id || usuario.rol == "admin") && (
-                                <a href={`/editar-terraza/${publicacion.id}`}>Editar</a>
+                                <Link to={`/editar-terraza/${publicacion.id}`}>Editar</Link>
                             )
                         }
                         <p><b>Descripción:</b> {publicacion.descripcion}</p>
