@@ -1,8 +1,9 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
-import { crearPublicacion } from "../firebase";
+import { borrarMultimedia, crearPublicacion, editarPublicacion, obtenerMultimedia, obtenerPublicacion } from "../firebase";
+import { useAuth } from "../context/AuthProvider";
 
 const datosDefault = {
     nombreTerraza: "", // string
@@ -23,30 +24,91 @@ const datosDefault = {
 
 function FormularioPublicarTerraza(){
     const navigate = useNavigate();
+    const { idPublicacion } = useParams();
+    const { usuario } = useAuth();
 
     const [datos, setDatos] = useState({ ...datosDefault });
+    const [imgSubidas, setImgSubidas] = useState([]);
     const [multimedia, setMultimedia] = useState([]);
     const [errores, setErrores] = useState(null);
 
+    // Para cambiar entre creación y edición
+    useEffect(() => {
+        const obtenerDatosEdicion = async () => {
+            // Obtenemos todo para rellenar el formulario
+            const datos = await obtenerPublicacion(idPublicacion);
+            let multimedia = await obtenerMultimedia(datos.id);
+
+            // Para cada imagen, guardar la referencia, src y borrar
+            multimedia = multimedia.map(elemento => ({
+                ...elemento, // referencia y src
+                borrar: false // Para saber si se tiene que borrar de storage
+            }))
+
+            setDatos(datos);
+            setImgSubidas(multimedia);
+        }
+
+        // Al cambiar de ruta se reinician los datos
+        setDatos(datosDefault);
+        setImgSubidas([]);
+        setMultimedia([]);
+
+        // Si se está editando se obtienen los datos para ponerlos en los estados
+        if(idPublicacion) obtenerDatosEdicion();
+    }, [idPublicacion])
+
+    // Verificar los permisos al cargar los datos
+    useEffect(() => {
+        if(!usuario || !datos.idUsuario) return;
+
+        // Si no es el dueño o admin, lo redirige
+        if(datos.idUsuario != usuario.id && usuario.rol != "admin"){
+            navigate("/publicaciones");
+            toast.error("No tienes los permisos suficientes");
+        }
+    }, [datos, usuario])
+
     const handleSubmit = async e => {
         e.preventDefault();
-
+    
+        // Datos que se van a subir (crear o editar)
         const publicacion = {
             ...datos,
             multimedia: multimedia.map(imagen => imagen.file), // Solo se envian los archivos y no los src temporales
         }
 
-        toast.promise(crearPublicacion(publicacion), {
-            loading: "Publicando terraza...",
-            success: () => {
-                navigate("/publicaciones"); // Redirige a ver las publicaciones
-                return "Terraza publicada";
-            },
-            error: (error) => {
-                setErrores(JSON.parse(error.message));
-                return "Verifique los datos";
-            }
-        });
+        if(!idPublicacion){
+            // Si no está editando, crea la publicación y agrega la id del usuario
+            toast.promise(crearPublicacion({ ...publicacion, idUsuario: usuario.id }), {
+                loading: "Publicando terraza...",
+                success: () => {
+                    navigate("/publicaciones"); // Redirige a ver las publicaciones
+                    return "Terraza publicada";
+                },
+                error: (error) => {
+                    setErrores(JSON.parse(error.message));
+                    return "Verifique los datos";
+                }
+            });
+        } else {
+            // Si está editando, edita la publicación y borra las imagenes si es necesario
+            toast.promise(editarPublicacion(publicacion), {
+                loading: "Editando terraza...",
+                success: () => {
+                    navigate("/publicaciones"); // Redirige a ver las publicaciones
+                    return "Terraza editada";
+                },
+                error: (error) => {
+                    setErrores(JSON.parse(error.message));
+                    return "Verifique los datos";
+                }
+            });
+
+            // Las imagenes se borran en segundo plano de storage
+            const imagenesABorrar = imgSubidas.filter(img => img.borrar == true).map(img => img.referencia);
+            borrarMultimedia(imagenesABorrar);
+        }
     }
 
     const handleInput = e => {
@@ -70,6 +132,12 @@ function FormularioPublicarTerraza(){
         for(let i = 0; i < files.length; i++){
             let file = files[i];
 
+            // Si no es una imagen, muestra un error
+            if(!file.type.startsWith("image/")){
+                toast.error("Solo se permiten imagenes");
+                continue;
+            }
+
             // Esperamos a que se termine de leer
             const imagen = await new Promise((res) => {
                 const reader = new FileReader();
@@ -81,7 +149,7 @@ function FormularioPublicarTerraza(){
 
             // Si no existe esa imagen en multimedia, se agrega
             if(!multimedia.some(mult => mult.file.name == imagen.file.name)) imagenes.push(imagen);
-            else console.log("YA EXISTE WEY");
+            else toast.error("Imagen ya existente");
         }
 
         setMultimedia([
@@ -90,14 +158,23 @@ function FormularioPublicarTerraza(){
         ]);
     }
 
-    const handleBorrarMultimedia = name => {
+    const handleBorrarMultimediaLocal = name => {
         // Borramos las imagenes para no enviarlas y no subirlas a storage
         setMultimedia(prevState => prevState.filter(img => img.file.name !== name));
     }
 
+    const handleBorrarMultimediaStorage = name => {
+        let imagenesSubidas = [...imgSubidas];
+        let indiceCambiar = imagenesSubidas.findIndex(img => img.referencia.name == name);
+
+        imagenesSubidas[indiceCambiar].borrar = true;
+
+        setImgSubidas(imagenesSubidas);
+    }
+
     return(
         <form onSubmit={handleSubmit}>
-            <h1>FormularioPublicarTerraza</h1>
+            <h1>{!idPublicacion ? "Formulario Publicar Terraza" : "Formulario Editar Terraza"}</h1>
 
             <div>
                 <label htmlFor="nombreTerraza">Nombre de la terraza:</label>
@@ -266,9 +343,18 @@ function FormularioPublicarTerraza(){
                     multiple
                     onInput={handleInput}
                 />
+                <h2>Subidas</h2>
+                {
+                    imgSubidas.map(imagen => (
+                        !imagen.borrar && (
+                            <img width="100" src={imagen.src} key={imagen.referencia.name} onClick={() => handleBorrarMultimediaStorage(imagen.referencia.name)} />
+                        )
+                    ))
+                }
+                <h2>Nuevas</h2>
                 {
                     multimedia.map(imagen => (
-                        <img src={imagen.src} key={imagen.file.name} onClick={() => handleBorrarMultimedia(imagen.file.name)} />
+                        <img width="100" src={imagen.src} key={imagen.file.name} onClick={() => handleBorrarMultimediaLocal(imagen.file.name)} />
                     ))
                 }
             </div>

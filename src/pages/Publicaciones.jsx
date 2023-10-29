@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import { obtenerMultimedia, obtenerPublicacionesTiempoReal } from "../firebase";
+import { useAuth } from "../context/AuthProvider";
 
 function Publicaciones(){
+    const { usuario } = useAuth();
+    
     const [publicaciones, setPublicaciones] = useState(null);
     const [multimedia, setMultimedia] = useState([]);
 
@@ -13,7 +16,7 @@ function Publicaciones(){
 
             // Se obtienen las url de las imagenes
             for(let i = 0; i < publicaciones.length; i++){
-                let mult = await obtenerMultimedia(publicaciones[i].nombreTerraza);
+                let mult = await obtenerMultimedia(publicaciones[i].id);
 
                 // Por cada terraza que carga, se actualizan las imagenes para renderizar más rápido
                 setMultimedia(prevMultimedia => ({
@@ -33,6 +36,12 @@ function Publicaciones(){
                 publicaciones && publicaciones.map(publicacion => (
                     <div key={publicacion.id}>
                         <h2>{publicacion.nombreTerraza}</h2>
+                        {
+                            // Solo muestra el boton para editar si es admin o el dueño de la publicación
+                            usuario && (publicacion.idUsuario == usuario.id || usuario.rol == "admin") && (
+                                <a href={`/editar-terraza/${publicacion.id}`}>Editar</a>
+                            )
+                        }
                         <p><b>Descripción:</b> {publicacion.descripcion}</p>
                         <p><b>Reglamento:</b> {publicacion.reglamento}</p>
                         <p><b>Dirección:</b> {publicacion.direccion}</p>
@@ -48,7 +57,7 @@ function Publicaciones(){
                             {
                                 multimedia[publicacion.id]?.length > 0 ? (
                                     multimedia[publicacion.id].map((imagen, indice) => (
-                                        <img width="100" src={imagen} key={indice} />
+                                        <img width="100" src={imagen.src} key={indice} />
                                     ))    
                                 ) : (
                                     " No hay multimedia para mostrar"

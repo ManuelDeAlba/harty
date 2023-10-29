@@ -11,7 +11,7 @@ import { useAuth } from "../context/AuthProvider";
     param - Parametro para comparar con la id del usuario y establecer permisos
 */
 const permisoDefault = false;
-function Protegido({ names, type="route", redirect="/", param="id", children }){
+function Protegido({ names, type="route", redirect="/", param="idUsuario", children }){
     const params = useParams();
     // Parametro para comparar con el id del usuario
     // Por defecto busca id y si no, busca el parametro que se pase, por ejemplo :id, :etc

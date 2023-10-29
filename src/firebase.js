@@ -2,7 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, doc, setDoc, getDocs, collection, query, orderBy, onSnapshot, getDoc } from "firebase/firestore";
 import { getAuth } from 'firebase/auth';
-import { getStorage, ref, uploadBytes, getDownloadURL, listAll } from 'firebase/storage';
+import { getStorage, ref, uploadBytes, getDownloadURL, listAll, deleteObject } from 'firebase/storage';
 
 import { EXPRESIONES, ERRORES_HARTY } from "./utils";
 
@@ -99,9 +99,73 @@ export async function crearPublicacion({
     const docRef = doc(db, "publicaciones", id);
 
     // Subida de imagenes a storage
-    await subirMultimedia(nombreTerraza, multimedia);
+    await subirMultimedia(id, multimedia);
 
     await setDoc(docRef, publicacion);
+}
+
+export async function editarPublicacion({
+    id,
+    nombreTerraza, // string
+    descripcion, // string
+    reglamento, // string - opcional
+    direccion, //? string por ahora
+    telefono, // string
+    redes, //? string (ver como poner en el HTML) - opcional
+    precio, // number
+    horarios, //? string (ver como poner en el HTML)
+    tamano, // string
+    capacidad, // number
+    servicios, // string - opcional
+    etiquetas, // string - opcional
+
+    multimedia, // files
+    disponibilidad, // ? (ver como poner en el HTML)
+}){
+    // Validación de datos
+    let errores = [];
+    if(!nombreTerraza) errores.push({ name: "nombreTerraza", msg: "Escribe un nombre válido" });
+    if(!descripcion) errores.push({ name: "descripcion", msg: "Escribe la descripción" });
+    if(!direccion) errores.push({ name: "direccion", msg: "Escribe la dirección" });
+    if(!telefono || !EXPRESIONES.TELEFONO.test(telefono)) errores.push({ name: "telefono", msg: "Escribe un teléfono válido (10 dígitos)" });
+    if(!precio || !EXPRESIONES.PRECIO.test(precio)) errores.push({ name: "precio", msg: "Escribe un precio válido" });
+    if(!horarios) errores.push({ name: "horarios", msg: "Escribe el horario" });
+    if(!tamano) errores.push({ name: "tamano", msg: "Escribe el tamaño de la terraza" });
+    if(!capacidad || !EXPRESIONES.CAPACIDAD) errores.push({ name: "capacidad", msg: "Escribe la capacidad de personas" });
+
+    // Si existen errores no se edita el documento
+    if(errores.length) throw ERRORES_HARTY.INVALID_DATA(JSON.stringify(errores));
+    
+    // Creación del documento
+    const publicacion = {
+        id,
+        nombreTerraza,
+        descripcion,
+        reglamento,
+        direccion,
+        telefono,
+        redes,
+        precio,
+        horarios,
+        tamano,
+        capacidad,
+        servicios,
+        etiquetas,
+        disponibilidad
+    }
+    const docRef = doc(db, "publicaciones", id);
+
+    // Subida de imagenes a storage
+    await subirMultimedia(id, multimedia);
+
+    // Edición de documento
+    await setDoc(docRef, publicacion);
+}
+
+export async function obtenerPublicacion(id){
+    const docRef = doc(db, "publicaciones", id);
+
+    return (await getDoc(docRef)).data();
 }
 
 export async function obtenerPublicaciones(){
@@ -153,12 +217,20 @@ export async function obtenerMultimedia(carpeta){
 
     // Por cada referencia obtenemos su URL
     let imagenes = referencias.map(async referencia => {
-        return await getDownloadURL(referencia);
+        const url = await getDownloadURL(referencia);
+        return { referencia, src: url };
     })
 
     imagenes = await Promise.all(imagenes);
 
+    // Regresa solo las urls
     return imagenes;
+}
+
+export async function borrarMultimedia(referencias){
+    referencias.map(async referencia => {
+        await deleteObject(referencia);
+    })
 }
 
 // Funcion para obtener previsualizaciones (solo la primera imagen o una aleatoria para evitar cargar tanto)

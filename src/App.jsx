@@ -98,11 +98,16 @@ function App() {
                             <FormularioPublicarTerraza />
                         </Protegido>
                     } />
+                    <Route path="/editar-terraza/:idPublicacion" element={
+                        <Protegido names={["editar-terraza"]} redirect="/iniciar-sesion">
+                            <FormularioPublicarTerraza />
+                        </Protegido>
+                    } />
 
                     {/* Sesión de usuario */}
-                    <Route path="/perfil/:id" element={
+                    <Route path="/perfil/:idUsuario" element={
                         // Se verifican los permisos generales (por rol) y de usuario (solo para su propio perfil)
-                        <Protegido names={["ver-perfil", "usuario/ver-perfil"]}>
+                        <Protegido names={["ver-perfil", "usuario/ver-perfil"]} param="idUsuario">
                             <h1>PERFIL DEL USUARIO</h1>
                         </Protegido>
                     } />

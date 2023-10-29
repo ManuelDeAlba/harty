@@ -26,6 +26,7 @@ export const ERRORES_FIREBASE = {
         "auth/invalid-login-credentials": "Credenciales de inicio de sesión incorrectas. Verifique su usuario y contraseña",
         "auth/missing-email": "Escribe el correo electrónico",
         "auth/weak-password": "La contraseña debe tener al menos 6 caracteres",
-        "auth/email-already-in-use": "El correo ya está en uso"
+        "auth/email-already-in-use": "El correo ya está en uso",
+        "auth/too-many-requests": "Acceso a la cuenta deshabilitado. Restablezca la contraseña",
     },
 }
