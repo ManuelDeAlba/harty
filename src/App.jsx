@@ -99,7 +99,8 @@ function App() {
                         </Protegido>
                     } />
                     <Route path="/editar-terraza/:idPublicacion" element={
-                        <Protegido names={["editar-terraza"]} redirect="/iniciar-sesion">
+                        // Se verifican los permisos generales (por rol) y de usuario (para sus propias publicaciones)
+                        <Protegido names={["editar-terraza", "publicacion/editar-terraza"]} param="idPublicacion" redirect="/publicaciones">
                             <FormularioPublicarTerraza />
                         </Protegido>
                     } />

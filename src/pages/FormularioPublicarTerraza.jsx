@@ -58,17 +58,6 @@ function FormularioPublicarTerraza(){
         if(idPublicacion) obtenerDatosEdicion();
     }, [idPublicacion])
 
-    // Verificar los permisos al cargar los datos
-    useEffect(() => {
-        if(!usuario || !datos.idUsuario) return;
-
-        // Si no es el dueño o admin, lo redirige
-        if(datos.idUsuario != usuario.id && usuario.rol != "admin"){
-            navigate("/publicaciones");
-            toast.error("No tienes los permisos suficientes");
-        }
-    }, [datos, usuario])
-
     const handleSubmit = async e => {
         e.preventDefault();
     

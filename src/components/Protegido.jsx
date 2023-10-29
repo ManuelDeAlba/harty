@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 
 import { useAuth } from "../context/AuthProvider";
+import { obtenerPublicacion } from "../firebase";
 
 /*
     names - arreglo con los nombres de permisos o acciones
@@ -11,7 +12,7 @@ import { useAuth } from "../context/AuthProvider";
     param - Parametro para comparar con la id del usuario y establecer permisos
 */
 const permisoDefault = false;
-function Protegido({ names, type="route", redirect="/", param="idUsuario", children }){
+function Protegido({ names, type="route", redirect="/", param="id", children }){
     const params = useParams();
     // Parametro para comparar con el id del usuario
     // Por defecto busca id y si no, busca el parametro que se pase, por ejemplo :id, :etc
@@ -24,10 +25,10 @@ function Protegido({ names, type="route", redirect="/", param="idUsuario", child
     const [autorizado, setAutorizado] = useState(permisoDefault);
 
     useEffect(() => {
-        // Cuando ya se hayan obtenido los permisos
-        if(permisos){
+        const procesarPermisos = async () => {
             setCargando(true);
 
+            //? ROL
             // Se obtiene el rol del usuario actual
             let rol = usuario?.rol ?? "anonimo"; // (admin o usuario, si no existe, es anonimo)
 
@@ -35,16 +36,23 @@ function Protegido({ names, type="route", redirect="/", param="idUsuario", child
             // Solo puede bajar el rol a anonimo si no es admin (admin tiene más peso que la verificación)
             if(rol != "admin" && !usuarioAuth?.emailVerified) rol = "anonimo";
 
+            //? PERMISOS
             // Obtenemos los permisos de firebase (true o false), si no existe pone permisoDefault por defecto
             // Si hay algún permiso que cumpla, entonces autoriza (permiso de usuario o por rol)
-            let autorizado = names.some(name => {
+            let autorizado = names.map(async name => {
                 if(name.startsWith("usuario/")){
                     // Si el tipo de permiso es solo para paginas del usuario compara por el rol y por la id del usuario
-                    return permisos[rol]?.[name] && usuario.id == parametro;
+                    return permisos[rol]?.[name] && parametro == usuario.id;
+                } else if(name.startsWith("publicacion/")) {
+                    // Si se tiene que proteger una publicación para que solo acceda el creador
+                    const publicacion = await obtenerPublicacion(parametro);
+                    return permisos[rol]?.[name] && publicacion.idUsuario == usuario.id;
                 } else {
                     return permisos[rol]?.[name];
                 }
             }) ?? permisoDefault;
+
+            autorizado = (await Promise.all(autorizado)).includes(true);
 
             // Actualizamos el estado para el renderizado
             setAutorizado(autorizado);
@@ -68,6 +76,9 @@ function Protegido({ names, type="route", redirect="/", param="idUsuario", child
 
             setCargando(false);
         }
+
+        // Cuando ya se hayan obtenido los permisos
+        if(permisos) procesarPermisos();
     }, [usuarioAuth, permisos])
 
     // Manejar la renderización, cuando type="route" no renderiza nada porque tiene que redirigir
