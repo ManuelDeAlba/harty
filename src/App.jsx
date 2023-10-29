@@ -11,6 +11,7 @@ import Publicaciones from "./pages/Publicaciones";
 import FormularioPublicarTerraza from "./pages/FormularioPublicarTerraza";
 import FormularioRegistrarse from "./pages/FormularioRegistrarse";
 import FormularioIniciarSesion from "./pages/FormularioIniciarSesion";
+import Perfil from "./pages/Perfil";
 
 // Componentes
 import Navbar from "./components/Navbar";
@@ -109,7 +110,7 @@ function App() {
                     <Route path="/perfil/:idUsuario" element={
                         // Se verifican los permisos generales (por rol) y de usuario (solo para su propio perfil)
                         <Protegido names={["ver-perfil", "usuario/ver-perfil"]} param="idUsuario">
-                            <h1>PERFIL DEL USUARIO</h1>
+                            <Perfil />
                         </Protegido>
                     } />
                     <Route path="/registrarse" element={<FormularioRegistrarse />} />
