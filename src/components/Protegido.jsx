@@ -79,7 +79,7 @@ function Protegido({ names, type="route", redirect="/", param="id", children }){
 
         // Cuando ya se hayan obtenido los permisos
         if(permisos) procesarPermisos();
-    }, [usuarioAuth, permisos])
+    }, [usuarioAuth, permisos, location.pathname])
 
     // Manejar la renderización, cuando type="route" no renderiza nada porque tiene que redirigir
     if(cargando){

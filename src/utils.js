@@ -15,6 +15,7 @@ export class HartyError extends Error{
 // Se crean las instancias de todos los errores para llamarlos con
 // throw ERRORES_HARTY.NOMBRE_ERROR
 export const ERRORES_HARTY = {
+    MISSING_ID: new HartyError({ code: "harty/missing-id", message: "Escribe la id" }),
     MISSING_NAME: new HartyError({ code: "harty/missing-name", message: "Escribe el nombre" }),
     INVALID_DATA: (message) => new HartyError({ code: "harty/invalid-data", message }),
 }

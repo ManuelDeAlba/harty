@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import React, { useEffect } from 'react';
 
@@ -12,6 +12,7 @@ import FormularioPublicarTerraza from "./pages/FormularioPublicarTerraza";
 import FormularioRegistrarse from "./pages/FormularioRegistrarse";
 import FormularioIniciarSesion from "./pages/FormularioIniciarSesion";
 import Perfil from "./pages/Perfil";
+import FormularioEditarPerfil from "./pages/FormularioEditarPerfil";
 
 // Componentes
 import Navbar from "./components/Navbar";
@@ -107,14 +108,22 @@ function App() {
                     } />
 
                     {/* Sesión de usuario */}
+                    <Route path="/registrarse" element={<FormularioRegistrarse />} />
+                    <Route path="/iniciar-sesion" element={<FormularioIniciarSesion />} />
                     <Route path="/perfil/:idUsuario" element={
                         // Se verifican los permisos generales (por rol) y de usuario (solo para su propio perfil)
                         <Protegido names={["ver-perfil", "usuario/ver-perfil"]} param="idUsuario">
                             <Perfil />
                         </Protegido>
                     } />
-                    <Route path="/registrarse" element={<FormularioRegistrarse />} />
-                    <Route path="/iniciar-sesion" element={<FormularioIniciarSesion />} />
+                    <Route path="/editar-perfil/:idUsuario" element={
+                        // Se verifican los permisos generales (por rol) y de usuario (solo para su propio perfil)
+                        <Protegido names={["editar-perfil", "usuario/editar-perfil"]} param="idUsuario">
+                            <FormularioEditarPerfil />
+                        </Protegido>
+                    } />
+
+                    <Route path="*" element={<Navigate to="/" />} />
                 </Routes>
             </Router>
         </AuthProvider>

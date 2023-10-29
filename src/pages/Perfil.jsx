@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 import { obtenerUsuario } from "../firebase";
 
@@ -22,6 +22,7 @@ function Perfil(){
             <p><span>Nombre:</span> { datosPerfil.nombre }</p>
             <p><span>Correo:</span> { datosPerfil.correo }</p>
             <p><span>Rol:</span> { datosPerfil.rol }</p>
+            <Link to={`/editar-perfil/${datosPerfil.id}`}>Editar perfil</Link>
         </main>
     )
 }

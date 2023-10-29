@@ -1,7 +1,7 @@
 import { createUserWithEmailAndPassword, onAuthStateChanged, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { createContext, useContext, useEffect, useState } from "react";
 import { auth, db, obtenerUsuario, obtenerPermisos } from "../firebase";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, updateDoc } from "firebase/firestore";
 import { ERRORES_HARTY } from "../utils";
 
 const authContext = createContext();
@@ -79,6 +79,21 @@ function AuthProvider({ children }){
         setUsuario(usuario);
     }
 
+    const editarPerfil = async ({
+        id,
+        nombre
+    }) => {
+        // Validaciones que no hace firebase (manuales)
+        if(!id) throw ERRORES_HARTY.MISSING_ID;
+        if(!nombre) throw ERRORES_HARTY.MISSING_NAME;
+
+        const docRef = doc(db, "usuarios", id);
+
+        await updateDoc(docRef, {
+            nombre
+        })
+    }
+
     // Al cargar la página se suscribe al evento para obtener los cambios en el auth
     // También se obtienen los permisos (no se obtienen en tiempo real porque no cambian constantemente)
     useEffect(() => {
@@ -115,6 +130,7 @@ function AuthProvider({ children }){
             cerrarSesion,
             restablecerContrasena,
             actualizarUsuario,
+            editarPerfil,
         }}>
             {
                 children
