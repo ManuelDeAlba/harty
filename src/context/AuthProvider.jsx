@@ -71,14 +71,6 @@ function AuthProvider({ children }){
         await sendPasswordResetEmail(auth, correo);
     }
 
-    const actualizarUsuario = async uid => {
-        // Al cargar la página o al editar el perfil se obtienen los datos del usuario y se guardan en el contexto
-        const usuario = await obtenerUsuario(uid);
-
-        setUsuarioAuth(auth.currentUser);
-        setUsuario(usuario);
-    }
-
     const editarPerfil = async ({
         id,
         nombre
@@ -91,7 +83,20 @@ function AuthProvider({ children }){
 
         await updateDoc(docRef, {
             nombre
-        })
+        });
+
+        // Se actualiza el usuario del contexto
+        await actualizarUsuario(id);
+    }
+
+    const actualizarUsuario = async uid => {
+        setCargandoUsuario(true);
+
+        // Al cargar la página o al editar el perfil se obtienen los datos del usuario y se guardan en el contexto
+        const usuario = await obtenerUsuario(uid);
+
+        setUsuarioAuth(auth.currentUser);
+        setUsuario(usuario);
     }
 
     // Al cargar la página se suscribe al evento para obtener los cambios en el auth
