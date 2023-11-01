@@ -35,8 +35,8 @@ export async function obtenerUsuario(uid){
     return documento.data();
 }
 
-export async function obtenerUsuariosPaginacion({ ref=null, cantidad=5 } = {}){
-	let q = query(collection(db, "usuarios"), orderBy("nombre"), startAfter(ref), limit(cantidad));
+export async function obtenerUsuariosPaginacion({ ref=null, cantidad=10 } = {}){
+	let q = query(collection(db, "usuarios"), orderBy("rol"), orderBy("nombre"), startAfter(ref), limit(cantidad));
 
 	const docs = (await getDocs(q)).docs;
     
