@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from 'react-router-dom';
-import { obtenerUsuariosPaginacion } from "../../firebase";
+import { estadoUsuario, obtenerUsuariosPaginacion } from "../../firebase";
 
 function ListaUsuarios(){
     const [usuarios, setUsuarios] = useState([]);
@@ -29,11 +29,16 @@ function ListaUsuarios(){
         });
     }
 
-    const handleBorrar = async (id) => {
-        //! Pedir confirmación
-        //! Borrar
-        // if(confirmacion) await borrarUsuario(id);
-        // Recargar página o usar onSnapshot
+    const handleDeshabilitar = async (id, habilitado) => {
+        await estadoUsuario(id, habilitado);
+
+        // Se actualizan los datos de los usuarios
+        setUsuarios(usuarios => {
+            return usuarios.map(usuario => {
+                if(usuario.id == id) usuario.habilitado = habilitado
+                return usuario;
+            })
+        })
     }
 
     return(
@@ -48,7 +53,7 @@ function ListaUsuarios(){
                             <p>{usuario.rol} - {usuario.nombre}</p>
                             <p>{usuario.correo}</p>
                             <Link to={`/perfil/${usuario.id}`}>Perfil</Link>
-                            <button onClick={handleBorrar}>Borrar (todavía no sirve)</button>
+                            <button onClick={() => handleDeshabilitar(usuario.id, !usuario.habilitado)}>{usuario.habilitado ? "Deshabilitar" : "Habilitar"}</button>
                         </div>
                     ))
                 }

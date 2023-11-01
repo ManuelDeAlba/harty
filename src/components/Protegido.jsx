@@ -32,9 +32,9 @@ function Protegido({ names, type="route", redirect="/", param="id", children }){
             // Se obtiene el rol del usuario actual
             let rol = usuario?.rol ?? "anonimo"; // (admin o usuario, si no existe, es anonimo)
 
-            // Si el email no está verificado, se regresa a anonimo en lugar de usuario
-            // Solo puede bajar el rol a anonimo si no es admin (admin tiene más peso que la verificación)
-            if(rol != "admin" && !usuarioAuth?.emailVerified) rol = "anonimo";
+            // Si el email no está verificado o el usuario está deshabilitado, se regresa a anonimo en lugar de usuario
+            // Solo puede bajar el rol a anonimo si no es admin (admin tiene más peso que la verificación o estar deshabilitado)
+            if(rol != "admin" && (!usuarioAuth?.emailVerified || !usuario?.habilitado)) rol = "anonimo";
 
             //? PERMISOS
             // Obtenemos los permisos de firebase (true o false), si no existe pone permisoDefault por defecto
@@ -65,9 +65,12 @@ function Protegido({ names, type="route", redirect="/", param="id", children }){
                 if(!usuarioAuth){
                     // Si no tiene una sesión activa
                     toast.error("Registrate o inicia sesión y verifica tu cuenta para acceder");
-                } else if(!usuarioAuth.emailVerified){
+                } else if(!usuarioAuth?.emailVerified){
                     // Si solo falta la verificación
                     toast.error("Verifica tu correo electrónico para acceder");
+                } else if(!usuario?.habilitado) {
+                    // Si la cuenta está deshabilitada
+                    toast.error("La cuenta está deshabilitada");
                 } else {
                     // Si no tiene los suficientes permisos
                     toast.error("No tienes los permisos suficientes");

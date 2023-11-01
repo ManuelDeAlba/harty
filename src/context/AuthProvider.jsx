@@ -47,6 +47,7 @@ function AuthProvider({ children }){
         const usuarioDB = await registrarUsuarioDB({
             id: credenciales.user.uid,
             rol: "usuario", // Si no está verificado, automaticamente baja a anonimo
+            habilitado: true,
             nombre,
             correo
         });

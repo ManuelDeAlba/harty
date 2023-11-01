@@ -153,12 +153,12 @@ function FormularioPublicarTerraza(){
     }
 
     const handleBorrarMultimediaStorage = name => {
-        let imagenesSubidas = [...imgSubidas];
-        let indiceCambiar = imagenesSubidas.findIndex(img => img.referencia.name == name);
-
-        imagenesSubidas[indiceCambiar].borrar = true;
-
-        setImgSubidas(imagenesSubidas);
+        setImgSubidas(imagenes => {
+            return imagenes.map(img => {
+                if(img.referencia.name == name) img.borrar = true;
+                return img;
+            })
+        })
     }
 
     return(
