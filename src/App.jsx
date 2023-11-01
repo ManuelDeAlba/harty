@@ -13,6 +13,7 @@ import FormularioRegistrarse from "./pages/FormularioRegistrarse";
 import FormularioIniciarSesion from "./pages/FormularioIniciarSesion";
 import Perfil from "./pages/Perfil";
 import FormularioEditarPerfil from "./pages/FormularioEditarPerfil";
+import ListaUsuarios from "./pages/admin/ListaUsuarios";
 
 // Componentes
 import Navbar from "./components/Navbar";
@@ -120,6 +121,13 @@ function App() {
                         // Se verifican los permisos generales (por rol) y de usuario (solo para su propio perfil)
                         <Protegido names={["editar-perfil", "usuario/editar-perfil"]} param="idUsuario">
                             <FormularioEditarPerfil />
+                        </Protegido>
+                    } />
+
+                    {/* Administración */}
+                    <Route path="/admin/lista-usuarios" element={
+                        <Protegido names={["lista-usuarios"]}>
+                            <ListaUsuarios />
                         </Protegido>
                     } />
 

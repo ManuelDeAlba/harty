@@ -7,21 +7,23 @@ import { useAuth } from "../context/AuthProvider";
 
 const datosPerfilDefault = {
     nombre: "",
+    rol: ""
 }
 
 function FormularioEditarPerfil(){
     const navigate = useNavigate();
     const { idUsuario } = useParams();
-    const { editarPerfil } = useAuth();
+    const { usuario, editarPerfil, permisos } = useAuth();
 
     const [datosPerfil, setDatosPerfil] = useState(datosPerfilDefault);
 
     // Al cambiar la url (id del usuario) se vuelve a obtener todo
     useEffect(() => {
         obtenerUsuario(idUsuario)
-        .then(({ nombre }) => {
+        .then(({ nombre, rol }) => {
             setDatosPerfil({
                 nombre,
+                rol
             });
         });
     }, [idUsuario])
@@ -30,12 +32,12 @@ function FormularioEditarPerfil(){
         e.preventDefault();
 
         toast.promise(editarPerfil({
-            ...datosPerfil,
-            id: idUsuario
+            id: idUsuario,
+            ...datosPerfil
         }), {
             loading: "Editando perfil...",
             success: () => {
-                navigate("/");
+                navigate(-1);
                 return "Perfil editado";
             },
             error: (error) => error.message
@@ -64,6 +66,16 @@ function FormularioEditarPerfil(){
                     required
                 />
             </div>
+
+            {
+                // Solo los que pueden editar todos los perfiles (administradores)
+                permisos && usuario && permisos[usuario.rol]["editar-perfil"] && (
+                    <select name="rol" onInput={handleInput} value={datosPerfil.rol}>
+                        <option value="usuario">Usuario</option>
+                        <option value="admin">Administrador</option>
+                    </select>
+                )
+            }
 
             <input type="submit" value="Editar perfil" />
         </form>

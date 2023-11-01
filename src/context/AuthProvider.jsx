@@ -73,7 +73,8 @@ function AuthProvider({ children }){
 
     const editarPerfil = async ({
         id,
-        nombre
+        nombre,
+        rol,
     }) => {
         // Validaciones que no hace firebase (manuales)
         if(!id) throw ERRORES_HARTY.MISSING_ID;
@@ -82,11 +83,14 @@ function AuthProvider({ children }){
         const docRef = doc(db, "usuarios", id);
 
         await updateDoc(docRef, {
-            nombre
+            nombre,
+            rol
         });
 
         // Se actualiza el usuario del contexto
-        await actualizarUsuario(id);
+        // Si un admin editó el perfil de otra persona
+        // esto no se ejecuta para no cambiar el estado de usuario
+        if(usuario.id == id) await actualizarUsuario(id);
     }
 
     const actualizarUsuario = async uid => {

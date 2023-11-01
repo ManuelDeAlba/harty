@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getFirestore, doc, setDoc, getDocs, collection, query, orderBy, onSnapshot, getDoc } from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDocs, collection, query, orderBy, onSnapshot, getDoc, startAt, limit, startAfter } from "firebase/firestore";
 import { getAuth } from 'firebase/auth';
 import { getStorage, ref, uploadBytes, getDownloadURL, listAll, deleteObject } from 'firebase/storage';
 
@@ -33,6 +33,17 @@ export async function obtenerUsuario(uid){
     let documento = await getDoc(docRef);
 
     return documento.data();
+}
+
+export async function obtenerUsuariosPaginacion({ ref=null, cantidad=5 } = {}){
+	let q = query(collection(db, "usuarios"), orderBy("nombre"), startAfter(ref), limit(cantidad));
+
+	const docs = (await getDocs(q)).docs;
+    
+    return {
+        ultimo: docs[docs.length - 1],
+        usuarios: docs.map(doc => doc.data())
+    };
 }
 
 export async function obtenerPermisos(){
