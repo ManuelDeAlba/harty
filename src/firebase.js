@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getFirestore, doc, setDoc, getDocs, collection, query, orderBy, onSnapshot, getDoc, startAt, limit, startAfter, updateDoc } from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDocs, collection, query, orderBy, onSnapshot, getDoc, startAt, limit, startAfter, updateDoc, where } from "firebase/firestore";
 import { getAuth } from 'firebase/auth';
 import { getStorage, ref, uploadBytes, getDownloadURL, listAll, deleteObject } from 'firebase/storage';
 
@@ -67,6 +67,8 @@ export async function obtenerPermisos(){
 
 //! Soportar las imagenes y videos, disponibilidad, convertir las etiquetas, etc.
 export async function crearPublicacion({
+    idUsuario,
+
     nombreTerraza, // string
     descripcion, // string
     reglamento, // string - opcional
@@ -100,6 +102,7 @@ export async function crearPublicacion({
     // Creación del documento
     const id = Date.now().toString();
     const publicacion = {
+        idUsuario,
         id,
         nombreTerraza,
         descripcion,
@@ -190,6 +193,17 @@ export async function obtenerPublicacion(id){
 export async function obtenerPublicaciones(){
     // Se crea la consulta ordenando por fecha de más reciente a menos reciente
     const q = query(collection(db, "publicaciones"), orderBy("id", "desc"));
+
+    // Se obtienen los documentos
+    const querySnapshot = await getDocs(q);
+    
+    // Se recorre para obtener la información de cada documento
+    return querySnapshot.docs.map(doc => doc.data());
+}
+
+export async function obtenerPublicacionesUsuario(uid){
+    // Se crea la consulta ordenando por fecha de más reciente a menos reciente
+    const q = query(collection(db, "publicaciones"), where("idUsuario", "==", uid), orderBy("id", "desc"));
 
     // Se obtienen los documentos
     const querySnapshot = await getDocs(q);
