@@ -5,6 +5,8 @@ import toast from "react-hot-toast";
 import { obtenerUsuario } from "../firebase";
 import { useAuth } from "../context/AuthProvider";
 
+import Protegido from "../components/Protegido";
+
 const datosPerfilDefault = {
     nombre: "",
     rol: ""
@@ -13,7 +15,7 @@ const datosPerfilDefault = {
 function FormularioEditarPerfil(){
     const navigate = useNavigate();
     const { idUsuario } = useParams();
-    const { usuario, editarPerfil, permisos } = useAuth();
+    const { editarPerfil } = useAuth();
 
     const [datosPerfil, setDatosPerfil] = useState(datosPerfilDefault);
 
@@ -67,15 +69,13 @@ function FormularioEditarPerfil(){
                 />
             </div>
 
-            {
-                // Solo los que pueden editar todos los perfiles (administradores)
-                permisos && usuario && permisos[usuario.rol]["editar-perfil"] && (
-                    <select name="rol" onInput={handleInput} value={datosPerfil.rol}>
-                        <option value="usuario">Usuario</option>
-                        <option value="admin">Administrador</option>
-                    </select>
-                )
-            }
+            {/* Solo los que pueden editar todos los perfiles (administradores) */}
+            <Protegido names={["editar-perfil"]} type="component" errorComponent={""}>
+                <select name="rol" onInput={handleInput} value={datosPerfil.rol}>
+                    <option value="usuario">Usuario</option>
+                    <option value="admin">Administrador</option>
+                </select>
+            </Protegido>
 
             <input type="submit" value="Editar perfil" />
         </form>

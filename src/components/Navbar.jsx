@@ -1,8 +1,10 @@
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthProvider';
 
+import Protegido from './Protegido';
+
 function Navbar() {
-    const { usuario, usuarioAuth, cerrarSesion, permisos } = useAuth();
+    const { usuario, usuarioAuth, cerrarSesion } = useAuth();
 
     return (
         <nav>
@@ -42,13 +44,13 @@ function Navbar() {
                                             {
                                                 usuario ? (
                                                     <>
-                                                        {
-                                                            permisos[usuario.rol]["lista-usuarios"] && (
-                                                                <NavLink to="/admin/lista-usuarios">
-                                                                    Lista de usuarios
-                                                                </NavLink>
-                                                            )
-                                                        }
+                                                        {/* Muestra este boton solo a los usuarios permitidos (administradores) */}
+                                                        <Protegido names={["lista-usuarios"]} type="component" errorComponent={""}>
+                                                            <NavLink to="/admin/lista-usuarios">
+                                                                Lista de usuarios
+                                                            </NavLink>
+                                                        </Protegido>
+
                                                         <NavLink to={`/perfil/${usuario.id}`}>
                                                             Perfil
                                                         </NavLink>

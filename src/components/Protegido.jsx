@@ -12,7 +12,14 @@ import { obtenerPublicacion } from "../firebase";
     param - Parametro para comparar con la id del usuario y establecer permisos
 */
 const permisoDefault = false;
-function Protegido({ names, type="route", redirect="/", param="id", children }){
+function Protegido({
+    names,
+    type="route",
+    redirect="/", // route
+    param="id", // route
+    errorComponent=<span>No tienes los permisos suficientes</span>,
+    children
+}){
     const params = useParams();
     // Parametro para comparar con el id del usuario
     // Por defecto busca id y si no, busca el parametro que se pase, por ejemplo :id, :etc
@@ -88,7 +95,7 @@ function Protegido({ names, type="route", redirect="/", param="id", children }){
     if(cargando){
         return <span>Cargando...</span>
     } else if(!autorizado && type == "component"){
-        return <span>No tienes los permisos suficientes</span>
+        return errorComponent;
     } else if(autorizado){
         // Si el usuario tiene permisos muestra todo normal
         return children;
