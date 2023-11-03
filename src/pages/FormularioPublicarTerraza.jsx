@@ -167,12 +167,9 @@ function FormularioPublicarTerraza(){
         if(res){
             let promesa = new Promise(async (res) => {
                 // Eliminar imagenes
-                console.log("Borrando multimedia");
                 await borrarMultimedia(imgSubidas.map(img => img.referencia));
                 // Eliminar publicacion
-                console.log("Borrando publicacion");
                 await borrarPublicacion(idPublicacion);
-                console.log("Ya acabó");
                 res();
             })
 
@@ -356,6 +353,7 @@ function FormularioPublicarTerraza(){
                     id="multimedia"
                     type="file"
                     multiple
+                    accept="image/*"
                     onInput={handleInput}
                 />
                 <h2>Subidas</h2>
