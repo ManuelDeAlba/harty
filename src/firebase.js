@@ -4,7 +4,7 @@ import { getFirestore, doc, setDoc, getDocs, collection, query, orderBy, onSnaps
 import { getAuth } from 'firebase/auth';
 import { getStorage, ref, uploadBytes, getDownloadURL, listAll, deleteObject } from 'firebase/storage';
 
-import { EXPRESIONES, ERRORES_HARTY } from "./utils";
+import { EXPRESIONES, ERRORES_HARTY, separarEtiquetas } from "./utils";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -115,7 +115,7 @@ export async function crearPublicacion({
         tamano,
         capacidad,
         servicios,
-        etiquetas,
+        etiquetas: separarEtiquetas(etiquetas),
         disponibilidad
     }
     const docRef = doc(db, "publicaciones", id);
@@ -172,7 +172,7 @@ export async function editarPublicacion({
         tamano,
         capacidad,
         servicios,
-        etiquetas,
+        etiquetas: separarEtiquetas(etiquetas),
         disponibilidad
     }
     const docRef = doc(db, "publicaciones", id);

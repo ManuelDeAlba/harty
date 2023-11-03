@@ -33,7 +33,7 @@ function PrevisualizacionPublicacion({ publicacion }){
             <p><b>Tamaño:</b> {publicacion.tamano}</p>
             <p><b>Capacidad de personas:</b> {publicacion.capacidad}</p>
             <p><b>Servicios extras:</b> {publicacion.servicios}</p>
-            <p><b>Etiquetas:</b> {publicacion.etiquetas}</p>
+            <p><b>Etiquetas:</b> {publicacion.etiquetas.map(etiqueta => <span>{ etiqueta }</span>)}</p>
             <p><b>Multimedia:</b>
                 {
                     multimedia.length > 0 ? (

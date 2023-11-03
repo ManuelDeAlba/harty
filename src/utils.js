@@ -31,3 +31,8 @@ export const ERRORES_FIREBASE = {
         "auth/too-many-requests": "Acceso a la cuenta deshabilitado. Restablezca la contraseña",
     },
 }
+
+// FUNCIONES
+export function separarEtiquetas(etiquetas){
+    return etiquetas.replace(/[^\w\ñ\.\-_,]/g, "").split(/,+/).filter(etiqueta => etiqueta != "");
+}
