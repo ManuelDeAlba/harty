@@ -19,6 +19,7 @@ import ListaUsuarios from "./pages/admin/ListaUsuarios";
 import Navbar from "./components/Navbar";
 import Protegido from "./components/Protegido";
 import Head from './components/Head';
+import ScrollToTop from "./components/ScrollToTop";
 
 
 function App() {
@@ -93,46 +94,49 @@ function App() {
             <Router>
                 <Navbar />
                 <Toaster />
-                <Routes>
-                    <Route path="/" element={<Inicio />} />
-                    <Route path="/publicaciones" element={<Publicaciones />} />
-                    <Route path="/publicar-terraza" element={
-                        <Protegido names={["publicar-terraza"]} redirect="/iniciar-sesion">
-                            <FormularioPublicarTerraza />
-                        </Protegido>
-                    } />
-                    <Route path="/editar-terraza/:idPublicacion" element={
-                        // Se verifican los permisos generales (por rol) y de usuario (para sus propias publicaciones)
-                        <Protegido names={["editar-terraza", "publicacion/editar-terraza"]} param="idPublicacion" redirect="/publicaciones">
-                            <FormularioPublicarTerraza />
-                        </Protegido>
-                    } />
+                
+                <ScrollToTop>
+                    <Routes>
+                        <Route path="/" element={<Inicio />} />
+                        <Route path="/publicaciones" element={<Publicaciones />} />
+                        <Route path="/publicar-terraza" element={
+                            <Protegido names={["publicar-terraza"]} redirect="/iniciar-sesion">
+                                <FormularioPublicarTerraza />
+                            </Protegido>
+                        } />
+                        <Route path="/editar-terraza/:idPublicacion" element={
+                            // Se verifican los permisos generales (por rol) y de usuario (para sus propias publicaciones)
+                            <Protegido names={["editar-terraza", "publicacion/editar-terraza"]} param="idPublicacion" redirect="/publicaciones">
+                                <FormularioPublicarTerraza />
+                            </Protegido>
+                        } />
 
-                    {/* Sesión de usuario */}
-                    <Route path="/registrarse" element={<FormularioRegistrarse />} />
-                    <Route path="/iniciar-sesion" element={<FormularioIniciarSesion />} />
-                    <Route path="/perfil/:idUsuario" element={
-                        // Se verifican los permisos generales (por rol) y de usuario (solo para su propio perfil)
-                        <Protegido names={["ver-perfil", "usuario/ver-perfil"]} param="idUsuario">
-                            <Perfil />
-                        </Protegido>
-                    } />
-                    <Route path="/editar-perfil/:idUsuario" element={
-                        // Se verifican los permisos generales (por rol) y de usuario (solo para su propio perfil)
-                        <Protegido names={["editar-perfil", "usuario/editar-perfil"]} param="idUsuario">
-                            <FormularioEditarPerfil />
-                        </Protegido>
-                    } />
+                        {/* Sesión de usuario */}
+                        <Route path="/registrarse" element={<FormularioRegistrarse />} />
+                        <Route path="/iniciar-sesion" element={<FormularioIniciarSesion />} />
+                        <Route path="/perfil/:idUsuario" element={
+                            // Se verifican los permisos generales (por rol) y de usuario (solo para su propio perfil)
+                            <Protegido names={["ver-perfil", "usuario/ver-perfil"]} param="idUsuario">
+                                <Perfil />
+                            </Protegido>
+                        } />
+                        <Route path="/editar-perfil/:idUsuario" element={
+                            // Se verifican los permisos generales (por rol) y de usuario (solo para su propio perfil)
+                            <Protegido names={["editar-perfil", "usuario/editar-perfil"]} param="idUsuario">
+                                <FormularioEditarPerfil />
+                            </Protegido>
+                        } />
 
-                    {/* Administración */}
-                    <Route path="/admin/lista-usuarios" element={
-                        <Protegido names={["lista-usuarios"]}>
-                            <ListaUsuarios />
-                        </Protegido>
-                    } />
+                        {/* Administración */}
+                        <Route path="/admin/lista-usuarios" element={
+                            <Protegido names={["lista-usuarios"]}>
+                                <ListaUsuarios />
+                            </Protegido>
+                        } />
 
-                    <Route path="*" element={<Navigate to="/" />} />
-                </Routes>
+                        <Route path="*" element={<Navigate to="/" />} />
+                    </Routes>
+                </ScrollToTop>
             </Router>
         </AuthProvider>
     )
