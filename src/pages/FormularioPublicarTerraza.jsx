@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
-import { borrarMultimedia, crearPublicacion, editarPublicacion, obtenerMultimedia, obtenerPublicacion } from "../firebase";
+import { borrarMultimedia, borrarPublicacion, crearPublicacion, editarPublicacion, obtenerMultimedia, obtenerPublicacion } from "../firebase";
 import { useAuth } from "../context/AuthProvider";
 
 const datosDefault = {
@@ -159,6 +159,32 @@ function FormularioPublicarTerraza(){
                 return img;
             })
         })
+    }
+
+    const handleBorrarPublicacion = (idPublicacion) => {
+        let res = confirm("¿Realmente quieres borrar la terraza?") // Cambiar por ventana modal para confirmar
+
+        if(res){
+            let promesa = new Promise(async (res) => {
+                // Eliminar imagenes
+                console.log("Borrando multimedia");
+                await borrarMultimedia(imgSubidas.map(img => img.referencia));
+                // Eliminar publicacion
+                console.log("Borrando publicacion");
+                await borrarPublicacion(idPublicacion);
+                console.log("Ya acabó");
+                res();
+            })
+
+            toast.promise(promesa, {
+                loading: "Borrando terraza...",
+                success: () => {
+                    navigate("/publicaciones"); // Redirige a ver las publicaciones
+                    return "Terraza borrada";
+                },
+                error: "Hubo un error"
+            });
+        }
     }
 
     return(
@@ -351,6 +377,12 @@ function FormularioPublicarTerraza(){
             <div>
                 <h4>Falta disponibilidad</h4>
             </div>
+
+            {
+                idPublicacion && (
+                    <button type="button" onClick={() => handleBorrarPublicacion(datos.id)}>Borrar publicación</button>
+                )
+            }
 
             <input type="submit" value="Publicar" />
         </form>

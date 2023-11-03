@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getFirestore, doc, setDoc, getDocs, collection, query, orderBy, onSnapshot, getDoc, startAt, limit, startAfter, updateDoc, where } from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDocs, collection, query, orderBy, onSnapshot, getDoc, startAt, limit, startAfter, updateDoc, where, deleteDoc } from "firebase/firestore";
 import { getAuth } from 'firebase/auth';
 import { getStorage, ref, uploadBytes, getDownloadURL, listAll, deleteObject } from 'firebase/storage';
 
@@ -225,6 +225,12 @@ export function obtenerPublicacionesTiempoReal(callback) {
 
     // Retorna una función para detener la suscripción cuando sea necesario
     return unsubscribe;
+}
+
+export async function borrarPublicacion(id){
+    const docRef = doc(db, "publicaciones", id);
+
+    await deleteDoc(docRef);
 }
 
 //! STORAGE
