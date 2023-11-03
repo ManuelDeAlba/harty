@@ -16,7 +16,7 @@ function Protegido({
     names,
     type="route",
     redirect="/", // route
-    param="id", // route
+    param="id", // route y component
     errorComponent=<span>No tienes los permisos suficientes</span>,
     children
 }){
