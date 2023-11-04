@@ -107,6 +107,7 @@
 	}
 	.site-logo a img {
 	    max-width: 150px;
+		height: 10px;
 	}
 	.site-logo {
 	    text-align: center;
