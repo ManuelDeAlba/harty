@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthProvider";
 import { ERRORES_FIREBASE } from "../utils";
 import toast from "react-hot-toast";
-import LoadScripts from '../components/LoadScripts';
 
 function FormularioIniciarSesion(){
     const { iniciarSesion, restablecerContrasena } = useAuth();
@@ -48,8 +47,6 @@ function FormularioIniciarSesion(){
 
     return(
         <form onSubmit={handleSubmit}>
-            {LoadScripts()}
-            <br/><br/><br/><br/>
             <h1>Inicio de sesión</h1>
             
             <div>

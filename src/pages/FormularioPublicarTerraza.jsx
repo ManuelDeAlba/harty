@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import LoadScripts from '../components/LoadScripts';
 
 import { crearPublicacion } from "../firebase";
 
@@ -54,9 +53,8 @@ function FormularioPublicarTerraza(){
 
     return(
         <form onSubmit={handleSubmit}>
-            {LoadScripts()}
-            <br/><br/><br/><br/>
             <h1>FormularioPublicarTerraza</h1>
+
             <div>
                 <label htmlFor="nombreTerraza">Nombre de la terraza:</label>
                 <input
