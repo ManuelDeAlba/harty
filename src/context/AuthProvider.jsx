@@ -1,7 +1,7 @@
 import { createUserWithEmailAndPassword, onAuthStateChanged, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { createContext, useContext, useEffect, useState } from "react";
 import { auth, db, obtenerUsuario, obtenerPermisos } from "../firebase";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, updateDoc } from "firebase/firestore";
 import { ERRORES_HARTY } from "../utils";
 
 const authContext = createContext();
@@ -14,18 +14,13 @@ export const useAuth = () => {
 function AuthProvider({ children }){
     const [usuarioAuth, setUsuarioAuth] = useState(null);
     const [usuario, setUsuario] = useState(null);
+    const [cargandoUsuario, setCargandoUsuario] = useState(true);
     const [permisos, setPermisos] = useState(null);
 
     // Funciones privadas
-    const registrarUsuarioDB = async ({ id, nombre, correo }) => {
+    const registrarUsuarioDB = async (datosUsuario) => {
         // Se registran los datos del perfil de cada usuario, las contraseñas no se guardan porque firebase/auth ya las maneja de una forma segura
-        const docRef = doc(db, "usuarios", id);
-
-        const datosUsuario = {
-            id,
-            nombre,
-            correo,
-        }
+        const docRef = doc(db, "usuarios", datosUsuario.id);
 
         await setDoc(docRef, datosUsuario);
 
@@ -38,6 +33,7 @@ function AuthProvider({ children }){
 
     // Funciones públicas
     const registrarUsuario = async ({ nombre, correo, contrasena }) => {
+        setCargandoUsuario(true);
         // Validaciones que no hace firebase (manuales)
         if(!nombre) throw ERRORES_HARTY.MISSING_NAME;
 
@@ -51,6 +47,7 @@ function AuthProvider({ children }){
         const usuarioDB = await registrarUsuarioDB({
             id: credenciales.user.uid,
             rol: "usuario", // Si no está verificado, automaticamente baja a anonimo
+            habilitado: true,
             nombre,
             correo
         });
@@ -75,9 +72,33 @@ function AuthProvider({ children }){
         await sendPasswordResetEmail(auth, correo);
     }
 
+    const editarPerfil = async ({
+        id,
+        nombre,
+        rol,
+    }) => {
+        // Validaciones que no hace firebase (manuales)
+        if(!id) throw ERRORES_HARTY.MISSING_ID;
+        if(!nombre) throw ERRORES_HARTY.MISSING_NAME;
+
+        const docRef = doc(db, "usuarios", id);
+
+        await updateDoc(docRef, {
+            nombre,
+            rol
+        });
+
+        // Se actualiza el usuario del contexto
+        // Si un admin editó el perfil de otra persona
+        // esto no se ejecuta para no cambiar el estado de usuario
+        if(usuario.id == id) await actualizarUsuario(id);
+    }
+
     const actualizarUsuario = async uid => {
+        setCargandoUsuario(true);
+
         // Al cargar la página o al editar el perfil se obtienen los datos del usuario y se guardan en el contexto
-        const usuario = (await obtenerUsuario(uid)).data();
+        const usuario = await obtenerUsuario(uid);
 
         setUsuarioAuth(auth.currentUser);
         setUsuario(usuario);
@@ -90,6 +111,8 @@ function AuthProvider({ children }){
         .then(setPermisos)
 
         const unsubscribe = onAuthStateChanged(auth, async currentUser => {
+            setCargandoUsuario(true);
+
             if(currentUser){
                 // Se obtienen los datos del usuario (auth y db)
                 await actualizarUsuario(currentUser.uid);
@@ -102,16 +125,22 @@ function AuthProvider({ children }){
         return () => unsubscribe();
     }, [])
 
+    useEffect(() => {
+        if(usuario) setCargandoUsuario(false);
+    }, [usuario])
+
     return(
         <authContext.Provider value={{
             usuarioAuth, // Usuario de firebase/auth
             usuario, // Datos de la página
+            cargandoUsuario,
             permisos, // Acciones que puede realizar cada rol
             registrarUsuario,
             iniciarSesion,
             cerrarSesion,
             restablecerContrasena,
             actualizarUsuario,
+            editarPerfil,
         }}>
             {
                 children
