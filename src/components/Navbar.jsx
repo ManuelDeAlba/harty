@@ -1,13 +1,48 @@
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthProvider';
+import React, { useState, useEffect } from 'react';
 
 import Protegido from './Protegido';
 
 function Navbar() {
     const { usuario, usuarioAuth, cerrarSesion } = useAuth();
+    const [scrolled, setScrolled] = useState(false);
+    const [shrunken, setShrunken] = useState(false);
+  
+    useEffect(() => {
+      const handleScroll = () => {
+        if (window.scrollY > 0) {
+          setScrolled(true);
+          setShrunken(true);
+        } else {
+          setScrolled(false);
+          setShrunken(false);
+        }
+      };
+  
+  
+      window.addEventListener('scroll', handleScroll);
+  
+      return () => {
+        window.removeEventListener('scroll', handleScroll);
+      };
+    }, []);
+
+    const navStyle = {
+        position: 'fixed',
+        left: 0,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+        height: scrolled ? (shrunken ? '70px' : 'var(--height-nav)') : 'var(--height-nav)',
+        fontWeight: 'bold',
+        backgroundColor: scrolled ? 'var(--color-secundario)' : 'transparent',
+        transition: 'background-color 0.3s ease, height 0.3s ease', // Agregar transiciones
+      };
 
     return (
-        <nav className='nav'>
+        <nav className='nav' style={navStyle}>
             <div className="nav__contenedor">
                 <NavLink className='nav__logo' to="/">
                     <img className='nav__img' src="assets/img/logo.png" alt="Logo de Harty" />
@@ -16,6 +51,7 @@ function Navbar() {
                 <div className="nav__links">
                     <div className="nav__paginas">
                         <NavLink className='nav__link' to="/">Inicio</NavLink>
+                         {/* Componente de prueba del slideshow para inicio, borrar después*/}
                         <NavLink className='nav__link' to="/publicaciones">Publicaciones</NavLink>
                         <NavLink className='nav__link' to="/publicar-terraza">Publicar</NavLink>
                     </div>

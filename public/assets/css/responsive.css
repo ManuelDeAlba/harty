@@ -112,13 +112,7 @@
 	.site-logo {
 	    text-align: center;
 	    position: absolute;
-	    z-index: 999;
-	}
-	.mean-container .mean-bar {
-		z-index: 2;
-	}
-	.responsive-menu-wrap {
-	    display: block;
+	    z-index: 99999;
 	}
 	.header-icons {
 	    text-align: center;
