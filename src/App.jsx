@@ -22,12 +22,11 @@ import Protegido from "./components/Protegido";
 import Head from './components/Head';
 import ScrollToTop from "./components/ScrollToTop";
 
-
 function App() {
     return (
         <AuthProvider>
             <ModalConfirmProvider>
-                <Head />
+                {/* <Head /> */}
 
                 <Router>
                     <Navbar />

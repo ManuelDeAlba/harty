@@ -7,75 +7,50 @@ function Navbar() {
     const { usuario, usuarioAuth, cerrarSesion } = useAuth();
 
     return (
-        <nav>
-            <div className="top-header-area" id="sticker">
-                <div className="container">
-                    <div className="row">
-                        <div className="col-lg-12 col-sm-12 text-center">
-                            <div className="main-menu-wrap">
-                                <div className="site-logo">
-                                    <NavLink to="/">
-                                        <img src="assets/img/logo.png" alt="" />
-                                    </NavLink>
-                                </div>
+        <nav className='nav'>
+            <div className="nav__contenedor">
+                <NavLink className='nav__logo' to="/">
+                    <img className='nav__img' src="assets/img/logo.png" alt="Logo de Harty" />
+                </NavLink>
 
-                                <nav className="main-menu">
-                                    <ul>
-                                        <li>
-                                            <NavLink to="/">
-                                                Inicio
-                                            </NavLink>
-                                        </li>
-                                        <li>
-                                            <NavLink to="/publicaciones">
-                                                Publicaciones
-                                            </NavLink>
-                                        </li>
-                                        <li>
-                                            <NavLink to="/publicar-terraza">
-                                                Publicar terraza
-                                            </NavLink>
-                                        </li>
+                <div className="nav__links">
+                    <div className="nav__paginas">
+                        <NavLink className='nav__link' to="/">Inicio</NavLink>
+                        <NavLink className='nav__link' to="/publicaciones">Publicaciones</NavLink>
+                        <NavLink className='nav__link' to="/publicar-terraza">Publicar</NavLink>
+                    </div>
+                    
+                    {/* Links de sesión */}
+                    <div className="nav__sesion">
+                        {
+                            usuario ? (
+                                <>
+                                    {/* Muestra este boton solo a los usuarios permitidos (administradores) */}
+                                    <Protegido names={["lista-usuarios"]} type="component" errorComponent={""}>
+                                        <NavLink className='nav__link' to="/admin/lista-usuarios">Usuarios</NavLink>
+                                    </Protegido>
 
-                                        {/* Links de sesión */}
-                                        {usuario && usuario.nombre}
-                                        {usuario && (usuarioAuth && usuarioAuth.emailVerified ? "Verificado" : "No verificado")}
-                                        <li>
-                                            {
-                                                usuario ? (
-                                                    <>
-                                                        {/* Muestra este boton solo a los usuarios permitidos (administradores) */}
-                                                        <Protegido names={["lista-usuarios"]} type="component" errorComponent={""}>
-                                                            <NavLink to="/admin/lista-usuarios">
-                                                                Lista de usuarios
-                                                            </NavLink>
-                                                        </Protegido>
-
-                                                        <NavLink to={`/perfil/${usuario.id}`}>
-                                                            Perfil
-                                                        </NavLink>
-                                                        <NavLink to="/" onClick={cerrarSesion}>
-                                                            Cerrar sesión
-                                                        </NavLink>
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <NavLink to="/registrarse">Registrarse</NavLink>
-                                                        <NavLink to="/iniciar-sesion">Iniciar sesión</NavLink>
-                                                    </>
-                                                )
-                                            }
-                                        </li>
-                                    </ul>
-                                </nav>
-                                <a className="mobile-show search-bar-icon" href="#">
-                                    <i className="fas fa-search"></i>
-                                </a>
-                                <div className="mobile-menu"></div>
-                            </div>
-                        </div>
+                                    <NavLink className='nav__link' to={`/perfil/${usuario.id}`}>Mi perfil</NavLink>
+                                    <NavLink className='nav__link' to="/" onClick={cerrarSesion}>Cerrar sesión</NavLink>
+                                </>
+                            ) : (
+                                <>
+                                    <NavLink className='nav__link' to="/registrarse">Registrarse</NavLink>
+                                    <NavLink className='nav__link' to="/iniciar-sesion">Iniciar sesión</NavLink>
+                                </>
+                            )
+                        }
                     </div>
                 </div>
+
+                <label className="nav__hamburguesa" htmlFor="menu">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="nav__icono icon icon-tabler icon-tabler-menu-2" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M4 6l16 0"></path><path d="M4 12l16 0"></path>
+                        <path d="M4 18l16 0"></path>
+                    </svg>
+                </label>
+                <input id="menu" type="checkbox" className="nav__checkbox"></input>
             </div>
         </nav>
     )

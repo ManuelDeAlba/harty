@@ -1,3 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
+
+:root{
+  --height-nav: 60px;
+  
+  --color-primario: #F28123;
+  --color-secundario: #051922;
+}
+
 *{
   margin: 0;
   padding: 0;
@@ -5,28 +14,33 @@
 }
 body{
   min-height: 100vh;
-  font-family: sans-serif;
+  padding-top: var(--height-nav);
+  font-family: "Poppins", sans-serif;
 }
 input, textarea{
   font-size: 1em;
   font-family: sans-serif;
 }
 
+.contenedor{
+  width: 90%;
+  max-width: 1000px;
+  margin: 30px auto;
+}
+
 /* BOTONES */
 .boton{
   display: inline-block;
   padding: 5px 20px;
-  background-color: var(--boton-bg);
-  color: var(--boton-color);
+  background-color: var(--boton-bg, #09f);
+  color: var(--boton-color, #fff);
   border: none;
   text-align: center;
-  font-size: 1.2em;
-  font-family: sans-serif;
   text-decoration: none;
   cursor: pointer;
 }
 .boton:hover{
-  background-color: var(--boton-bg-hover);
+  background-color: var(--boton-bg-hover, rgb(0, 137, 228));
 }
 .boton--rojo{ background: rgb(255, 0, 0); color: #fff; }
 .boton--rojo:hover{ background: rgb(205, 0, 0); }
@@ -35,7 +49,164 @@ input, textarea{
 .boton--amarillo{ background: rgb(255, 255, 0); color: #000; }
 .boton--amarillo:hover{ background: rgb(205, 205, 0); }
 
-/* VENTANA MODAL */
+/* NAVBAR */
+.nav{
+  position: fixed;
+  top:0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: var(--height-nav);
+  font-weight: bold;
+  background-color: var(--color-secundario);
+}
+.nav__contenedor{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 90%;
+  height: 100%;
+  gap: 30px;
+}
+.nav__logo{
+  height: 90%;
+}
+.nav__img{
+  height: 100%;
+}
+.nav__links{
+  flex: 1;
+  display: flex;
+  justify-content: space-around;
+  gap: 20px;
+}
+.nav__paginas,
+.nav__sesion{
+  display: flex;
+  gap: 20px;
+}
+.nav__link{
+  color: #fff;
+  text-decoration: none;
+  transition: color .2s;
+  user-select: none;
+}
+.nav__link:hover{
+  color: #FFDE59;
+}
+
+/* NAVBAR HAMBURGUESA */
+.nav__hamburguesa {
+  display: none;
+  align-items: center;
+  height: 100%;
+  color: #fff;
+  z-index: 1000;
+}
+.nav__icono {
+  height: 90%;
+  cursor: pointer;
+}
+.nav__checkbox {
+  display: none;
+}
+
+@media screen and (max-width: 830px){
+  .nav__hamburguesa{
+    display: block;
+  }
+  .nav__links{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    flex-direction: column;
+    justify-content: center;
+    gap: 50px;
+    height: 100vh;
+    height: 100dvh;
+    background-color: var(--color-secundario);
+    clip-path: circle(0 at 50% 0%);
+    transition: .4s;
+    overflow: auto;
+  }
+  .nav:has(.nav__checkbox:checked) .nav__links {
+    clip-path: circle(120vmax at 50% 0%);
+  }
+  html:has(.nav__checkbox:checked){
+    overflow: hidden
+  }
+  .nav__paginas,
+  .nav__sesion{
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+/* HEADER */
+.header{
+  background-image: linear-gradient(0deg, rgb(0 0 0 / .5), rgb(0 0 0 / .5)), url(assets/img/hero-bg.jpg);
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - var(--height-nav));
+  min-height: calc(100dvh - var(--height-nav));
+  text-align: center;
+}
+.header__contenedor{
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+.header__texto{
+  color: var(--color-primario);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 7px;
+  font-size: 1.2rem;
+}
+.header__titulo{
+  font-weight: 700;
+  line-height: 1.3;
+  font-size: clamp(1.3rem, 5vw, 4rem);
+  color: #fff;
+}
+.header__botones{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
+  width: 90%;
+  max-width: 420px;
+  margin: 0 auto;
+  gap: 20px;
+}
+.header__cta{
+  width: 100%;
+  padding: 10px 20px;
+  background-color: var(--color-primario);
+  border-radius: 50px;
+  transition: .3s;
+  outline: 2px solid var(--color-primario);
+}
+.header__cta:hover{
+  outline: 2px solid var(--color-secundario);
+  background-color: var(--color-secundario);
+  color: var(--color-primario);
+}
+.header__cta--borde{
+  background-color: transparent;
+}
+.header__cta--borde:hover{
+  outline: 2px solid var(--color-primario);
+  background-color: var(--color-primario);
+  color: #fff;
+}
+
+/* VENTANA MODAL CONFIRMACION */
 .modal{
   position: fixed;
   top: 0;
