@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 
 import { borrarMultimedia, borrarPublicacion, crearPublicacion, editarPublicacion, obtenerMultimedia, obtenerPublicacion } from "../firebase";
 import { useAuth } from "../context/AuthProvider";
+import { useModal } from "../context/ModalConfirmProvider";
 
 const datosDefault = {
     nombreTerraza: "", // string
@@ -26,6 +27,7 @@ function FormularioPublicarTerraza(){
     const navigate = useNavigate();
     const { idPublicacion } = useParams();
     const { usuario } = useAuth();
+    const { abrirModal, cerrarModal } = useModal();
 
     const [datos, setDatos] = useState({ ...datosDefault });
     const [imgSubidas, setImgSubidas] = useState([]);
@@ -162,26 +164,31 @@ function FormularioPublicarTerraza(){
     }
 
     const handleBorrarPublicacion = (idPublicacion) => {
-        let res = confirm("¿Realmente quieres borrar la terraza?") // Cambiar por ventana modal para confirmar
+        abrirModal({
+            texto: "¿Realmente quieres borrar la publicación?",
+            onResult: (res) => {
+                if(res){
+                    let promesa = new Promise(async (res) => {
+                        // Eliminar imagenes
+                        await borrarMultimedia(imgSubidas.map(img => img.referencia));
+                        // Eliminar publicacion
+                        await borrarPublicacion(idPublicacion);
+                        res();
+                    })
+        
+                    toast.promise(promesa, {
+                        loading: "Borrando terraza...",
+                        success: () => {
+                            navigate("/publicaciones"); // Redirige a ver las publicaciones
+                            return "Terraza borrada";
+                        },
+                        error: "Hubo un error"
+                    });
+                }
 
-        if(res){
-            let promesa = new Promise(async (res) => {
-                // Eliminar imagenes
-                await borrarMultimedia(imgSubidas.map(img => img.referencia));
-                // Eliminar publicacion
-                await borrarPublicacion(idPublicacion);
-                res();
-            })
-
-            toast.promise(promesa, {
-                loading: "Borrando terraza...",
-                success: () => {
-                    navigate("/publicaciones"); // Redirige a ver las publicaciones
-                    return "Terraza borrada";
-                },
-                error: "Hubo un error"
-            });
-        }
+                cerrarModal();
+            }
+        })
     }
 
     return(
