@@ -3,7 +3,7 @@
 :root{
   --height-nav: 60px;
   
-  --color-primario: #F28123;
+  --color-primario: #ffd52f;
   --color-secundario: #051922;
 }
 
@@ -94,7 +94,7 @@ input, textarea{
   user-select: none;
 }
 .nav__link:hover{
-  color: #FFDE59;
+  color: var(--color-primario);
 }
 
 /* NAVBAR HAMBURGUESA */
@@ -191,6 +191,9 @@ input, textarea{
   border-radius: 50px;
   transition: .3s;
   outline: 2px solid var(--color-primario);
+  color: var(--color-secundario);
+  font-weight: bold;
+  letter-spacing: 1px;
 }
 .header__cta:hover{
   outline: 2px solid var(--color-secundario);
@@ -199,11 +202,12 @@ input, textarea{
 }
 .header__cta--borde{
   background-color: transparent;
+  color: #fff;
 }
 .header__cta--borde:hover{
   outline: 2px solid var(--color-primario);
   background-color: var(--color-primario);
-  color: #fff;
+  color: var(--color-secundario);
 }
 
 /* VENTANA MODAL CONFIRMACION */
