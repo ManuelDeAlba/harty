@@ -19,7 +19,6 @@ import ListaUsuarios from "./pages/admin/ListaUsuarios";
 // Componentes
 import Navbar from "./components/Navbar";
 import Protegido from "./components/Protegido";
-import Head from './components/Head';
 import ScrollToTop from "./components/ScrollToTop";
 
 function App() {
