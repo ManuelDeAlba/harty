@@ -266,15 +266,14 @@ export async function obtenerMultimedia(carpeta){
     return imagenes;
 }
 
-async function obtenerURLImagenPrevisual(carpeta) {
+export async function obtenerPrevisualizacion(carpeta) {
     const referenciaLista = ref(storage, carpeta.toString());
     // Obtenemos la lista de todos los archivos en el directorio
     let { items: referencias } = await listAll(referenciaLista);
     // Verificamos si hay al menos un archivo en la carpeta
     if (referencias.length > 0) {
         // Obtén la URL de descarga del primer archivo
-        const url = await getDownloadURL(referencias[0]);
-        return url;
+        return await getDownloadURL(referencias[0]);
     } else {
         // No se encontraron archivos en la carpeta
         return null;

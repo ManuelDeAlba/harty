@@ -1,26 +1,18 @@
+import { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthProvider';
-import React, { useState, useEffect } from 'react';
 
 import Protegido from './Protegido';
 
 function Navbar() {
-    const { usuario, usuarioAuth, cerrarSesion } = useAuth();
+    const { usuario, cerrarSesion } = useAuth();
     const [scrolled, setScrolled] = useState(false);
-    const [shrunken, setShrunken] = useState(false);
   
     useEffect(() => {
       const handleScroll = () => {
-        if (window.scrollY > 0) {
-          setScrolled(true);
-          setShrunken(true);
-        } else {
-          setScrolled(false);
-          setShrunken(false);
-        }
+        setScrolled(window.scrollY > 0);
       };
-  
-  
+
       window.addEventListener('scroll', handleScroll);
   
       return () => {
@@ -28,21 +20,8 @@ function Navbar() {
       };
     }, []);
 
-    const navStyle = {
-        position: 'fixed',
-        left: 0,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: '100%',
-        height: scrolled ? (shrunken ? '70px' : 'var(--height-nav)') : 'var(--height-nav)',
-        fontWeight: 'bold',
-        backgroundColor: scrolled ? 'var(--color-secundario)' : 'transparent',
-        transition: 'background-color 0.3s ease, height 0.3s ease', // Agregar transiciones
-      };
-
     return (
-        <nav className='nav' style={navStyle}>
+        <nav className={`nav${scrolled ? " nav--scrolled" : ""}`}>
             <div className="nav__contenedor">
                 <NavLink className='nav__logo' to="/">
                     <img className='nav__img' src="assets/img/logo.png" alt="Logo de Harty" />
