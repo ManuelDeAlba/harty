@@ -1,12 +1,15 @@
-import { useState, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthProvider';
 
 import Protegido from './Protegido';
 
 function Navbar() {
+    const location = useLocation();
     const { usuario, cerrarSesion } = useAuth();
+
     const [scrolled, setScrolled] = useState(false);
+    const checkbox = useRef();
   
     useEffect(() => {
       const handleScroll = () => {
@@ -20,8 +23,17 @@ function Navbar() {
       };
     }, []);
 
+    // Cada que cambia la ruta, se cierra el menu
+    useEffect(() => {
+        cerrarMenu();
+    }, [location])
+
+    const cerrarMenu = () => {
+        checkbox.current.checked = false;
+    }
+
     return (
-        <nav className={`nav${scrolled ? " nav--scrolled" : ""}`}>
+        <nav className={`nav${location.pathname == "/" ? " nav--transparent" : ""}${scrolled ? " nav--scrolled" : ""}`}>
             <div className="nav__contenedor">
                 <NavLink className='nav__logo' to="/">
                     <img className='nav__img' src="assets/img/logo.png" alt="Logo de Harty" />
@@ -30,7 +42,6 @@ function Navbar() {
                 <div className="nav__links">
                     <div className="nav__paginas">
                         <NavLink className='nav__link' to="/">Inicio</NavLink>
-                         {/* Componente de prueba del slideshow para inicio, borrar después*/}
                         <NavLink className='nav__link' to="/publicaciones">Publicaciones</NavLink>
                         <NavLink className='nav__link' to="/publicar-terraza">Publicar</NavLink>
                     </div>
@@ -65,7 +76,7 @@ function Navbar() {
                         <path d="M4 18l16 0"></path>
                     </svg>
                 </label>
-                <input id="menu" type="checkbox" className="nav__checkbox"></input>
+                <input ref={checkbox} id="menu" type="checkbox" className="nav__checkbox"></input>
             </div>
         </nav>
     )

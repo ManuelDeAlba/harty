@@ -14,22 +14,17 @@
   padding: 0;
   box-sizing: border-box;
 }
+
 html {
-  font-size: 14px;
-  font-weight: 400;
   line-height: 28px;
-  height: 100%;
 }
 
 body{
   margin: 0; 
   padding: 0;
   min-height: 100vh;
-  /*padding-top: var(--height-nav);*/
+  padding-top: var(--height-nav);
   font-family: "Poppins", sans-serif;
-  font-family: "Open Sans", sans-serif;
-  font-weight: 400;
-  font-size: 1rem;
   letter-spacing: 0.1px;
   line-height: 1.8;
 }
@@ -39,16 +34,10 @@ body img {
 }
 
 a {
-  cursor: pointer;
   text-decoration: none;
   -webkit-transition: all 0.2s ease-in-out;
   -o-transition: all 0.2s ease-in-out;
   transition: all 0.2s ease-in-out;
-}
-
-a:hover {
-  color: #FFDE59;
-  text-decoration: none;
 }
 
 h1, .h1,
@@ -60,16 +49,7 @@ h6, .h6 {
   font-family: "Poppins", sans-serif;
   font-weight: 700;
   margin: 0 0 1.25rem 0;
-  color: #0D004B;
-}
-
-h1:last-child, .h1:last-child,
-h2:last-child, .h2:last-child,
-h3:last-child, .h3:last-child,
-h4:last-child, .h4:last-child,
-h5:last-child, .h5:last-child,
-h6:last-child, .h6:last-child {
-  margin: 0;
+  color: var(--color-secundario);
 }
 
 h1, .h1 {
@@ -156,16 +136,16 @@ p {
   font-size: 1rem;
   letter-spacing: 0.1px;
   line-height: 1.8;
-  color: #0D004B;
-  margin: 0 0 1.25rem 0;
+  color: var(--color-secundario);
 }
 
-p:last-child {
-  margin: 0;
-}
 input, textarea{
   font-size: 1em;
-  font-family: sans-serif;
+  font-family: "Poppins", sans-serif;
+  padding: .25rem .5rem;
+  outline: none;
+  border-radius: 3px;
+  border: 1px solid #333;
 }
 
 .contenedor{
@@ -208,13 +188,16 @@ input, textarea{
   width: 100%;
   height: var(--height-nav);
   font-weight: bold;
-  background-color: transparent;
+  background: var(--color-secundario);
   z-index: 1000;
   transition: 0.3s ease;
 }
+.nav--transparent{
+  background-color: transparent;
+}
 .nav--scrolled{
-  background: var(--color-secundario);
-  height: var(--height-nav-scrolled);
+  --height-nav: var(--height-nav-scrolled);
+  background: var(--color-secundario); /* Sobreescribe el transparent */
 }
 .nav__contenedor{
   display: flex;
@@ -308,6 +291,9 @@ input, textarea{
 }
 
 /* HEADER */
+.header__inicio{
+  margin-top: calc(-1 * var(--height-nav));
+}
 .header__slide{
   background-size: cover;
   background-position: top center;
@@ -315,8 +301,6 @@ input, textarea{
   display: flex;
   justify-content: center;
   align-items: center;
-  /* min-height: calc(100vh - var(--height-nav)); */
-  /* min-height: calc(100dvh - var(--height-nav)); */
   min-height: 100vh;
   min-height: 100dvh;
   text-align: center;
@@ -398,8 +382,7 @@ input, textarea{
   }
 }
 
-
-/************************ SLIDER *********************+*/
+/* SLIDER */
 .react-slideshow-container .default-nav {
   display: none;
 }
