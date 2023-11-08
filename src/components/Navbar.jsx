@@ -36,7 +36,7 @@ function Navbar() {
         <nav className={`nav${location.pathname == "/" ? " nav--transparent" : ""}${scrolled ? " nav--scrolled" : ""}`}>
             <div className="nav__contenedor">
                 <NavLink className='nav__logo' to="/">
-                    <img className='nav__img' src="assets/img/logo.png" alt="Logo de Harty" />
+                    <img className='nav__img' src="/assets/img/logo.png" alt="Logo de Harty" />
                 </NavLink>
 
                 <div className="nav__links">
