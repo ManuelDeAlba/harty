@@ -6,6 +6,7 @@ import { obtenerUsuario } from "../firebase";
 import { useAuth } from "../context/AuthProvider";
 
 import Protegido from "../components/Protegido";
+import { useModal } from "../context/ModalConfirmProvider";
 
 const datosPerfilDefault = {
     nombre: "",
@@ -16,6 +17,7 @@ function FormularioEditarPerfil(){
     const navigate = useNavigate();
     const { idUsuario } = useParams();
     const { editarPerfil } = useAuth();
+    const { abrirModal, cerrarModal } = useModal();
 
     const [datosPerfil, setDatosPerfil] = useState(datosPerfilDefault);
 
@@ -33,17 +35,26 @@ function FormularioEditarPerfil(){
     const handleSubmit = async e => {
         e.preventDefault();
 
-        toast.promise(editarPerfil({
-            id: idUsuario,
-            ...datosPerfil
-        }), {
-            loading: "Editando perfil...",
-            success: () => {
-                navigate(-1);
-                return "Perfil editado";
-            },
-            error: (error) => error.message
-        });
+        abrirModal({
+            texto: "¿Realmente quieres editar el perfil?",
+            onResult: (res) => {
+                if(res){
+                    toast.promise(editarPerfil({
+                        id: idUsuario,
+                        ...datosPerfil
+                    }), {
+                        loading: "Editando perfil...",
+                        success: () => {
+                            navigate(-1);
+                            return "Perfil editado";
+                        },
+                        error: (error) => error.message
+                    });
+                }
+
+                cerrarModal();
+            }
+        })
     }
 
     const handleInput = e => {
