@@ -9,6 +9,7 @@ import ModalConfirmProvider from "./context/ModalConfirmProvider";
 // Paginas
 import Inicio from "./pages/Inicio";
 import Publicaciones from "./pages/Publicaciones";
+import Publicacion from "./pages/Publicacion";
 import FormularioPublicarTerraza from "./pages/FormularioPublicarTerraza";
 import FormularioRegistrarse from "./pages/FormularioRegistrarse";
 import FormularioIniciarSesion from "./pages/FormularioIniciarSesion";
@@ -25,8 +26,6 @@ function App() {
     return (
         <AuthProvider>
             <ModalConfirmProvider>
-                {/* <Head /> */}
-
                 <Router>
                     <Navbar />
                     <Toaster />
@@ -46,6 +45,7 @@ function App() {
                                     <FormularioPublicarTerraza />
                                 </Protegido>
                             } />
+                            <Route path="/publicacion/:idPublicacion" element={<Publicacion />} />
 
                             {/* Sesión de usuario */}
                             <Route path="/registrarse" element={<FormularioRegistrarse />} />
