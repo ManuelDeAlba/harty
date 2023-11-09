@@ -15,6 +15,7 @@ export class HartyError extends Error{
 // Se crean las instancias de todos los errores para llamarlos con
 // throw ERRORES_HARTY.NOMBRE_ERROR
 export const ERRORES_HARTY = {
+    MISSING_ID: new HartyError({ code: "harty/missing-id", message: "Escribe la id" }),
     MISSING_NAME: new HartyError({ code: "harty/missing-name", message: "Escribe el nombre" }),
     INVALID_DATA: (message) => new HartyError({ code: "harty/invalid-data", message }),
 }
@@ -26,6 +27,24 @@ export const ERRORES_FIREBASE = {
         "auth/invalid-login-credentials": "Credenciales de inicio de sesión incorrectas. Verifique su usuario y contraseña",
         "auth/missing-email": "Escribe el correo electrónico",
         "auth/weak-password": "La contraseña debe tener al menos 6 caracteres",
-        "auth/email-already-in-use": "El correo ya está en uso"
+        "auth/email-already-in-use": "El correo ya está en uso",
+        "auth/too-many-requests": "Acceso a la cuenta deshabilitado. Restablezca la contraseña",
     },
+}
+
+// FUNCIONES
+export function separarEtiquetas(etiquetas){
+    return etiquetas.replace(/[^\wñÑáéíóúÁÉÍÓÚ\.\-_,]/g, "").split(/,+/).filter(etiqueta => etiqueta != "");
+}
+
+export async function obtenerUbicacion(){
+    return await new Promise((res) => {
+        navigator.geolocation.getCurrentPosition(geolocation => {
+            const {longitude: longitud, latitude: latitud} = geolocation.coords;
+
+            res({ longitud, latitud });
+        }, err => {
+            res(null);
+        })
+    })
 }
