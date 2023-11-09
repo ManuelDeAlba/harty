@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthProvider";
 import { ERRORES_FIREBASE } from "../utils";
 import toast from "react-hot-toast";
+import { FaEnvelope} from 'react-icons/fa';
+import { FaLock} from 'react-icons/fa';
 
 function FormularioIniciarSesion(){
     const { iniciarSesion, restablecerContrasena } = useAuth();
@@ -47,35 +49,42 @@ function FormularioIniciarSesion(){
 
     return(
         <form onSubmit={handleSubmit}>
-            <h1>Inicio de sesión</h1>
-            
-            <div>
-                <label htmlFor="correo">Correo:</label>
-                <input
-                    name="correo"
-                    id="correo"
-                    type="email"
-                    onInput={handleInput}
-                    value={datos.correo}
-                    required
-                />
+            <div className="container">
+            <div className='contenedor-registro'> 
+                <h1>Inicio de sesión</h1>
+                <div className="input-field">
+                    <i><FaEnvelope/></i>
+                    <label htmlFor="correo"></label>
+                    <input
+                        name="correo"
+                        id="correo"
+                        type="email"
+                        onInput={handleInput}
+                        value={datos.correo}
+                        required
+                        placeholder="Correo:"
+                    />
+                </div>
+
+                <div className="input-field">
+                    <i><FaLock/></i>
+                    <label htmlFor="contrasena"></label>
+                    <input
+                        name="contrasena"
+                        id="contrasena"
+                        type="password"
+                        onInput={handleInput}
+                        value={datos.contrasena}
+                        required
+                        placeholder="Contraseña:"
+                    />
+                </div>
+                <div className="btn-field">
+                    <input type="submit" value="Iniciar sesión" className="button1" />
+                </div>
+                <span onClick={restablecer}>Olvidé mi contraseña</span>
             </div>
-
-            <div>
-                <label htmlFor="contrasena">Contraseña:</label>
-                <input
-                    name="contrasena"
-                    id="contrasena"
-                    type="password"
-                    onInput={handleInput}
-                    value={datos.contrasena}
-                    required
-                />
             </div>
-
-            <input type="submit" value="Iniciar sesión" />
-
-            <span onClick={restablecer}>Olvidé mi contraseña</span>
         </form>
     )
 }
