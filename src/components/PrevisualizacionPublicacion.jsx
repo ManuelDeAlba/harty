@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthProvider";
 import { obtenerPrevisualizacion } from "../firebase";
 
-import { FaClock, FaRuler, FaUsers, FaMapMarker, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaClock, FaUsers, FaMapMarkerAlt } from 'react-icons/fa';
 
 function PrevisualizacionPublicacion({ publicacion }){
     const { usuario } = useAuth();
@@ -22,46 +22,46 @@ function PrevisualizacionPublicacion({ publicacion }){
             {
                 // Solo muestra el boton para editar si es admin o el dueño de la publicación
                 usuario && (publicacion.idUsuario == usuario.id || usuario.rol == "admin") && (
-                    <Link to={`/editar-terraza/${publicacion.id}`} className="editar_publicacion">Editar</Link>
+                    <Link to={`/editar-terraza/${publicacion.id}`} className="publicacion__editar">Editar</Link>
                 )
             }
-            <Link to={`/publicacion/${publicacion.id}`}>
+            <Link className="publicacion__portada" to={`/publicacion/${publicacion.id}`}>
                 {
                     previsualizacion && (
-                        <img  className="img_publicacion" src={previsualizacion} />  
+                        <img className="publicacion__img" src={previsualizacion} />
                     )
                 }
             </Link>
-            <div className = "texto_publicacion">
+            <div className="publicacion__texto">
                 <Link to={`/publicacion/${publicacion.id}`}>
-                        <h5 className="texto_overflow">{publicacion.nombreTerraza}</h5>
+                    <h5 className="texto-overflow">{publicacion.nombreTerraza}</h5>
                 </Link>
                 <div className="row">
-                    <div className="column texto_overflow">
+                    <div className="column texto-overflow">
                         <FaClock style={{ fontSize: '.85em', marginRight: '0.5em' }}/>
-                        <p className="column_font">{publicacion.horarios}</p>
+                        <p className="column-font">{publicacion.horarios}</p>
                     </div>
-                    {/*<div className="column texto_overflow">
+                    {/*<div className="column texto-overflow">
                         <FaRuler style={{ fontSize: '1.5em', marginRight: '0.5em' }}/>
                         <p>{publicacion.tamano}</p>
                     </div>
                     */}
-                    <div className="column texto_overflow">
+                    <div className="column texto-overflow">
                         <FaUsers style={{ fontSize: '.85em', marginRight: '0.5em' }}/>
-                        <p className="column_font">{publicacion.capacidad}</p>
+                        <p className="column-font">{publicacion.capacidad}</p>
                     </div>
                 </div>
                 <h4><b>$</b> {publicacion.precio}</h4>
-                <p className="calificacion"> 4.5 ★★★★★</p>
+                <p className="publicacion__calificacion">4.5 ★★★★★</p>
                 {/* Dirección temporal */}
-                <div className="direccion">
+                <div className="publicacion__direccion">
                     <FaMapMarkerAlt style={{ fontSize: '2em', marginRight: '0.5em', marginBottom:'2px' }} /> 
-                    <span className="texto_overflow">{JSON.stringify(publicacion.direccion)}</span>                
+                    <span className="texto-overflow">{JSON.stringify(publicacion.direccion)}</span>                
                 </div>
-                <div className="etiquetas-container">
+                <div className="publicacion__etiquetas">
                     {
                         publicacion.etiquetas.length > 0 && (
-                            publicacion.etiquetas.map((etiqueta, indice) => <span className="etiqueta" key={indice}>&#35;{ etiqueta } </span>)
+                            publicacion.etiquetas.map((etiqueta, indice) => <span className="publicacion__etiqueta" key={indice}>&#35;{ etiqueta } </span>)
                         )
                     }
                 </div>

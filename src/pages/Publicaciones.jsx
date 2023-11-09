@@ -20,7 +20,7 @@ function Publicaciones(){
 
     return(
         <main>
-            <div className="header__publicaciones" style={{ backgroundImage: `url(${fondo[0]})` }}>
+            <header className="header__publicaciones" style={{ backgroundImage: `url(${fondo[0]})` }}>
                 <div className="header__contenedor header__contenedor--2 contenedor">
                     <h1 className="header__titulo">Publicaciones</h1>
                     <div className="header__searchbar">
@@ -30,14 +30,14 @@ function Publicaciones(){
                         </button>
                     </div>
                 </div>
-            </div>
-            <div className="publicaciones_blog" >
+            </header>
+            <section className="publicaciones" >
             {
                 publicaciones && publicaciones.map(publicacion => (
                     <PrevisualizacionPublicacion publicacion={publicacion} key={publicacion.id} />
                 ))
             }
-            </div>
+            </section>
         </main>
     )
 }
