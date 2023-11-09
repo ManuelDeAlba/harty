@@ -109,7 +109,7 @@ function SelectorDeUbicacion({ name, value, onInput: handleInput, geolocalizacio
 
     return(
         // Estilos temporales
-        <div ref={mapaContenedor} style={{width: "50%", aspectRatio: "1/1"}} className="mapa" />
+        <div ref={mapaContenedor} style={{width: "90%", maxWidth: "500px", aspectRatio: "1/1"}} className="mapa" />
     )
 }
 
