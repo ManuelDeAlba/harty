@@ -181,7 +181,7 @@ export async function editarPublicacion({
     await subirMultimedia(id, multimedia);
 
     // Edición de documento
-    await setDoc(docRef, publicacion);
+    await updateDoc(docRef, publicacion);
 }
 
 export async function obtenerPublicacion(id){
