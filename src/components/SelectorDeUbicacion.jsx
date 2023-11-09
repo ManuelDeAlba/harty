@@ -5,7 +5,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 
 import { obtenerUbicacion } from "../utils";
 
-mapboxgl.accessToken = 'pk.eyJ1IjoiZmVybmFuZG8tbWFudWVsIiwiYSI6ImNsb3B4cnAxYTBicnEya3B0MjdldzJ6czAifQ.NkNzuxywuW5RK8slFqWXlw';
+mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
 function SelectorDeUbicacion({ name, value, onInput: handleInput, geolocalizacion }){
     let mapaContenedor = useRef(null);
