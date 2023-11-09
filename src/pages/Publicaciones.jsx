@@ -19,11 +19,13 @@ function Publicaciones(){
     return(
         <main>
             <h1>Publicaciones</h1>
+            <div className="publicaciones_blog" >
             {
                 publicaciones && publicaciones.map(publicacion => (
                     <PrevisualizacionPublicacion publicacion={publicacion} key={publicacion.id} />
                 ))
             }
+            </div>
         </main>
     )
 }
