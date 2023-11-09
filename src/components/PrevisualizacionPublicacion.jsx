@@ -55,13 +55,13 @@ function PrevisualizacionPublicacion({ publicacion }){
                 <p className="calificacion"> 4.5 ★★★★★</p>
                 {/* Dirección temporal */}
                 <div className="direccion">
-                    <FaMapMarkerAlt style={{ fontSize: '2em', marginRight: '0.5em', marginBottom:'2px' }} /> {/* Ajusta el tamaño y el margen según tus preferencias */}
+                    <FaMapMarkerAlt style={{ fontSize: '2em', marginRight: '0.5em', marginBottom:'2px' }} /> 
                     <span className="texto_overflow">{JSON.stringify(publicacion.direccion)}</span>                
                 </div>
                 <div className="etiquetas-container">
                     {
                         publicacion.etiquetas.length > 0 && (
-                            publicacion.etiquetas.map((etiqueta, indice) => <span className="etiqueta texto_overflow" key={indice}>&#35;{ etiqueta } </span>)
+                            publicacion.etiquetas.map((etiqueta, indice) => <span className="etiqueta" key={indice}>&#35;{ etiqueta } </span>)
                         )
                     }
                 </div>

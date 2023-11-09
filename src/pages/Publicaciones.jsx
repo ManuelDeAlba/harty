@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
+import { FaSearch } from 'react-icons/fa';
 
 import { obtenerPublicacionesTiempoReal } from "../firebase";
 import PrevisualizacionPublicacion from "../components/PrevisualizacionPublicacion";
 
 function Publicaciones(){   
     const [publicaciones, setPublicaciones] = useState(null);
+    const fondo = ["/assets/img/publicaciones-bg.png"];
 
     useEffect(() => {
         const unsubscribe = obtenerPublicacionesTiempoReal(async publicaciones => {
@@ -18,7 +20,17 @@ function Publicaciones(){
 
     return(
         <main>
-            <h1>Publicaciones</h1>
+            <div className="header__publicaciones" style={{ backgroundImage: `url(${fondo[0]})` }}>
+                <div className="header__contenedor header__contenedor--2 contenedor">
+                    <h1 className="header__titulo">Publicaciones</h1>
+                    <div className="header__searchbar">
+                        <input type="text" placeholder="Buscar..." />
+                        <button>
+                            <FaSearch />
+                        </button>
+                    </div>
+                </div>
+            </div>
             <div className="publicaciones_blog" >
             {
                 publicaciones && publicaciones.map(publicacion => (
