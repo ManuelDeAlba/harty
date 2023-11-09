@@ -20,7 +20,7 @@ const datosDefault = {
     tamano: "", // string
     capacidad: "", // number
     servicios: "", // string - opcional
-    etiquetas: [], // string - opcional
+    etiquetas: "", // string - opcional
 
     disponibilidad: "", // ? (ver como poner en el HTML)
 }
@@ -250,8 +250,8 @@ function FormularioPublicarTerraza(){
                         name="direccion"
                         onInput={handleInput}
                         value={datos.direccion}
-                        // Si no se está editando obtiene la ubicación
-                        geolocalizacion={!idPublicacion}
+                        // Para saber si se cambió de ruta entre publicar y editar
+                        modoEdicion={idPublicacion != undefined}
                     />
                 }
                 <p style={{color: "red"}}>{ errores && errores.find(err => err.name == "direccion")?.msg }</p>
