@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthProvider";
 import { obtenerPrevisualizacion } from "../firebase";
 
+import { FaClock, FaUsers, FaMapMarkerAlt } from 'react-icons/fa';
+
 function PrevisualizacionPublicacion({ publicacion }){
     const { usuario } = useAuth();
     
@@ -16,36 +18,58 @@ function PrevisualizacionPublicacion({ publicacion }){
 
     return(
         // Estilos temporales
-        <div style={{background: "#ccc", margin: "1rem", padding: "1rem 2rem", borderRadius: "3px"}}>
+        <div className="publicacion">
             {
                 // Solo muestra el boton para editar si es admin o el dueño de la publicación
                 usuario && (publicacion.idUsuario == usuario.id || usuario.rol == "admin") && (
-                    <Link to={`/editar-terraza/${publicacion.id}`}>Editar</Link>
+                    <Link to={`/editar-terraza/${publicacion.id}`} className="publicacion__editar">Editar</Link>
                 )
             }
-            <Link to={`/publicacion/${publicacion.id}`}>
+            <Link className="publicacion__portada" to={`/publicacion/${publicacion.id}`}>
                 {
                     previsualizacion && (
-                        <img width="100" src={previsualizacion} />  
+                        <img className="publicacion__img" src={previsualizacion} />
                     )
                 }
-                <h2>{publicacion.nombreTerraza}</h2>
             </Link>
-            <p><b>Precio:</b> {publicacion.precio}</p>
-            <p><b>Calificación:</b> FALTA</p>
-            {/* Dirección temporal */}
-            <p><b>Dirección:</b> {JSON.stringify(publicacion.direccion)}</p>
-            <p><b>Horarios:</b> {publicacion.horarios}</p>
-            <p><b>Tamaño:</b> {publicacion.tamano}</p>
-            <p><b>Capacidad de personas:</b> {publicacion.capacidad}</p>
-            {
-                publicacion.etiquetas.length > 0 && (
-                    publicacion.etiquetas.map((etiqueta, indice) => <span key={indice}>&#35;{ etiqueta } </span>)
-                )
-            }
+            <div className="publicacion__texto">
+                <Link to={`/publicacion/${publicacion.id}`}>
+                    <h5 className="texto-overflow">{publicacion.nombreTerraza}</h5>
+                </Link>
+                <div className="row">
+                    <div className="column texto-overflow">
+                        <FaClock style={{ fontSize: '.85em', marginRight: '0.5em' }}/>
+                        <p className="column-font">{publicacion.horarios}</p>
+                    </div>
+                    {/*<div className="column texto-overflow">
+                        <FaRuler style={{ fontSize: '1.5em', marginRight: '0.5em' }}/>
+                        <p>{publicacion.tamano}</p>
+                    </div>
+                    */}
+                    <div className="column texto-overflow">
+                        <FaUsers style={{ fontSize: '.85em', marginRight: '0.5em' }}/>
+                        <p className="column-font">{publicacion.capacidad}</p>
+                    </div>
+                </div>
+                <h4><b>$</b> {publicacion.precio}</h4>
+                <p className="publicacion__calificacion">4.5 ★★★★★</p>
+                {/* Dirección temporal */}
+                <div className="publicacion__direccion">
+                    <FaMapMarkerAlt style={{ fontSize: '2em', marginRight: '0.5em', marginBottom:'2px' }} /> 
+                    <span className="texto-overflow">{JSON.stringify(publicacion.direccion)}</span>                
+                </div>
+                <div className="publicacion__etiquetas">
+                    {
+                        publicacion.etiquetas.length > 0 && (
+                            publicacion.etiquetas.map((etiqueta, indice) => <span className="publicacion__etiqueta" key={indice}>&#35;{ etiqueta } </span>)
+                        )
+                    }
+                </div>
+            </div>
             {/* <p><b>Disponibilidad:</b> {publicacion.disponibilidad}</p> */}
         </div>
     )
 }
 
 export default PrevisualizacionPublicacion;
+
