@@ -6,11 +6,13 @@ import { borrarMultimedia, borrarPublicacion, crearPublicacion, editarPublicacio
 import { useAuth } from "../context/AuthProvider";
 import { useModal } from "../context/ModalConfirmProvider";
 
+import SelectorDeUbicacion from "../components/SelectorDeUbicacion";
+
 const datosDefault = {
     nombreTerraza: "", // string
     descripcion: "", // string
     reglamento: "", // string - opcional
-    direccion: "", //? string por ahora
+    direccion: { longitud: -103, latitud: 21 },
     telefono: "", // string
     redes: "", //? string (ver como poner en el HTML) - opcional
     precio: "", // number
@@ -18,7 +20,7 @@ const datosDefault = {
     tamano: "", // string
     capacidad: "", // number
     servicios: "", // string - opcional
-    etiquetas: "", // string - opcional
+    etiquetas: [], // string - opcional
 
     disponibilidad: "", // ? (ver como poner en el HTML)
 }
@@ -29,7 +31,7 @@ function FormularioPublicarTerraza(){
     const { usuario } = useAuth();
     const { abrirModal, cerrarModal } = useModal();
 
-    const [datos, setDatos] = useState({ ...datosDefault });
+    const [datos, setDatos] = useState(null);
     const [imgSubidas, setImgSubidas] = useState([]);
     const [multimedia, setMultimedia] = useState([]);
     const [errores, setErrores] = useState(null);
@@ -39,6 +41,9 @@ function FormularioPublicarTerraza(){
         const obtenerDatosEdicion = async () => {
             // Obtenemos todo para rellenar el formulario
             const datos = await obtenerPublicacion(idPublicacion);
+            // Se convierten las etiquetas de arreglo a cadena
+            datos.etiquetas = datos.etiquetas?.join(",") ?? "";
+
             let multimedia = await obtenerMultimedia(datos.id);
 
             // Para cada imagen, guardar la referencia, src y borrar
@@ -108,9 +113,11 @@ function FormularioPublicarTerraza(){
             return;
         }
 
-        setDatos({
-            ...datos,
-            [e.target.name]: e.target.value
+        setDatos(prev => {
+            return {
+                ...prev,
+                [e.target.name]: e.target.value
+            }
         })
     }
 
@@ -191,6 +198,8 @@ function FormularioPublicarTerraza(){
         })
     }
 
+    if(!datos) return <span>Cargando...</span>
+
     return(
         <form onSubmit={handleSubmit}>
             <h1>{!idPublicacion ? "Formulario Publicar Terraza" : "Formulario Editar Terraza"}</h1>
@@ -235,15 +244,16 @@ function FormularioPublicarTerraza(){
             </div>
 
             <div>
-                <label htmlFor="direccion">Dirección de la terraza:</label>
-                <input
-                    name="direccion"
-                    id="direccion"
-                    type="text"
-                    onInput={handleInput}
-                    value={datos.direccion}
-                    required
-                />
+                <label>Dirección de la terraza:</label>
+                {
+                    <SelectorDeUbicacion
+                        name="direccion"
+                        onInput={handleInput}
+                        value={datos.direccion}
+                        // Si no se está editando obtiene la ubicación
+                        geolocalizacion={!idPublicacion}
+                    />
+                }
                 <p style={{color: "red"}}>{ errores && errores.find(err => err.name == "direccion")?.msg }</p>
             </div>
 
@@ -389,7 +399,7 @@ function FormularioPublicarTerraza(){
                 )
             }
 
-            <input type="submit" value="Publicar" />
+            <input type="submit" value={`${!idPublicacion ? "Publicar" : "Editar"}`} />
         </form>
     )
 }

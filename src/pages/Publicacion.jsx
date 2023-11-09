@@ -38,7 +38,8 @@ function Publicacion(){
                 <h1>{publicacion.nombreTerraza}</h1>
                 <p><b>Descripción:</b> {publicacion.descripcion}</p>
                 <p><b>Reglamento:</b> {publicacion.reglamento}</p>
-                <p><b>Dirección:</b> {publicacion.direccion}</p>
+                {/* Dirección temporal */}
+                <p><b>Dirección:</b> {JSON.stringify(publicacion.direccion)}</p>
                 <p><b>Teléfono:</b> {publicacion.telefono}</p>
                 <p><b>Redes sociales:</b> {publicacion.redes}</p>
                 <p><b>Precio:</b> {publicacion.precio}</p>

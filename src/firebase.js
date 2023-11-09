@@ -72,7 +72,7 @@ export async function crearPublicacion({
     nombreTerraza, // string
     descripcion, // string
     reglamento, // string - opcional
-    direccion, //? string por ahora
+    direccion, // {longitud: 0, latitud: 0}
     telefono, // string
     redes, //? string (ver como poner en el HTML) - opcional
     precio, // number
@@ -80,7 +80,7 @@ export async function crearPublicacion({
     tamano, // string
     capacidad, // number
     servicios, // string - opcional
-    etiquetas, // string - opcional
+    etiquetas, // array - opcional
 
     multimedia, // files
     disponibilidad, // ? (ver como poner en el HTML)
@@ -131,7 +131,7 @@ export async function editarPublicacion({
     nombreTerraza, // string
     descripcion, // string
     reglamento, // string - opcional
-    direccion, //? string por ahora
+    direccion, // {longitud: 0, latitud: 0}
     telefono, // string
     redes, //? string (ver como poner en el HTML) - opcional
     precio, // number
@@ -139,7 +139,7 @@ export async function editarPublicacion({
     tamano, // string
     capacidad, // number
     servicios, // string - opcional
-    etiquetas, // string - opcional
+    etiquetas, // array - opcional
 
     multimedia, // files
     disponibilidad, // ? (ver como poner en el HTML)

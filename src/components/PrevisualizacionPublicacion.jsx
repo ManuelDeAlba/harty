@@ -33,7 +33,8 @@ function PrevisualizacionPublicacion({ publicacion }){
             </Link>
             <p><b>Precio:</b> {publicacion.precio}</p>
             <p><b>Calificación:</b> FALTA</p>
-            <p><b>Dirección:</b> {publicacion.direccion}</p>
+            {/* Dirección temporal */}
+            <p><b>Dirección:</b> {JSON.stringify(publicacion.direccion)}</p>
             <p><b>Horarios:</b> {publicacion.horarios}</p>
             <p><b>Tamaño:</b> {publicacion.tamano}</p>
             <p><b>Capacidad de personas:</b> {publicacion.capacidad}</p>

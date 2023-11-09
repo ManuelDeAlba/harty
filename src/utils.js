@@ -34,5 +34,17 @@ export const ERRORES_FIREBASE = {
 
 // FUNCIONES
 export function separarEtiquetas(etiquetas){
-    return etiquetas.replace(/[^\w\ñ\.\-_,]/g, "").split(/,+/).filter(etiqueta => etiqueta != "");
+    return etiquetas.replace(/[^\wñÑáéíóúÁÉÍÓÚ\.\-_,]/g, "").split(/,+/).filter(etiqueta => etiqueta != "");
+}
+
+export async function obtenerUbicacion(){
+    return await new Promise((res) => {
+        navigator.geolocation.getCurrentPosition(geolocation => {
+            const {longitude: longitud, latitude: latitud} = geolocation.coords;
+
+            res({ longitud, latitud });
+        }, err => {
+            res(null);
+        })
+    })
 }
