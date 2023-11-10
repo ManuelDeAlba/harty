@@ -233,6 +233,54 @@ export async function borrarPublicacion(id){
     await deleteDoc(docRef);
 }
 
+export async function guardarCalificacion({
+    idPublicacion,
+    idUsuario,
+    calificacion
+}){
+    const docRef = doc(db, "calificaciones", `${idPublicacion}-${idUsuario}`);
+
+    //Si la calificación es 0, se borra de la db
+
+    if(calificacion == 0){
+        deleteDoc(docRef);
+        return;
+    }
+
+    const documento = await setDoc(docRef, {
+        idPublicacion,
+        idUsuario,
+        calificacion
+    });
+
+    return documento;
+}
+
+export async function obtenerCalificacion({
+    idPublicacion,
+    idUsuario
+}){
+    // Consulta en la base de datos de las calificaciones donde cumpla con idTerraza
+    const q = query(collection(db, "calificaciones"),where("idPublicacion", "==", idPublicacion));
+
+    // Obtener los documentos
+    const documentos = (await getDocs(q)).docs.map(doc => doc.data());
+
+    // Calcular la calififación total
+    let calificacionTotal = (documentos.reduce((prev, curr) => prev + (curr?.calificacion ?? 0), 0)) / documentos.length;
+    calificacionTotal = calificacionTotal || 0;
+    // Se busca la calificacion del usuario si existe idUsuario
+    let calificacionUsuario = documentos.find(doc => doc.idUsuario == idUsuario)?.calificacion;
+    
+    // Si existe idUsuario
+    if(idUsuario) {
+        // Obtener la calificación del usuario con el mismo arreglo
+        return { calificacionTotal, calificacionUsuario };
+    } else {
+        return { calificacionTotal };
+    }
+}
+
 //! STORAGE
 export async function subirMultimedia(carpeta, multimedia){
     const promesas = multimedia.map(file => {
@@ -285,5 +333,3 @@ export async function borrarMultimedia(referencias){
         await deleteObject(referencia);
     })
 }
-
-// Funcion para obtener previsualizaciones (solo la primera imagen o una aleatoria para evitar cargar tanto)

@@ -1,27 +1,66 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { obtenerMultimedia, obtenerPublicacion } from "../firebase";
+import { FaBullhorn } from "react-icons/fa";
+
+import { guardarCalificacion, obtenerCalificacion, obtenerMultimedia, obtenerPublicacion } from "../firebase";
+
 import MapaUbicacion from "../components/MapaUbicacion";
+import { useAuth } from "../context/AuthProvider";
 
 function Publicacion(){
     const { idPublicacion } = useParams();
+    const { usuario } = useAuth();
 
     const [cargando, setCargando] = useState(true);
     const [publicacion, setPublicacion] = useState(null);
     const [multimedia, setMultimedia] = useState([]);
+
+    const [calificaciones, setCalificaciones] = useState({
+        total: 0,
+        usuario: 0
+    });
+
+    const handleCalificacion = async cal => {
+        let nuevaCal = cal == calificaciones.usuario ? 0 : cal;
+
+        // Se cambia en la base de datos
+        await guardarCalificacion({
+            idPublicacion,
+            idUsuario: usuario.id,
+            calificacion: nuevaCal
+        });
+
+        // Se obtienen los nuevos valores
+        const { calificacionTotal, calificacionUsuario } = await obtenerCalificacion({
+            idPublicacion,
+            idUsuario: usuario.id
+        });
+
+        // Se actualiza el estado para el renderizado
+        setCalificaciones({
+            total: calificacionTotal,
+            usuario: calificacionUsuario
+        });
+    }
 
     useEffect(() => {
         const obtenerDatos = async () => {
             setCargando(true);
 
             // Se obtienen los datos en paralelo
-            let [publicacion, multimedia] = await Promise.all([
+            let [publicacion, multimedia, { calificacionTotal, calificacionUsuario }] = await Promise.all([
                 obtenerPublicacion(idPublicacion),
-                obtenerMultimedia(idPublicacion)
+                obtenerMultimedia(idPublicacion),
+                obtenerCalificacion({ idPublicacion })
             ])
 
             setPublicacion(publicacion);
             setMultimedia(multimedia);
+            // Aquí solo se guarda la calificación total por si no existe el usuario
+            setCalificaciones(prev => ({
+                ...prev,
+                total: calificacionTotal
+            }));
 
             setCargando(false);
         }
@@ -29,13 +68,28 @@ function Publicacion(){
         obtenerDatos();
     }, [idPublicacion])
 
+    useEffect(() => {
+        if(usuario){
+            obtenerCalificacion({
+                idPublicacion,
+                idUsuario: usuario.id
+            })
+            .then(({ calificacionTotal, calificacionUsuario }) => {
+                setCalificaciones({
+                    total: calificacionTotal,
+                    usuario: calificacionUsuario
+                })
+            });
+        }
+    }, [usuario])
+
     if(cargando) return <h3>Cargando...</h3>
 
     if(!publicacion) return <h3>No existe la publicación</h3>
 
     return(
-        <main>
-            <section>
+        <main className="publicacion">
+            <section className="publicacion__texto">
                 <h1>{publicacion.nombreTerraza}</h1>
                 <p><b>Descripción:</b> {publicacion.descripcion}</p>
                 <p><b>Reglamento:</b> {publicacion.reglamento}</p>
@@ -64,20 +118,20 @@ function Publicacion(){
                 {/* <p><b>Disponibilidad:</b> {publicacion.disponibilidad}</p> */}
             </section>
 
-            <section>
+            <section className="publicacion__acciones">
                 <span><b>Acciones (reportar), calificar, etc.</b></span>
-                <span>Reportar terraza</span>
-                <div>
-                    <span>Calificar</span>
-                    <span onClick={() => alert(1)}>⭐</span>
-                    <span onClick={() => alert(2)}>⭐</span>
-                    <span onClick={() => alert(3)}>⭐</span>
-                    <span onClick={() => alert(4)}>⭐</span>
-                    <span onClick={() => alert(5)}>⭐</span>
+                <span>Reportar terraza <FaBullhorn /></span>
+                <div className="calificacion">
+                    <span className="calificacion__titulo">Calificacion total: {calificaciones.total}</span>
+                    <span className={`calificacion__estrella${calificaciones.usuario >= 1 ? " calificacion__estrella--activa" : ""}`} onClick={() => handleCalificacion(1)}>&#9733;</span>
+                    <span className={`calificacion__estrella${calificaciones.usuario >= 2 ? " calificacion__estrella--activa" : ""}`} onClick={() => handleCalificacion(2)}>&#9733;</span>
+                    <span className={`calificacion__estrella${calificaciones.usuario >= 3 ? " calificacion__estrella--activa" : ""}`} onClick={() => handleCalificacion(3)}>&#9733;</span>
+                    <span className={`calificacion__estrella${calificaciones.usuario >= 4 ? " calificacion__estrella--activa" : ""}`} onClick={() => handleCalificacion(4)}>&#9733;</span>
+                    <span className={`calificacion__estrella${calificaciones.usuario >= 5 ? " calificacion__estrella--activa" : ""}`} onClick={() => handleCalificacion(5)}>&#9733;</span>
                 </div>
             </section>
 
-            <section>
+            <section className="publicacion__comentarios">
                 <span><b>Comentarios</b></span>
                 <ul>
                     <li>Lista</li>
