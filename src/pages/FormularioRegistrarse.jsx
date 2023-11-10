@@ -47,6 +47,7 @@ function FormularioRegistrarse(){
     }
 
     return(
+<<<<<<< HEAD
         <main className="contenedor-sesion">
             <form className="form__sesion" onSubmit={handleSubmit}>
                 <h1 className="form__titulo">Registro</h1>
@@ -55,6 +56,16 @@ function FormularioRegistrarse(){
                     <label htmlFor="nombre"></label>
                     <input
                         className="form__campo"
+=======
+        <form onSubmit={handleSubmit}>
+            <div className='container'> 
+            <div className='contenedor-registro'>
+                <h1>Registro</h1>
+                <div className="input-field">
+                    <i><FaUser /></i>
+                    <label htmlFor="nombre"></label>
+                    <input
+>>>>>>> 0d24cb0c9d410a482671090f1b3b04bce875ee97
                         name="nombre"
                         id="nombre"
                         type="text"
@@ -65,11 +76,18 @@ function FormularioRegistrarse(){
                     />
                 </div>
                 
+<<<<<<< HEAD
                 <div className="form__input">
                     <FaEnvelope className="form__icono" />
                     <label htmlFor="correo"></label>
                     <input
                         className="form__campo"
+=======
+                <div className="input-field">
+                    <i><FaEnvelope/></i>
+                    <label htmlFor="correo"></label>
+                    <input
+>>>>>>> 0d24cb0c9d410a482671090f1b3b04bce875ee97
                         name="correo"
                         id="correo"
                         type="email"
@@ -80,11 +98,18 @@ function FormularioRegistrarse(){
                     />
                 </div>
 
+<<<<<<< HEAD
                 <div className="form__input">
                     <FaLock className="form__icono" />
                     <label htmlFor="contrasena"></label>
                     <input
                         className="form__campo"
+=======
+                <div className="input-field">
+                    <i><FaLock /></i>
+                    <label htmlFor="contrasena"></label>
+                    <input
+>>>>>>> 0d24cb0c9d410a482671090f1b3b04bce875ee97
                         name="contrasena"
                         id="contrasena"
                         type="password"
@@ -94,9 +119,18 @@ function FormularioRegistrarse(){
                         placeholder="Contraseña:"
                     />
                 </div>
+<<<<<<< HEAD
                 <input type="submit" value="Registrarse" className="form__boton boton" />
             </form>
         </main>
+=======
+                 <div className="btn-field">   
+                    <input type="submit" value="Registrarse" className="button1" />
+                </div>
+            </div>
+            </div>
+        </form>
+>>>>>>> 0d24cb0c9d410a482671090f1b3b04bce875ee97
     )
 }
 
