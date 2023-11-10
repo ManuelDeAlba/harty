@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthProvider";
 import { obtenerPrevisualizacion } from "../firebase";
 
-import { FaClock, FaUsers, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaClock, FaUsers } from 'react-icons/fa';
 
 function PrevisualizacionPublicacion({ publicacion }){
     const { usuario } = useAuth();
@@ -54,10 +54,6 @@ function PrevisualizacionPublicacion({ publicacion }){
                 <h4><b>$</b> {publicacion.precio}</h4>
                 <p className="publicacion__calificacion">4.5 ★★★★★</p>
                 {/* Dirección temporal */}
-                <div className="publicacion__direccion">
-                    <FaMapMarkerAlt style={{ fontSize: '2em', marginRight: '0.5em', marginBottom:'2px' }} /> 
-                    <span className="texto-overflow">{JSON.stringify(publicacion.direccion)}</span>                
-                </div>
                 <div className="publicacion__etiquetas">
                     {
                         publicacion.etiquetas.length > 0 && (

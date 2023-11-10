@@ -576,11 +576,6 @@ html:has(.modal){ overflow: hidden; }
   color: var(--color-primario); 
   font-size: 20px;
 }
-.publicacion__direccion {
-  display: flex;
-  align-items: center; 
-  margin-bottom: 25px;
-}
 
 .publicacion__etiquetas {
   width: 100%;
