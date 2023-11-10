@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { obtenerMultimedia, obtenerPublicacion } from "../firebase";
+import MapaUbicacion from "../components/MapaUbicacion";
 
 function Publicacion(){
     const { idPublicacion } = useParams();
@@ -39,7 +40,8 @@ function Publicacion(){
                 <p><b>Descripción:</b> {publicacion.descripcion}</p>
                 <p><b>Reglamento:</b> {publicacion.reglamento}</p>
                 {/* Dirección temporal */}
-                <p><b>Dirección:</b> {JSON.stringify(publicacion.direccion)}</p>
+                <p><b>Direccion:</b></p>
+                <MapaUbicacion ubicacion={publicacion.direccion} />
                 <p><b>Teléfono:</b> {publicacion.telefono}</p>
                 <p><b>Redes sociales:</b> {publicacion.redes}</p>
                 <p><b>Precio:</b> {publicacion.precio}</p>
