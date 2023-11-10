@@ -613,3 +613,63 @@ html:has(.modal){ overflow: hidden; }
 .publicacion__etiqueta:hover {
   background-color: var(--color-etiqueta-hover);
 }
+
+/* INICIO DE SESIÓN Y REGISTRO */
+.contenedor-sesion{
+  height: calc(100vh - var(--height-nav));
+  height: calc(100dvh - var(--height-nav));
+  background-color: #f5f6f7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.form__sesion{
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 90%;
+  max-width: 350px;
+  background-color: #ffffff;
+  padding: 1rem 3rem;
+  text-align: center;
+  border-radius: 25px;
+  box-shadow: 0 3px 13px 1px rgb(0 0 0 / 9%);
+}
+.form__titulo{
+  margin: 0;
+  color: var(--color-titulo);
+  font-size: clamp(1.5rem, 5vw, 2rem);
+  text-align: center;
+}
+.form__input{
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #767676;
+}
+.form__icono{
+  margin: 0 .25rem;
+  color: var(--color-primario);
+}
+.form__campo{
+  background: transparent;
+  padding: .5rem 1rem;
+  color: #000;
+  border: none;
+  outline: none;
+}
+.form__boton{
+  border-radius: 10px;
+  padding: 10px;
+  margin: 10px;
+  border: 0;
+  outline: 0;
+  cursor: pointer;
+}
+.form__restablecer{
+  color: #09f;
+  font-size: .9rem;
+  cursor: pointer;
+}
+.form__restablecer:hover{
+  text-decoration: underline;
+}
