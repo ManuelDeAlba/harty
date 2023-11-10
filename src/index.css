@@ -466,8 +466,9 @@ html:has(.modal){ overflow: hidden; }
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 50vh;
-  min-height: 50dvh;
+  min-height: calc(50vh + var(--height-nav));
+  min-height: calc(50dvh + var(--height-nav));
+  margin-top: calc(-1 * var(--height-nav));
   background-size: cover;
   background-position: top center;
   background-attachment: inherit;
@@ -475,34 +476,30 @@ html:has(.modal){ overflow: hidden; }
 }
 
 .header__searchbar {
-  display: flex;
-  align-items: center;
-  border-radius: 30px;
-  padding: 8px;
+  display: grid;
+  grid-template-columns: 1fr max-content;
+  width: 80%;
+  padding: 5px 10px;
   background-color: #f0f0f0;
-  width:80%;
+  border-radius: 30px;
   box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.8);
 }
 
 .header__searchbar input {
+  width: 100%;
   background-color: transparent;
   border: none;
   outline: none;
-  flex: 1;
-  padding: 8px;
-  font-size: 16px;
-  margin-left: 10px;
+  font-size: 1rem;
 }
 
 .header__searchbar button {
   background-color: transparent;
+  padding: 5px;
+  color:var(--color-secundario);
   border: none;
   outline: none;
-  padding: 8px;
-  border-top-right-radius: 24px;
-  border-bottom-right-radius: 24px;
   cursor: pointer;
-  color:var(--color-secundario);
 }
 
 .header__searchbar:hover {

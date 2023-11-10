@@ -23,12 +23,14 @@ function Publicaciones(){
             <header className="header__publicaciones" style={{ backgroundImage: `url(${fondo[0]})` }}>
                 <div className="header__contenedor header__contenedor--2 contenedor">
                     <h1 className="header__titulo">Publicaciones</h1>
-                    <div className="header__searchbar">
-                        <input type="text" placeholder="Buscar..." />
-                        <button>
-                            <FaSearch />
-                        </button>
-                    </div>
+                    <form className="header__searchbar" onSubmit={(e) => {
+                        // TEMPORAL
+                        e.preventDefault();
+                        alert("Buscando terraza: " + e.target.busqueda.value);
+                    }}>
+                        <input name="busqueda" type="text" placeholder="Buscar..." />
+                        <button type="submit"><FaSearch /></button>
+                    </form>
                 </div>
             </header>
             <section className="publicaciones" >
