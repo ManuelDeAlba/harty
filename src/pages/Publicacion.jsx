@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination } from "swiper/modules";
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+
 import { FaBullhorn } from "react-icons/fa";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 
@@ -132,6 +139,27 @@ function Publicacion(){
         <main className="publicacion">
             <section className="publicacion__texto">
                 <h1>{publicacion.nombreTerraza}</h1>
+                {
+                    multimedia.length > 0 && (
+                        <Swiper
+                            className="publicacion__slider contenedor"
+                            modules={[Navigation, Pagination]}
+                            pagination={{
+                                clickable: true
+                            }}
+                            navigation
+                            loop
+                        >
+                            {
+                                multimedia.map((imagen, indice) => (
+                                    <SwiperSlide className="publicacion__slide">
+                                        <img className="publicacion__img" src={imagen.src} key={indice} />
+                                    </SwiperSlide>
+                                ))
+                            }
+                        </Swiper>
+                    )
+                }
                 <p><b>Descripción:</b> {publicacion.descripcion}</p>
                 <p><b>Reglamento:</b> {publicacion.reglamento}</p>
                 {/* Dirección temporal */}
@@ -145,17 +173,6 @@ function Publicacion(){
                 <p><b>Capacidad de personas:</b> {publicacion.capacidad}</p>
                 <p><b>Servicios extras:</b> {publicacion.servicios}</p>
                 <p><b>Etiquetas:</b> {publicacion.etiquetas.map((etiqueta, indice) => <span key={indice}>{ etiqueta }</span>)}</p>
-                <p><b>Multimedia:</b>
-                    {
-                        multimedia.length > 0 ? (
-                            multimedia.map((imagen, indice) => (
-                                <img width="100" src={imagen.src} key={indice} />
-                            ))    
-                        ) : (
-                            " No hay multimedia para mostrar"
-                        )
-                    }
-                </p>
                 {/* <p><b>Disponibilidad:</b> {publicacion.disponibilidad}</p> */}
             </section>
 
