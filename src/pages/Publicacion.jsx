@@ -152,8 +152,8 @@ function Publicacion(){
                         >
                             {
                                 multimedia.map((imagen, indice) => (
-                                    <SwiperSlide className="publicacion__slide">
-                                        <img className="publicacion__img" src={imagen.src} key={indice} />
+                                    <SwiperSlide className="publicacion__slide" key={indice}>
+                                        <img className="publicacion__img" src={imagen.src} />
                                     </SwiperSlide>
                                 ))
                             }
