@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { FaClock, FaUsers } from 'react-icons/fa';
 
 import { useAuth } from "../context/AuthProvider";
-import { obtenerCalificacion, obtenerPrevisualizacion } from "../firebase";
 
-import { FaClock, FaUsers } from 'react-icons/fa';
+import { obtenerCalificacion, obtenerPrevisualizacion } from "../firebase";
+import { truncarCalificacion } from "../utils";
 
 function PrevisualizacionPublicacion({ publicacion }){
     const { usuario } = useAuth();
@@ -58,7 +59,7 @@ function PrevisualizacionPublicacion({ publicacion }){
                     </div>
                 </div>
                 <span className="previsualizacion__precio"><b>$</b> {publicacion.precio}</span>
-                <p className="previsualizacion__calificacion"><span className="previsualizacion__estrella">★</span> {calificacion || "Sin calificaciones"}</p>
+                <p className="previsualizacion__calificacion"><span className="previsualizacion__estrella">★</span> {truncarCalificacion(calificacion) || "Sin calificaciones"}</p>
                 {/* Dirección temporal */}
                 <div className="previsualizacion__etiquetas">
                     {

@@ -48,3 +48,13 @@ export async function obtenerUbicacion(){
         })
     })
 }
+export function truncarCalificacion(calificacion, decimales=1){
+    // Si no le pasan la calificación o si no cumple con el formato, no regresa nada
+    if(calificacion == undefined || !/[\d\.]+/.test(calificacion.toString())) return;
+
+    const cal = calificacion.toString();    
+    const punto = cal.indexOf(".");
+
+    // Si existe un punto se extrae solo lo necesario, si no, se regresa la calificación directamente
+    return parseFloat(punto != -1 ? cal.substring(0, punto + 1 + decimales) : calificacion);
+}

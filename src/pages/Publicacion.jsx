@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { FaBullhorn } from "react-icons/fa";
+import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 
-import { guardarCalificacion, obtenerCalificacion, obtenerMultimedia, obtenerPublicacion } from "../firebase";
+import { useAuth } from "../context/AuthProvider";
+
+import { guardarCalificacion, guardarFavorita, obtenerCalificacion, obtenerCantidadFavoritas, obtenerEstadoFavorita, obtenerMultimedia, obtenerPublicacion } from "../firebase";
+import { truncarCalificacion } from "../utils";
 
 import MapaUbicacion from "../components/MapaUbicacion";
-import { useAuth } from "../context/AuthProvider";
 
 function Publicacion(){
     const { idPublicacion } = useParams();
@@ -15,10 +18,27 @@ function Publicacion(){
     const [publicacion, setPublicacion] = useState(null);
     const [multimedia, setMultimedia] = useState([]);
 
+    const [cantidadFavoritas, setCantidadFavoritas] = useState(0);
+    const [favorita, setFavorita] = useState(false);
     const [calificaciones, setCalificaciones] = useState({
         total: 0,
         usuario: 0
     });
+
+    const handleFavorita = async (estado) => {
+        // Se cambia en la base de datos
+        await guardarFavorita({
+            idPublicacion,
+            idUsuario: usuario.id,
+            favorita: estado
+        })
+
+        // Se actualiza la cantidad de personas que le han dado en favorita
+        const cant = await obtenerCantidadFavoritas(idPublicacion);
+        
+        setFavorita(estado);
+        setCantidadFavoritas(cant);
+    }
 
     const handleCalificacion = async cal => {
         let nuevaCal = cal == calificaciones.usuario ? 0 : cal;
@@ -48,10 +68,11 @@ function Publicacion(){
             setCargando(true);
 
             // Se obtienen los datos en paralelo
-            let [publicacion, multimedia, { calificacionTotal, calificacionUsuario }] = await Promise.all([
+            let [publicacion, multimedia, { calificacionTotal }, cantidadFavoritas] = await Promise.all([
                 obtenerPublicacion(idPublicacion),
                 obtenerMultimedia(idPublicacion),
-                obtenerCalificacion({ idPublicacion })
+                obtenerCalificacion({ idPublicacion }),
+                obtenerCantidadFavoritas(idPublicacion)
             ])
 
             setPublicacion(publicacion);
@@ -61,6 +82,7 @@ function Publicacion(){
                 ...prev,
                 total: calificacionTotal
             }));
+            setCantidadFavoritas(cantidadFavoritas);
 
             setCargando(false);
         }
@@ -80,6 +102,12 @@ function Publicacion(){
                     usuario: calificacionUsuario
                 })
             });
+
+            obtenerEstadoFavorita({
+                idPublicacion,
+                idUsuario: usuario.id
+            })
+            .then(setFavorita);
         }
     }, [usuario])
 
@@ -121,8 +149,19 @@ function Publicacion(){
             <section className="publicacion__acciones">
                 <span><b>Acciones (reportar), calificar, etc.</b></span>
                 <span>Reportar terraza <FaBullhorn /></span>
+                <div className="favoritos">
+                    <span>Marcar como favoritos</span>
+                    <span>{cantidadFavoritas} persona/s la han marcado como favorita</span>
+                    <span onClick={() => handleFavorita(!favorita)} className="favoritos__corazon">
+                        {
+                            favorita ?
+                                <AiFillHeart /> :
+                                <AiOutlineHeart />
+                        }
+                    </span>
+                </div>
                 <div className="calificacion">
-                    <span className="calificacion__titulo">Calificacion total: {calificaciones.total}</span>
+                    <span className="calificacion__titulo">Calificacion total: {truncarCalificacion(calificaciones.total)}</span>
                     <span className={`calificacion__estrella${calificaciones.usuario >= 1 ? " calificacion__estrella--activa" : ""}`} onClick={() => handleCalificacion(1)}>&#9733;</span>
                     <span className={`calificacion__estrella${calificaciones.usuario >= 2 ? " calificacion__estrella--activa" : ""}`} onClick={() => handleCalificacion(2)}>&#9733;</span>
                     <span className={`calificacion__estrella${calificaciones.usuario >= 3 ? " calificacion__estrella--activa" : ""}`} onClick={() => handleCalificacion(3)}>&#9733;</span>

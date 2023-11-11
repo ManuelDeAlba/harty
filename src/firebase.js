@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getFirestore, doc, setDoc, getDocs, collection, query, orderBy, onSnapshot, getDoc, startAt, limit, startAfter, updateDoc, where, deleteDoc } from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDocs, collection, query, orderBy, onSnapshot, getDoc, startAt, limit, startAfter, updateDoc, where, deleteDoc, getCountFromServer } from "firebase/firestore";
 import { getAuth } from 'firebase/auth';
 import { getStorage, ref, uploadBytes, getDownloadURL, listAll, deleteObject } from 'firebase/storage';
 
@@ -233,6 +233,55 @@ export async function borrarPublicacion(id){
     await deleteDoc(docRef);
 }
 
+export async function guardarFavorita({
+    idPublicacion,
+    idUsuario,
+    favorita
+}){
+    const docRef = doc(db, "favoritas", `${idPublicacion}-${idUsuario}`);
+
+    // Si ya no es favorita, se borra de la base de datos
+    if(!favorita){
+        deleteDoc(docRef);
+        return;
+    }
+
+    await setDoc(docRef, {
+        idPublicacion,
+        idUsuario,
+        favorita
+    })
+}
+
+export async function obtenerEstadoFavorita({
+    idPublicacion,
+    idUsuario
+}){
+    const docRef = doc(db, "favoritas", `${idPublicacion}-${idUsuario}`);
+
+    const documento = await getDoc(docRef);
+
+    return documento.data()?.favorita || false;
+}
+
+export async function obtenerCantidadFavoritas(idPublicacion){
+    const q = query(collection(db, "favoritas"), where("idPublicacion", "==", idPublicacion));
+
+    const snapshot = await getCountFromServer(q);
+
+    return snapshot.data().count;
+}
+
+// Si solo hay publicacion, se obtienen todas las de esa publicacion (cantidad)
+// Si solo hay usuario, se obtienen solo las del usuario (para el perfil)
+// Si hay de los dos, obtienen filtradas
+export async function obtenerFavoritas({
+    idPublicacion,
+    idUsuario
+}){
+
+}
+
 export async function guardarCalificacion({
     idPublicacion,
     idUsuario,
@@ -247,13 +296,11 @@ export async function guardarCalificacion({
         return;
     }
 
-    const documento = await setDoc(docRef, {
+    await setDoc(docRef, {
         idPublicacion,
         idUsuario,
         calificacion
     });
-
-    return documento;
 }
 
 export async function obtenerCalificacion({

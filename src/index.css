@@ -619,6 +619,17 @@ html:has(.modal){ overflow: hidden; }
 }
 
 /* PUBLICACION (DETALLES) */
+.favoritos{
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  font-size: 1rem;
+}
+.favoritos__corazon{
+  font-size: 2rem;
+  cursor: pointer;
+  color: red;
+}
 .calificacion{
   display: flex;
   align-items: center;
