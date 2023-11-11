@@ -1,21 +1,25 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import toast from "react-hot-toast";
 
 import { FaBullhorn } from "react-icons/fa";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 
 import { useAuth } from "../context/AuthProvider";
+import { useModal } from "../context/ModalConfirmProvider";
 
-import { enviarComentario, guardarCalificacion, guardarFavorita, obtenerCalificacion, obtenerCantidadFavoritas, obtenerComentariosTiempoReal, obtenerEstadoFavorita, obtenerMultimedia, obtenerPublicacion } from "../firebase";
+import { borrarComentario, enviarComentario, guardarCalificacion, guardarFavorita, obtenerCalificacion, obtenerCantidadFavoritas, obtenerComentariosTiempoReal, obtenerEstadoFavorita, obtenerMultimedia, obtenerPublicacion } from "../firebase";
 import { truncarCalificacion } from "../utils";
 
 import SliderPublicacion from "../components/SliderPublicacion";
 import MapaUbicacion from "../components/MapaUbicacion";
+import Protegido from "../components/Protegido";
 
 function Publicacion(){
-    const { idPublicacion } = useParams();
     const navigate = useNavigate();
+    const { idPublicacion } = useParams();
     const { usuario } = useAuth();
+    const { abrirModal, cerrarModal } = useModal();
 
     const [cargando, setCargando] = useState(true);
     const [publicacion, setPublicacion] = useState(null);
@@ -93,12 +97,32 @@ function Publicacion(){
         // Se limpia el formulario
         e.target.reset();
 
-        //! PONER UN TOAST PARA INDICAR QUE SE ENVIO EL COMENTARIO
-        await enviarComentario({
+        toast.promise(enviarComentario({
             idPublicacion,
             idUsuario: usuario.id,
             comentario
+        }), {
+            loading: "Publicando comentario...",
+            success: "Comentario publicado",
+            error: (error) => error.message
         });
+    }
+
+    const handleBorrarComentario = async (idComentario) => {
+        abrirModal({
+            texto: "¿Realmente quieres borrar el comentario?",
+            onResult: (res) => {
+                if(res){
+                    toast.promise(borrarComentario(idComentario), {
+                        loading: "Borrando comentario...",
+                        success: "Comentario borrado",
+                        error: (error) => error.message
+                    });
+                }
+
+                cerrarModal();
+            }
+        })
     }
 
     useEffect(() => {
@@ -225,7 +249,19 @@ function Publicacion(){
                 <ul>
                     {
                         comentarios.map(({id, comentario, usuario: { nombre }}) => (
-                            <p className="comentario" key={id}><b>{nombre})</b> {comentario}</p>
+                            <div className="comentarios__contenedor-comentario" key={id}>
+                                <span className="comentarios__comentario"><b>{nombre})</b> {comentario}</span>
+                                <Protegido
+                                    // Puede borrar comentario si es admin o el dueño del comentario
+                                    names={["borrar-comentario", "comentario/borrar-comentario"]}
+                                    type="component"
+                                    params={{idComentario: id}}
+                                    cargandoComponent={""}
+                                    errorComponent={""}
+                                >
+                                    <button className="boton boton--rojo" onClick={() => handleBorrarComentario(id)}>Eliminar</button>
+                                </Protegido>
+                            </div>
                         ))    
                     }
                 </ul>

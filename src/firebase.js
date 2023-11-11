@@ -380,6 +380,20 @@ export function obtenerComentariosTiempoReal(idPublicacion, callback){
     return unsubscribe;
 }
 
+export async function obtenerComentario(idComentario){
+    const docRef = doc(db, "comentarios", idComentario);
+
+    const documento = await getDoc(docRef);
+
+    return documento.data();
+}
+
+export async function borrarComentario(idComentario){
+    const docRef = doc(db, "comentarios", idComentario);
+
+    await deleteDoc(docRef);
+}
+
 //! STORAGE
 export async function subirMultimedia(carpeta, multimedia){
     const promesas = multimedia.map(file => {
