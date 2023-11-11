@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { FaBullhorn } from "react-icons/fa";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 
@@ -12,6 +12,7 @@ import MapaUbicacion from "../components/MapaUbicacion";
 
 function Publicacion(){
     const { idPublicacion } = useParams();
+    const navigate = useNavigate();
     const { usuario } = useAuth();
 
     const [cargando, setCargando] = useState(true);
@@ -26,6 +27,12 @@ function Publicacion(){
     });
 
     const handleFavorita = async (estado) => {
+        // Si no existe el usuario, envia a iniciar sesión
+        if(!usuario){
+            navigate("/iniciar-sesion");
+            return;
+        }
+
         // Se cambia en la base de datos
         await guardarFavorita({
             idPublicacion,
@@ -41,6 +48,12 @@ function Publicacion(){
     }
 
     const handleCalificacion = async cal => {
+        // Si no existe el usuario, envia a iniciar sesión
+        if(!usuario){
+            navigate("/iniciar-sesion");
+            return;
+        }
+        
         let nuevaCal = cal == calificaciones.usuario ? 0 : cal;
 
         // Se cambia en la base de datos
