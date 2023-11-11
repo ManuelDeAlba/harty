@@ -248,8 +248,7 @@ export async function guardarFavorita({
 
     await setDoc(docRef, {
         idPublicacion,
-        idUsuario,
-        favorita
+        idUsuario
     })
 }
 
@@ -261,7 +260,7 @@ export async function obtenerEstadoFavorita({
 
     const documento = await getDoc(docRef);
 
-    return documento.data()?.favorita || false;
+    return documento.exists();
 }
 
 export async function obtenerCantidadFavoritas(idPublicacion){
