@@ -242,7 +242,7 @@ export async function guardarFavorita({
 
     // Si ya no es favorita, se borra de la base de datos
     if(!favorita){
-        deleteDoc(docRef);
+        await deleteDoc(docRef);
         return;
     }
 
@@ -296,7 +296,7 @@ export async function guardarCalificacion({
     //Si la calificación es 0, se borra de la db
 
     if(calificacion == 0){
-        deleteDoc(docRef);
+        await deleteDoc(docRef);
         return;
     }
 
