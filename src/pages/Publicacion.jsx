@@ -1,12 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination } from "swiper/modules";
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
-
 import { FaBullhorn } from "react-icons/fa";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 
@@ -15,6 +9,7 @@ import { useAuth } from "../context/AuthProvider";
 import { guardarCalificacion, guardarFavorita, obtenerCalificacion, obtenerCantidadFavoritas, obtenerEstadoFavorita, obtenerMultimedia, obtenerPublicacion } from "../firebase";
 import { truncarCalificacion } from "../utils";
 
+import SliderPublicacion from "../components/SliderPublicacion";
 import MapaUbicacion from "../components/MapaUbicacion";
 
 function Publicacion(){
@@ -139,31 +134,10 @@ function Publicacion(){
         <main className="publicacion">
             <section className="publicacion__texto">
                 <h1>{publicacion.nombreTerraza}</h1>
-                {
-                    multimedia.length > 0 && (
-                        <Swiper
-                            className="publicacion__slider contenedor"
-                            modules={[Navigation, Pagination]}
-                            pagination={{
-                                clickable: true
-                            }}
-                            navigation
-                            loop
-                        >
-                            {
-                                multimedia.map((imagen, indice) => (
-                                    <SwiperSlide className="publicacion__slide" key={indice}>
-                                        <img className="publicacion__img" src={imagen.src} />
-                                    </SwiperSlide>
-                                ))
-                            }
-                        </Swiper>
-                    )
-                }
+                <SliderPublicacion multimedia={multimedia} />
                 <p><b>Descripción:</b> {publicacion.descripcion}</p>
                 <p><b>Reglamento:</b> {publicacion.reglamento}</p>
-                {/* Dirección temporal */}
-                <p><b>Direccion:</b></p>
+                <p><b>Dirección:</b></p>
                 <MapaUbicacion ubicacion={publicacion.direccion} />
                 <p><b>Teléfono:</b> {publicacion.telefono}</p>
                 <p><b>Redes sociales:</b> {publicacion.redes}</p>
