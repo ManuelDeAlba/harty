@@ -111,7 +111,7 @@ function Publicacion(){
         }
     }, [usuario])
 
-    if(cargando) return <h3>Cargando...</h3>
+    if(cargando) return <span className="contenedor">Cargando...</span>
 
     if(!publicacion) return <h3>No existe la publicación</h3>
 
@@ -147,10 +147,12 @@ function Publicacion(){
             </section>
 
             <section className="publicacion__acciones">
-                <span><b>Acciones (reportar), calificar, etc.</b></span>
-                <span>Reportar terraza <FaBullhorn /></span>
+                <span><b>Acciones</b></span>
+
+                <span><b>Reportar terraza</b> <FaBullhorn /></span>
+
                 <div className="favoritos">
-                    <span>Marcar como favoritos</span>
+                    <span><b>Marcar como favoritos</b></span>
                     <span>{cantidadFavoritas} persona/s la han marcado como favorita</span>
                     <span onClick={() => handleFavorita(!favorita)} className="favoritos__corazon">
                         {
@@ -160,8 +162,9 @@ function Publicacion(){
                         }
                     </span>
                 </div>
+
                 <div className="calificacion">
-                    <span className="calificacion__titulo">Calificacion total: {truncarCalificacion(calificaciones.total)}</span>
+                    <span className="calificacion__titulo"><b>Calificacion total:</b> {truncarCalificacion(calificaciones.total)}</span>
                     <span className={`calificacion__estrella${calificaciones.usuario >= 1 ? " calificacion__estrella--activa" : ""}`} onClick={() => handleCalificacion(1)}>&#9733;</span>
                     <span className={`calificacion__estrella${calificaciones.usuario >= 2 ? " calificacion__estrella--activa" : ""}`} onClick={() => handleCalificacion(2)}>&#9733;</span>
                     <span className={`calificacion__estrella${calificaciones.usuario >= 3 ? " calificacion__estrella--activa" : ""}`} onClick={() => handleCalificacion(3)}>&#9733;</span>

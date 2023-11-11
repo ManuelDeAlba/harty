@@ -198,7 +198,7 @@ function FormularioPublicarTerraza(){
         })
     }
 
-    if(!datos) return <span>Cargando...</span>
+    if(!datos) return <span className="contenedor">Cargando...</span>
 
     return(
         <form onSubmit={handleSubmit}>

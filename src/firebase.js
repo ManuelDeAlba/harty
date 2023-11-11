@@ -272,14 +272,18 @@ export async function obtenerCantidadFavoritas(idPublicacion){
     return snapshot.data().count;
 }
 
-// Si solo hay publicacion, se obtienen todas las de esa publicacion (cantidad)
-// Si solo hay usuario, se obtienen solo las del usuario (para el perfil)
-// Si hay de los dos, obtienen filtradas
-export async function obtenerFavoritas({
-    idPublicacion,
-    idUsuario
-}){
+export async function obtenerPublicacionesFavoritas(idUsuario){
+    const q = query(collection(db, "favoritas"), where("idUsuario", "==", idUsuario));
+    const favoritas = (await getDocs(q)).docs.map(doc => doc.data());
 
+    const idPublicaciones = favoritas.map(doc => doc.idPublicacion);
+
+    if(idPublicaciones.length <= 0) return [];
+
+    const q2 = query(collection(db, "publicaciones"), where("id", "in", idPublicaciones));
+    const publicacionesFavoritas = (await getDocs(q2)).docs.map(doc => doc.data());
+
+    return publicacionesFavoritas;
 }
 
 export async function guardarCalificacion({

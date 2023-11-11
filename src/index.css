@@ -159,6 +159,7 @@ input, textarea{
 }
 
 .contenedor{
+  display: block; /* Para los elementos inline */
   width: 90%;
   max-width: 1000px;
   margin: 30px auto;
@@ -457,8 +458,9 @@ html:has(.modal){ overflow: hidden; }
   justify-content: space-evenly;
   gap: 20px;
 }
-.modal__botones > button{
+.modal__boton{
   min-width: 200px;
+  font-size: 1rem;
 }
 
 /******** PUBLICACIONES *************/
@@ -515,10 +517,14 @@ html:has(.modal){ overflow: hidden; }
   max-width: 1200px;
   margin: 10rem auto;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
   gap: 30px;
 }
-
+.publicaciones__titulo,
+.publicaciones__error{
+  display: block;
+  text-align: center;
+}
 
 /******** PREVIZUALIZACIONES PUBLICACIONES *************/
 .previsualizacion {
@@ -711,4 +717,24 @@ html:has(.modal){ overflow: hidden; }
 }
 .form__restablecer:hover{
   text-decoration: underline;
+}
+
+/* PERFIL */
+.perfil__datos{
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  font-size: 1.1rem;
+}
+.perfil__nombre{
+  text-align: center;
+}
+.perfil__editar{
+  align-self: flex-start;
+}
+.contenedor-publicaciones{
+  margin: 3rem auto;
+}
+.publicaciones--perfil{
+  margin: 3rem auto;
 }

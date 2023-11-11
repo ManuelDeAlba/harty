@@ -35,9 +35,11 @@ function Publicaciones(){
             </header>
             <section className="publicaciones" >
             {
-                publicaciones && publicaciones.map(publicacion => (
+                publicaciones ? publicaciones.map(publicacion => (
                     <PrevisualizacionPublicacion publicacion={publicacion} key={publicacion.id} />
-                ))
+                )) : (
+                    <span className="contenedor">Cargando...</span>
+                )
             }
             </section>
         </main>

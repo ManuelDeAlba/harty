@@ -1,14 +1,18 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
-import { obtenerPublicacionesUsuario, obtenerUsuario } from "../firebase";
+import { useAuth } from "../context/AuthProvider";
+
+import { obtenerPublicacionesFavoritas, obtenerPublicacionesUsuario, obtenerUsuario } from "../firebase";
 import PrevisualizacionPublicacion from "../components/PrevisualizacionPublicacion";
 
 function Perfil(){
     const { idUsuario } = useParams();
+    const { usuario } = useAuth();
 
     const [datosPerfil, setDatosPerfil] = useState(null);
     const [publicaciones, setPublicaciones] = useState([]);
+    const [publicacionesFavoritas, setPublicacionesFavoritas] = useState([]);
 
     // Al cambiar la url (id del usuario) se vuelve a obtener todo
     useEffect(() => {
@@ -17,33 +21,56 @@ function Perfil(){
 
         obtenerPublicacionesUsuario(idUsuario)
         .then(setPublicaciones);
+
+        obtenerPublicacionesFavoritas(idUsuario)
+        .then(setPublicacionesFavoritas);
     }, [idUsuario])
 
-    if(!datosPerfil) return <h3>Cargando...</h3>
+    if(!datosPerfil) return <span className="contenedor">Cargando...</span>
 
     return(
         <main>
-            <section>
-                <h1>{ datosPerfil.nombre }</h1>
-                <p><span>Nombre:</span> { datosPerfil.nombre }</p>
-                <p><span>Correo:</span> { datosPerfil.correo }</p>
-                <p><span>Rol:</span> { datosPerfil.rol }</p>
-                <Link to={`/editar-perfil/${datosPerfil.id}`}>Editar perfil</Link>
+            <section className="perfil__datos contenedor">
+                <h1 className="perfil__nombre">{ datosPerfil.nombre }</h1>
+                <span className="perfil__correo"><b>Correo:</b> { datosPerfil.correo }</span>
+                {
+                    usuario && usuario.rol == "admin" && (
+                        <span className="perfil__rol"><b>Rol:</b> { datosPerfil.rol }</span>
+                    )
+                }
+                <Link className="perfil__editar boton" to={`/editar-perfil/${datosPerfil.id}`}>Editar perfil</Link>
             </section>
-            <section>
+
+            <section className="contenedor-publicaciones">
+                <h2 className="publicaciones__titulo">Publicaciones</h2>
                 {
                     publicaciones.length > 0 ? (
-                        <>
-                            <h2>Publicaciones</h2>
-
+                        <div className="publicaciones publicaciones--perfil">
                             {
                                 publicaciones.map(publicacion => (
                                     <PrevisualizacionPublicacion publicacion={publicacion} key={publicacion.id} />
                                 ))
                             }
-                        </>
+                        </div>
                     ) : (
-                        <h2>No hay publicaciones para mostrar</h2>
+                        <span className="publicaciones__error">No hay publicaciones para mostrar</span>
+                    )
+                }
+            </section>
+
+            <section className="contenedor-publicaciones">
+                <h2 className="publicaciones__titulo">Publicaciones favoritas</h2>
+                {
+                    publicacionesFavoritas.length > 0 ? (
+                        <div className="publicaciones publicaciones--perfil">
+                            {
+                                publicacionesFavoritas.map(publicacion => (
+                                    <PrevisualizacionPublicacion publicacion={publicacion} key={publicacion.id} />
+                                ))
+                            }
+                        </div>
+                    ) : (
+                        <span className="publicaciones__error">No hay publicaciones favoritas para mostrar</span>
                     )
                 }
             </section>
