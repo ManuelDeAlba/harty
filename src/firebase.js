@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getFirestore, doc, setDoc, getDocs, collection, query, orderBy, onSnapshot, getDoc, startAt, limit, startAfter, updateDoc, where, deleteDoc, getCountFromServer } from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDocs, collection, query, orderBy, onSnapshot, getDoc, startAt, limit, startAfter, updateDoc, where, deleteDoc, getCountFromServer, addDoc } from "firebase/firestore";
 import { getAuth } from 'firebase/auth';
 import { getStorage, ref, uploadBytes, getDownloadURL, listAll, deleteObject } from 'firebase/storage';
 
@@ -329,6 +329,55 @@ export async function obtenerCalificacion({
     } else {
         return { calificacionTotal };
     }
+}
+
+export async function enviarComentario({
+    idPublicacion,
+    idUsuario,
+    comentario
+}){
+    addDoc(collection(db, "comentarios"), {
+        idPublicacion,
+        idUsuario,
+        comentario
+    });
+}
+
+export function obtenerComentariosTiempoReal(idPublicacion, callback){
+    const queryComentarios = query(collection(db, "comentarios"), where("idPublicacion", "==", idPublicacion));
+
+    // Establecer una suscripción a los cambios en la base de datos
+    const unsubscribe = onSnapshot(queryComentarios, async (querySnapshot) => {
+        // Se obtienen todos los comentarios y los id de los usuarios
+        let comentarios = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+        if(comentarios.length <= 0) return;
+
+        const idUsuarios = comentarios.map(comentario => comentario.idUsuario);
+
+        // Se buscan los datos de todos esos usuarios
+        const queryUsuarios = query(collection(db, "usuarios"), where("id", "in", idUsuarios));
+        const usuarios = (await getDocs(queryUsuarios)).docs.map(doc => doc.data());
+
+        // Cada comentario se completa con la información de su usuario
+        comentarios = comentarios.map(comentario => {
+            const usuario = usuarios.find(usuario => usuario.id === comentario.idUsuario);
+
+            return {
+                id: comentario.id,
+                idPublicacion: comentario.idPublicacion,
+                comentario: comentario.comentario,
+                usuario
+            }
+        });
+
+        callback(comentarios);
+    });
+
+    // Retorna una función para detener la suscripción cuando sea necesario
+    return unsubscribe;
 }
 
 //! STORAGE

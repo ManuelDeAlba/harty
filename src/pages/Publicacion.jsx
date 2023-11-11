@@ -6,7 +6,7 @@ import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 
 import { useAuth } from "../context/AuthProvider";
 
-import { guardarCalificacion, guardarFavorita, obtenerCalificacion, obtenerCantidadFavoritas, obtenerEstadoFavorita, obtenerMultimedia, obtenerPublicacion } from "../firebase";
+import { enviarComentario, guardarCalificacion, guardarFavorita, obtenerCalificacion, obtenerCantidadFavoritas, obtenerComentariosTiempoReal, obtenerEstadoFavorita, obtenerMultimedia, obtenerPublicacion } from "../firebase";
 import { truncarCalificacion } from "../utils";
 
 import SliderPublicacion from "../components/SliderPublicacion";
@@ -27,6 +27,7 @@ function Publicacion(){
         total: 0,
         usuario: 0
     });
+    const [comentarios, setComentarios] = useState([]);
 
     const handleFavorita = async (estado) => {
         // Si no existe el usuario, envia a iniciar sesión
@@ -78,7 +79,31 @@ function Publicacion(){
         });
     }
 
+    const handleComentario = async (e) => {
+        e.preventDefault();
+
+        // Si no existe el usuario, envia a iniciar sesión
+        if(!usuario){
+            navigate("/iniciar-sesion");
+            return;
+        }
+
+        const comentario = e.target.comentario.value;
+        
+        // Se limpia el formulario
+        e.target.reset();
+
+        //! PONER UN TOAST PARA INDICAR QUE SE ENVIO EL COMENTARIO
+        await enviarComentario({
+            idPublicacion,
+            idUsuario: usuario.id,
+            comentario
+        });
+    }
+
     useEffect(() => {
+        let unsubscribe;
+
         const obtenerDatos = async () => {
             setCargando(true);
 
@@ -88,7 +113,12 @@ function Publicacion(){
                 obtenerMultimedia(idPublicacion),
                 obtenerCalificacion({ idPublicacion }),
                 obtenerCantidadFavoritas(idPublicacion)
-            ])
+            ]);
+
+            // Suscripción para obtener los comentarios en tiempo real
+            unsubscribe = obtenerComentariosTiempoReal(idPublicacion, (comentarios) => {
+                setComentarios(comentarios);
+            });
 
             setPublicacion(publicacion);
             setMultimedia(multimedia);
@@ -103,6 +133,9 @@ function Publicacion(){
         }
 
         obtenerDatos();
+
+        // Se desuscribe al cambiar idPublicacion para la siguiente vez que se quiera poner el listener
+        return unsubscribe;
     }, [idPublicacion])
 
     useEffect(() => {
@@ -177,12 +210,24 @@ function Publicacion(){
                 </div>
             </section>
 
-            <section className="publicacion__comentarios">
+            <section className="comentarios">
                 <span><b>Comentarios</b></span>
+                <form className="comentarios__form" onSubmit={handleComentario}>
+                    <textarea
+                        className="comentarios__textarea"
+                        name="comentario"
+                        placeholder="Comentario..."
+                        cols="30"
+                        rows="3"
+                    ></textarea>
+                    <input type="submit" value="Enviar" />
+                </form>
                 <ul>
-                    <li>Lista</li>
-                    <li>de</li>
-                    <li>Comentarios</li>
+                    {
+                        comentarios.map(({id, comentario, usuario: { nombre }}) => (
+                            <p className="comentario" key={id}><b>{nombre})</b> {comentario}</p>
+                        ))    
+                    }
                 </ul>
             </section>
         </main>
