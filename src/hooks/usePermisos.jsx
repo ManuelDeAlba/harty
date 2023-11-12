@@ -10,7 +10,7 @@ function usePermisos(names){
     const [error, setError] = useState(null);
 
     const actualizarPermiso = () => {
-        if(usuario && usuarioAuth && permisos && names.length > 0){
+        if(permisos && names.length > 0){
             //? ROL
             const rol = obtenerRol({ usuario, usuarioAuth });
     

@@ -40,10 +40,10 @@ function Publicacion(){
     const [comentarios, setComentarios] = useState([]);
 
     const handleFavorita = async (estado) => {
-        // Si no existe el usuario, envia a iniciar sesión
+        // Si no tiene permisos para realizar esa acción
         if(!permisoFavorita){
             toast.error(errorFavorita.message);
-            if(errorFavorita.code != "harty/unverified-account") navigate("/iniciar-sesion");
+            if(errorFavorita.code != "harty/unverified-account" && errorFavorita.code != "harty/disabled-account") navigate("/iniciar-sesion");
             return;
         }
 
@@ -62,10 +62,10 @@ function Publicacion(){
     }
 
     const handleCalificacion = async cal => {
-        // Si no existe el usuario, envia a iniciar sesión
+        // Si no tiene permisos para realizar esa acción
         if(!permisoCalificar){
             toast.error(errorCalificar.message);
-            if(errorCalificar.code != "harty/unverified-account") navigate("/iniciar-sesion");
+            if(errorCalificar.code != "harty/unverified-account" && errorCalificar.code != "harty/disabled-account") navigate("/iniciar-sesion");
             return;
         }
         
@@ -94,10 +94,10 @@ function Publicacion(){
     const handleComentario = async (e) => {
         e.preventDefault();
 
-        // Si no existe el usuario, envia a iniciar sesión
+        // Si no tiene permisos para realizar esa acción
         if(!permisoComentar){
             toast.error(errorComentar.message);
-            if(errorComentar.code != "harty/unverified-account") navigate("/iniciar-sesion");
+            if(errorComentar.code != "harty/unverified-account" && errorComentar.code != "harty/disabled-account") navigate("/iniciar-sesion");
             return;
         }
 
