@@ -51,9 +51,8 @@ function FormularioIniciarSesion(){
         <main className="contenedor-sesion">
             <form className="form__sesion" onSubmit={handleSubmit}>
                 <h1 className="form__titulo">Inicio de sesión</h1>
-                <div className="form__input">
+                <div className="form__input form__input--border-bottom">
                     <FaEnvelope className="form__icono" />
-                    <label htmlFor="correo"></label>
                     <input
                         className="form__campo"
                         name="correo"
@@ -66,9 +65,8 @@ function FormularioIniciarSesion(){
                     />
                 </div>
 
-                <div className="form__input">
+                <div className="form__input form__input--border-bottom">
                     <FaLock className="form__icono" />
-                    <label htmlFor="contrasena"></label>
                     <input
                         className="form__campo"
                         name="contrasena"

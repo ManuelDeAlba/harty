@@ -41,7 +41,7 @@ function App() {
                             } />
                             <Route path="/editar-terraza/:idPublicacion" element={
                                 // Se verifican los permisos generales (por rol) y de usuario (para sus propias publicaciones)
-                                <Protegido names={["editar-terraza", "publicacion/editar-terraza"]} param="idPublicacion" redirect="/publicaciones">
+                                <Protegido names={["editar-terraza", "publicacion/editar-terraza"]} paramURL="idPublicacion" redirect="/publicaciones">
                                     <FormularioPublicarTerraza />
                                 </Protegido>
                             } />
@@ -52,13 +52,13 @@ function App() {
                             <Route path="/iniciar-sesion" element={<FormularioIniciarSesion />} />
                             <Route path="/perfil/:idUsuario" element={
                                 // Se verifican los permisos generales (por rol) y de usuario (solo para su propio perfil)
-                                <Protegido names={["ver-perfil", "usuario/ver-perfil"]} param="idUsuario">
+                                <Protegido names={["ver-perfil", "usuario/ver-perfil"]} paramURL="idUsuario">
                                     <Perfil />
                                 </Protegido>
                             } />
                             <Route path="/editar-perfil/:idUsuario" element={
                                 // Se verifican los permisos generales (por rol) y de usuario (solo para su propio perfil)
-                                <Protegido names={["editar-perfil", "usuario/editar-perfil"]} param="idUsuario">
+                                <Protegido names={["editar-perfil", "usuario/editar-perfil"]} paramURL="idUsuario">
                                     <FormularioEditarPerfil />
                                 </Protegido>
                             } />

@@ -201,206 +201,225 @@ function FormularioPublicarTerraza(){
     if(!datos) return <span className="contenedor">Cargando...</span>
 
     return(
-        <form onSubmit={handleSubmit}>
-            <h1>{!idPublicacion ? "Formulario Publicar Terraza" : "Formulario Editar Terraza"}</h1>
-
-            <div>
-                <label htmlFor="nombreTerraza">Nombre de la terraza:</label>
-                <input
-                    name="nombreTerraza"
-                    id="nombreTerraza"
-                    type="text"
-                    onInput={handleInput}
-                    value={datos.nombreTerraza}
-                    required
-                />
-                <p style={{color: "red"}}>{ errores && errores.find(err => err.name == "nombreTerraza")?.msg }</p>
-            </div>
-
-            <div>
-                <label htmlFor="descripcion">Descripción:</label>
-                <textarea
-                    name="descripcion"
-                    id="descripcion"
-                    cols="30"
-                    rows="3"
-                    onInput={handleInput}
-                    value={datos.descripcion}
-                    required
-                ></textarea>
-                <p style={{color: "red"}}>{ errores && errores.find(err => err.name == "descripcion")?.msg }</p>
-            </div>
-
-            <div>
-                <label htmlFor="reglamento">Reglamento:</label>
-                <textarea
-                    name="reglamento"
-                    id="reglamento"
-                    cols="30"
-                    rows="3"
-                    onInput={handleInput}
-                    value={datos.reglamento}
-                ></textarea>
-            </div>
-
-            <div>
-                <label>Dirección de la terraza:</label>
-                {
-                    <SelectorDeUbicacion
-                        name="direccion"
+        <main className="contenedor-publicar">
+            <form className='form__publicar' onSubmit={handleSubmit}>
+                <h1 className="form__titulo">{!idPublicacion ? "Publicar Terraza" : "Editar Terraza"}</h1>
+                
+                <label htmlFor="nombreTerraza">Nombre de la terraza <span className="form__obligatorio">*</span></label>
+                <div className="form__input">
+                    <input
+                        className="form__campo"
+                        name="nombreTerraza"
+                        id="nombreTerraza"
+                        type="text"
                         onInput={handleInput}
-                        value={datos.direccion}
-                        // Para saber si se cambió de ruta entre publicar y editar
-                        modoEdicion={idPublicacion != undefined}
+                        value={datos.nombreTerraza}
+                        required
                     />
-                }
-                <p style={{color: "red"}}>{ errores && errores.find(err => err.name == "direccion")?.msg }</p>
-            </div>
+                </div>
+                <span className="form__error">{ errores && errores.find(err => err.name == "nombreTerraza")?.msg }</span>
 
-            <div>
-                <label htmlFor="telefono">Teléfono:</label>
-                <input
-                    name="telefono"
-                    id="telefono"
-                    type="text"
-                    inputMode="tel"
-                    pattern="\d{10}"
-                    minLength={10}
-                    maxLength={10}
-                    onInput={handleInput}
-                    value={datos.telefono}
-                    required
-                />
-                <p style={{color: "red"}}>{ errores && errores.find(err => err.name == "telefono")?.msg }</p>
-            </div>
+                <label htmlFor="descripcion">Descripción <span className="form__obligatorio">*</span></label>
+                <div className="form__input">
+                    <textarea
+                        className="form__campo"
+                        name="descripcion"
+                        id="descripcion"
+                        cols="30"
+                        rows="3"
+                        onInput={handleInput}
+                        value={datos.descripcion}
+                        required
+                    ></textarea>
+                </div>
+                <span className="form__error">{ errores && errores.find(err => err.name == "descripcion")?.msg }</span>
 
-            <div>
+                <label htmlFor="reglamento">Reglamento:</label>
+                <div className="form__input">
+                    <textarea
+                        className="form__campo"
+                        name="reglamento"
+                        id="reglamento"
+                        cols="30"
+                        rows="3"
+                        onInput={handleInput}
+                        value={datos.reglamento}
+                    ></textarea>
+                </div>
+
+                <label>Dirección de la terraza: (Por favor, indique en el mapa la direccion)</label>
+                <div className="form__publicar-ubicacion">
+                    {
+                        <SelectorDeUbicacion
+                            name="direccion"
+                            onInput={handleInput}
+                            value={datos.direccion}
+                            // Para saber si se cambió de ruta entre publicar y editar
+                            modoEdicion={idPublicacion != undefined}
+                        />
+                    }
+                    <span className="form__error">{ errores && errores.find(err => err.name == "direccion")?.msg }</span>
+                </div>
+
+                <label htmlFor="telefono">Teléfono <span className="form__obligatorio">*</span></label>
+                <div className="form__input">
+                    <input
+                        className="form__campo"
+                        name="telefono"
+                        id="telefono"
+                        type="text"
+                        inputMode="tel"
+                        pattern="\d{10}"
+                        minLength={10}
+                        maxLength={10}
+                        onInput={handleInput}
+                        value={datos.telefono}
+                        required
+                    />
+                </div>
+                <span className="form__error">{ errores && errores.find(err => err.name == "telefono")?.msg }</span>
+
                 <label htmlFor="redes">Redes sociales:</label>
-                <input
-                    name="redes"
-                    id="redes"
-                    type="text"
-                    onInput={handleInput}
-                    value={datos.redes}
-                />
-            </div>
+                <div className="form__input">
+                    <input
+                        className="form__campo"
+                        name="redes"
+                        id="redes"
+                        type="text"
+                        onInput={handleInput}
+                        value={datos.redes}
+                    />
+                </div>
 
-            <div>
-                <label htmlFor="precio">Precio:</label>
-                <input
-                    name="precio"
-                    id="precio"
-                    type="number"
-                    inputMode="numeric"
-                    min={0}
-                    onInput={handleInput}
-                    value={datos.precio}
-                    required
-                />
-                <p style={{color: "red"}}>{ errores && errores.find(err => err.name == "precio")?.msg }</p>
-            </div>
+                <label htmlFor="precio">Precio <span className="form__obligatorio">*</span></label>
+                <div className="form__input">
+                    <input
+                        className="form__campo"
+                        name="precio"
+                        id="precio"
+                        type="number"
+                        inputMode="numeric"
+                        min={0}
+                        onInput={handleInput}
+                        value={datos.precio}
+                        required
+                    />
+                </div>
+                <span className="form__error">{ errores && errores.find(err => err.name == "precio")?.msg }</span>
 
-            <div>
-                <label htmlFor="horarios">Horarios:</label>
-                <input
-                    name="horarios"
-                    id="horarios"
-                    type="text"
-                    onInput={handleInput}
-                    value={datos.horarios}
-                    required
-                />
-                <p style={{color: "red"}}>{ errores && errores.find(err => err.name == "horarios")?.msg }</p>
-            </div>
+                <label htmlFor="horarios">Horarios <span className="form__obligatorio">*</span></label>
+                <div  className="form__input">
+                    <input
+                        className="form__campo"
+                        name="horarios"
+                        id="horarios"
+                        type="text"
+                        onInput={handleInput}
+                        value={datos.horarios}
+                        required
+                    />
+                </div>
+                <span className="form__error">{ errores && errores.find(err => err.name == "horarios")?.msg }</span>
 
-            <div>
-                <label htmlFor="tamano">Tamaño:</label>
-                <input
-                    name="tamano"
-                    id="tamano"
-                    type="text"
-                    onInput={handleInput}
-                    value={datos.tamano}
-                    required
-                />
-                <p style={{color: "red"}}>{ errores && errores.find(err => err.name == "tamano")?.msg }</p>
-            </div>
+                <label htmlFor="tamano">Tamaño <span className="form__obligatorio">*</span></label>
+                <div className="form__input">
+                    <input
+                        className="form__campo"
+                        name="tamano"
+                        id="tamano"
+                        type="text"
+                        onInput={handleInput}
+                        value={datos.tamano}
+                        required
+                    />
+                </div>
+                <span className="form__error">{ errores && errores.find(err => err.name == "tamano")?.msg }</span>
 
-            <div>
-                <label htmlFor="capacidad">Capacidad de personas:</label>
-                <input
-                    name="capacidad"
-                    id="capacidad"
-                    type="number"
-                    inputMode="numeric"
-                    onInput={handleInput}
-                    value={datos.capacidad}
-                    required
-                />
-                <p style={{color: "red"}}>{ errores && errores.find(err => err.name == "capacidad")?.msg }</p>
-            </div>
+                <label htmlFor="capacidad">Capacidad de personas <span className="form__obligatorio">*</span></label>
+                <div className="form__input">
+                    <input
+                        className="form__campo"
+                        name="capacidad"
+                        id="capacidad"
+                        type="number"
+                        inputMode="numeric"
+                        onInput={handleInput}
+                        value={datos.capacidad}
+                        required
+                    />
+                </div>
+                <span className="form__error">{ errores && errores.find(err => err.name == "capacidad")?.msg }</span>
 
-            <div>
                 <label htmlFor="servicios">Servicios extras:</label>
-                <textarea
-                    name="servicios"
-                    id="servicios"
-                    cols="30"
-                    rows="3"
-                    onInput={handleInput}
-                    value={datos.servicios}
-                ></textarea>
-            </div>
+                <div className="form__input">
+                    <textarea
+                        className="form__campo"
+                        name="servicios"
+                        id="servicios"
+                        cols="30"
+                        rows="3"
+                        onInput={handleInput}
+                        value={datos.servicios}
+                    ></textarea>
+                </div>
 
-            <div>
                 <label htmlFor="etiquetas">Etiquetas (separadas por ","):</label>
-                <input
-                    name="etiquetas"
-                    id="etiquetas"
-                    type="text"
-                    onInput={handleInput}
-                    value={datos.etiquetas}
-                />
-            </div>
+                <div className="form__input">
+                    <input
+                        className="form__campo"
+                        name="etiquetas"
+                        id="etiquetas"
+                        type="text"
+                        onInput={handleInput}
+                        value={datos.etiquetas}
+                    />
+                </div>
 
-            <div>
                 <label htmlFor="multimedia">Multimedia:</label>
-                <input
-                    name="multimedia"
-                    id="multimedia"
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    onInput={handleInput}
-                />
-                <h2>Subidas</h2>
-                {
-                    imgSubidas.map(imagen => (
-                        !imagen.borrar && (
-                            <img width="100" src={imagen.src} key={imagen.referencia.name} onClick={() => handleBorrarMultimediaStorage(imagen.referencia.name)} />
+                <div className="form__input">
+                    <input
+                     className="form__campo"
+                        name="multimedia"
+                        id="multimedia"
+                        type="file"
+                        multiple
+                        accept="image/*"
+                        onInput={handleInput}
+                    />
+                </div>    
+                    <h2>Subidas</h2>
+                    <div className="form__galeria">
+                    {
+                        imgSubidas.map(imagen => (
+                            !imagen.borrar && (
+                                <img className="form__img" src={imagen.src} key={imagen.referencia.name} onClick={() => handleBorrarMultimediaStorage(imagen.referencia.name)} />
+                            )
+                        ))
+                    }
+                    </div>
+                    <h2>Nuevas</h2>
+                    <div className="form__galeria">
+                    {
+                        multimedia.map(imagen => (
+                            <img className="form__img" src={imagen.src} key={imagen.file.name} onClick={() => handleBorrarMultimediaLocal(imagen.file.name)} />
+                        ))
+                    }
+                    </div>
+                <div>
+                    <h4>Falta disponibilidad</h4>
+                </div>
+
+                <div className="form__botones">
+                    {
+                        idPublicacion && (
+                            <button className="form__boton boton boton--rojo" type="button" onClick={() => handleBorrarPublicacion(datos.id)}>Borrar publicación</button>
                         )
-                    ))
-                }
-                <h2>Nuevas</h2>
-                {
-                    multimedia.map(imagen => (
-                        <img width="100" src={imagen.src} key={imagen.file.name} onClick={() => handleBorrarMultimediaLocal(imagen.file.name)} />
-                    ))
-                }
-            </div>
+                    }
 
-            <div>
-                <h4>Falta disponibilidad</h4>
-            </div>
-
-            {
-                idPublicacion && (
-                    <button type="button" onClick={() => handleBorrarPublicacion(datos.id)}>Borrar publicación</button>
-                )
-            }
-
-            <input type="submit" value={`${!idPublicacion ? "Publicar" : "Editar"}`} />
-        </form>
+                    <input type="submit" value={`${!idPublicacion ? "Publicar" : "Editar"}`} className="form__boton boton" />
+                </div>
+            </form>
+        </main>
     )
 }
 
