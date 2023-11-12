@@ -43,7 +43,7 @@ function MapaUbicacion({ className, style, ubicacion={longitud: 0, latitud: 0} }
 
     return(
         // Estilos temporales
-        <div ref={mapaContenedor} style={{width: "90%", maxWidth: "500px", aspectRatio: "1/1", ...style}} className={`mapa ${className}`} />
+        <div ref={mapaContenedor} className={`mapa ${className}`} />
     )
 }
 

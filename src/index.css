@@ -8,6 +8,7 @@
   --color-primario: #FFDE59;
   --color-secundario: #0D004B;
   --color-titulo: #051922;
+  --color-texto:#333;
 
   --color-etiqueta: #69757A;
   --color-etiqueta-hover: #0056b3;
@@ -216,6 +217,15 @@ i {
 .boton--amarillo{ background: rgb(255, 255, 0); color: #000; }
 .boton--amarillo:hover{ background: rgb(205, 205, 0); }
 
+
+.line {
+  border-top: 0.1px solid #c4c4c454; 
+  border-left: none;
+  border-bottom: none;
+
+}
+
+
 /* NAVBAR */
 .nav{
   position: fixed;
@@ -358,6 +368,7 @@ i {
 }
 .header__contenedor--3{
   align-items: flex-end;
+  text-align: end;
 }
 .header__texto{
   color: var(--color-primario);
@@ -544,13 +555,14 @@ html:has(.modal){ overflow: hidden; }
   left: 15px;
   padding: 10px 20px;
   background-color: #fff;
-  color: var(--color-secundario); /* Color del texto del botón */
+  color: var(--color-secundario); 
   border: none;
   border-radius: 7px;
   cursor: pointer;
   font-family: "Poppins", sans-serif;
   font-weight: 500;
   font-size: medium;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 .previsualizacion__editar:hover{
   background-color:var(--color-primario);
@@ -609,18 +621,33 @@ html:has(.modal){ overflow: hidden; }
 }
 
 /* PUBLICACION (DETALLES) */
+.publicacion{
+  width: 100%;
+  max-width: 1200px;
+  min-width: 500px;
+  margin: 50px auto;
+  padding: 24px;
+}
+
 .publicacion__slider{
   height: 500px;
+  width: 100%;
+  margin-top: 0;
+  margin-bottom: 40px;
+  min-width: 425px;
 }
 .swiper-button-prev,
 .swiper-button-next{
   --swiper-navigation-sides-offset: 0;
   color: white;
-  background: rgb(0 0 0 / .3);
   height: 100%;
   top: 0;
   margin: 0;
-  padding: 0 1.5rem;
+  padding: 1.5rem;
+  background: transparent;
+}
+.swiper-button-prev, .swiper-button-next{
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, .7);
 }
 .swiper-button-prev:hover,
 .swiper-button-next:hover{
@@ -631,23 +658,137 @@ html:has(.modal){ overflow: hidden; }
   --swiper-pagination-bullet-height: .75rem;
   --swiper-pagination-bullet-inactive-opacity: .4;
   outline: 2px solid rgb(200 200 200 / .4);
+  background-color: #00000092;
 }
 .publicacion__img{
-  width: 100%;
+  width: 1170px;
   height: 100%;
   object-fit: cover;
+  border-radius: 10px;
 }
-.favoritos{
+
+.publicacion__acciones{
+  display: grid;
+  grid-template-columns: 1fr auto; /* La primera columna ocupa el espacio disponible y la segunda se ajusta al contenido */
+  gap: 16px; /* Ajusta según sea necesario el espacio entre las columnas */
+  align-items: center;
+}
+
+.publicacion__texto{
+  color: var(--color-texto);
+  display: flex;
+  flex-wrap: wrap;
+  display: flex;
+}
+
+.publicacion__texto h3{
+  margin-bottom: 60px;
+}
+.publicacion__texto p{
+  color: var(--color-texto);
+}
+
+.columna-izquierda {/* Título, descripción, etc */
+  flex: 1; 
+  margin-bottom: 20px; 
+  padding-right: 2rem;
+}
+
+.columna-izquierda > * {
+  margin-bottom: 20px;
+}
+
+.publicacion .previsualizacion__etiqueta{
+  margin: 10px 10px auto auto;
+}
+
+.footer{
+  font-size: 1.1em;
+}
+
+.columna-derecha {/* Mapa de Ubicación, teléfono, etc */
+  box-shadow: 0px 6px 16px rgba(0, 0, 0, .12);
+  margin: 40px auto;
+  padding: 2rem;
+  border: 1px solid rgb(221, 221, 221);
+  border-radius: 12px;
+  height: fit-content;
+}
+
+.columna-derecha > * {
+  margin-bottom: 20px;
+  max-width: 400px;
+}
+
+.llama-ahora {
+  padding: 10px;
+  font-size: 16px;
+  background-color: var(--color-secundario); /* Color de fondo */
+  border: none; 
+  border-radius: 25px; 
+  cursor: pointer; 
+  text-align: center;
+  margin: 1px 60px;
+}
+
+.llama-ahora a{
+  color: white;
+}
+.llama-ahora:hover {
+  background-color: transparent;
+  border: 1px solid var(--color-secundario); 
+  margin: 0px 60px;
+}
+
+.llama-ahora:hover a{
+  color: var(--color-secundario); 
+}
+
+@media (max-width: 850px) {
+  .publicacion__texto {
+    flex-direction: column; 
+  }
+
+  .columna-derecha {
+    flex-basis:100%; 
+    order: 1; 
+    margin: 40px auto;
+  }
+}
+
+.publicacion__inferior {
+  margin-top: 100px;
+}/*SEGUIR AQUÍii*/
+
+.mapa {
+  width: 100%;
+  padding-top: 50%; 
+  position: relative;
+  min-height: 200px;
+  min-width: 370px;
+  border-radius: 10px;
+}
+
+@media screen and (min-width: 750px) {
+  .mapa{
+    padding-top:40% ;
+    width:80%;
+    margin: auto;
+  }
+}
+
+.favoritos {
   display: flex;
   align-items: center;
-  gap: .5rem;
-  font-size: 1rem;
 }
-.favoritos__corazon{
+
+.favoritos__corazon {
   font-size: 2rem;
   cursor: pointer;
   color: red;
   -webkit-tap-highlight-color: transparent;
+  margin-top: 10px;
+  margin-left: 5px;
 }
 .calificacion{
   display: flex;

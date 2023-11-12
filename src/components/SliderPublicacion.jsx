@@ -9,7 +9,7 @@ function SliderPublicacion({ multimedia }){
     return(
         multimedia.length > 0 && (
             <Swiper
-                className="publicacion__slider contenedor"
+                className="publicacion__slider"
                 modules={[Navigation, Pagination]}
                 pagination={{
                     clickable: true
