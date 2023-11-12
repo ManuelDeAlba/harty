@@ -53,7 +53,7 @@ function Protegido({
                     // Si se tiene que proteger una publicación para que solo acceda el creador
                     const publicacion = await obtenerPublicacion(parametroURL);
                     return permisos[rol]?.[name] && publicacion.idUsuario == usuario.id;
-                } else if(name.startsWith("comentario")) {
+                } else if(name.startsWith("comentario/")) {
                     // Si solo el dueño del usuario puede hacer un cambio con su propio comentario
                     // Se necesita un params con { idComentario: ... }
                     const comentario = await obtenerComentario(params.idComentario);
