@@ -4,7 +4,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
-function MapaUbicacion({ className, style, ubicacion={longitud: 0, latitud: 0} }){
+function MapaUbicacion({ className="", ubicacion={longitud: 0, latitud: 0} }){
     const mapaContenedor = useRef(null);
     const [mapa, setMapa] = useState(null);
     const [marker, setMarker] = useState(null);

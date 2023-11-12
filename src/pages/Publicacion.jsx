@@ -198,60 +198,80 @@ function Publicacion(){
     if(!publicacion) return <h3>No existe la publicación</h3>
 
     return(
-        <main className="publicacion">
-            <h3>{publicacion.nombreTerraza}</h3>
+        <main className="publicacion contenedor">
+            <h3 className="titulo">{publicacion.nombreTerraza}</h3>
+
             <SliderPublicacion multimedia={multimedia} />
-            <section className="publicacion__acciones texto-overflow">
+
+            <section className="publicacion__acciones">
                 <span><b>Reportar terraza</b> <FaBullhorn /></span>
                 <div className="favoritos">
-                        <span><b>{cantidadFavoritas}</b> </span>
-                        <span onClick={() => handleFavorita(!favorita)} className="favoritos__corazon">
-                            {
-                                favorita ?
-                                    <AiFillHeart /> :
-                                    <AiOutlineHeart />
-                            }
-                        </span>
+                    <span><b>{cantidadFavoritas}</b> </span>
+                    <span onClick={() => handleFavorita(!favorita)} className="favoritos__corazon">
+                        {
+                            favorita ?
+                                <AiFillHeart /> :
+                                <AiOutlineHeart />
+                        }
+                    </span>
                 </div>
             </section>
+
+            <section className="publicacion__iconos">
+                <div className="publicacion__icono">
+                    <FaClock className="publicacion__icono-dibujo" />
+                    <p className="texto-overflow">{publicacion.horarios}</p>
+                </div>
+
+                <div className="publicacion__icono">
+                    <FaRuler className="publicacion__icono-dibujo" />
+                    <p className="texto-overflow">{publicacion.tamano}</p>
+                </div>
+
+                <div className="publicacion__icono">
+                    <FaUsers className="publicacion__icono-dibujo" />
+                    <p className="texto-overflow">{publicacion.capacidad}</p>
+                </div>
+            </section>
+
             <section className="publicacion__texto">
-                <div className="columna-izquierda">
-                    <div className="column">
-                        <FaClock style={{ fontSize: '1.5em',marginRight:'.5em'}}/>
-                        <p className="footer texto-overflow">{publicacion.horarios}</p>
-                        <FaRuler style={{ fontSize: '2em', margin: '0 0.5em 0 1em' }} />
-                        <p className="footer texto-overflow">{publicacion.tamano}</p>
-                        <FaUsers style={{ fontSize: '1.8em', margin: '0 0.5em 0 1em' }} />
-                        <p className="footer texto-overflow">{publicacion.capacidad}</p>
-                    </div>
+                <div className="publicacion__izquierda">
                     <p>{publicacion.descripcion}</p>
-                    <p>{publicacion.etiquetas.map((etiqueta, indice) => <span className="previsualizacion__etiqueta" key={indice}>{ etiqueta }</span>)}</p>
+                    <div className="publicacion__etiquetas">
+                        {
+                            publicacion.etiquetas.map((etiqueta, indice) => <span className="previsualizacion__etiqueta" key={indice}>{ etiqueta }</span>)
+                        }
+                    </div>
                     <p><b>Reglamento:</b> {publicacion.reglamento}</p>
                     <hr className="line" />
                     <p><b>Servicios extras:</b> {publicacion.servicios}</p>
-                       {/* <p><b>Disponibilidad:</b> {publicacion.disponibilidad}</p> */}
+                    {/* <p><b>Disponibilidad:</b> {publicacion.disponibilidad}</p> */}
                 </div>
-                <div className="columna-derecha">
+                <div className="publicacion__derecha">
                     <span className="previsualizacion__precio"><b>$</b> {publicacion.precio}</span>
-                    <p> <FaPhone style={{ fontSize: '1.8em', verticalAlign: 'middle', marginRight: '0.5em' }} />{publicacion.telefono}</p>
-                    <p className="texto-overflow"><b>Redes sociales:</b> {publicacion.redes}</p>
-                    <div className="llama-ahora">
-                        <a href={`tel:${publicacion.telefono}`}>Llama ahora</a>
+                    <div className="publicacion__icono">
+                        <FaPhone className="publicacion__icono-dibujo publicacion__icono-dibujo--llamar" />
+                        <span>{publicacion.telefono}</span>
                     </div>
+                    <p className="texto-overflow"><b>Redes sociales:</b> {publicacion.redes}</p>
+                    <a className="publicacion__cta-llamar boton" href={`tel:${publicacion.telefono}`}>Llama ahora</a>
                     {/* Añade más elementos según sea necesario */}
                 </div>
             </section>
+
             <hr className="line" />
+
             <section className="publicacion__inferior">
-                <span><b>Ubicación </b></span>
                 <MapaUbicacion ubicacion={publicacion.direccion} />
                 <div className="calificacion">
                     <span className="calificacion__titulo"><b>Calificacion total:</b> {truncarCalificacion(calificaciones.total)}</span>
-                    <span className={`calificacion__estrella${calificaciones.usuario >= 1 ? " calificacion__estrella--activa" : ""}`} onClick={() => handleCalificacion(1)}>&#9733;</span>
-                    <span className={`calificacion__estrella${calificaciones.usuario >= 2 ? " calificacion__estrella--activa" : ""}`} onClick={() => handleCalificacion(2)}>&#9733;</span>
-                    <span className={`calificacion__estrella${calificaciones.usuario >= 3 ? " calificacion__estrella--activa" : ""}`} onClick={() => handleCalificacion(3)}>&#9733;</span>
-                    <span className={`calificacion__estrella${calificaciones.usuario >= 4 ? " calificacion__estrella--activa" : ""}`} onClick={() => handleCalificacion(4)}>&#9733;</span>
-                    <span className={`calificacion__estrella${calificaciones.usuario >= 5 ? " calificacion__estrella--activa" : ""}`} onClick={() => handleCalificacion(5)}>&#9733;</span>
+                    <div className="calificacion__estrellas">
+                        <span className={`calificacion__estrella${calificaciones.usuario >= 1 ? " calificacion__estrella--activa" : ""}`} onClick={() => handleCalificacion(1)}>&#9733;</span>
+                        <span className={`calificacion__estrella${calificaciones.usuario >= 2 ? " calificacion__estrella--activa" : ""}`} onClick={() => handleCalificacion(2)}>&#9733;</span>
+                        <span className={`calificacion__estrella${calificaciones.usuario >= 3 ? " calificacion__estrella--activa" : ""}`} onClick={() => handleCalificacion(3)}>&#9733;</span>
+                        <span className={`calificacion__estrella${calificaciones.usuario >= 4 ? " calificacion__estrella--activa" : ""}`} onClick={() => handleCalificacion(4)}>&#9733;</span>
+                        <span className={`calificacion__estrella${calificaciones.usuario >= 5 ? " calificacion__estrella--activa" : ""}`} onClick={() => handleCalificacion(5)}>&#9733;</span>
+                    </div>
                 </div>
                 <section className="comentarios">
                     <span><b>Comentarios</b></span>
@@ -261,11 +281,11 @@ function Publicacion(){
                             name="comentario"
                             placeholder="Comentario..."
                             cols="30"
-                            rows="3"
+                            rows="2"
                         ></textarea>
-                        <input type="submit" value="Enviar" />
+                        <input className="comentarios__boton boton" type="submit" value="Enviar" />
                     </form>
-                    <ul>
+                    <section className="comentarios__lista">
                         {
                             comentarios.map(({id, comentario, usuario: { nombre }}) => (
                                 <div className="comentarios__contenedor-comentario" key={id}>
@@ -278,12 +298,12 @@ function Publicacion(){
                                         cargandoComponent={""}
                                         errorComponent={""}
                                     >
-                                        <button className="boton boton--rojo" onClick={() => handleBorrarComentario(id)}>Eliminar</button>
+                                        <button className="comentarios__comentario-boton boton boton--rojo" onClick={() => handleBorrarComentario(id)}>Eliminar</button>
                                     </Protegido>
                                 </div>
                             ))    
                         }
-                    </ul>
+                    </section>
                 </section>
             </section>
         </main>
