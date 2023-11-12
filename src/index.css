@@ -647,6 +647,7 @@ html:has(.modal){ overflow: hidden; }
   font-size: 2rem;
   cursor: pointer;
   color: red;
+  -webkit-tap-highlight-color: transparent;
 }
 .calificacion{
   display: flex;
@@ -660,6 +661,7 @@ html:has(.modal){ overflow: hidden; }
   font-size: 2rem;
   cursor: pointer;
   user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 .calificacion__estrella:has(~ .calificacion__estrella:hover),
 .calificacion__estrella:hover{
@@ -708,6 +710,7 @@ html:has(.modal){ overflow: hidden; }
   color: var(--color-primario);
 }
 .form__campo{
+  width: 100%;
   background: transparent;
   padding: .5rem 1rem;
   color: #000;
