@@ -670,6 +670,76 @@ html:has(.modal){ overflow: hidden; }
 .calificacion__estrella--activa:hover{
   color: gold;
 }
+/* Publicar terraza*/
+.contenedor-publicar{
+  background-color: #f5f6f7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.form__publicar{
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 90%;
+  max-width: 70%;
+  height: auto;
+  background-color: #ffffff;
+  padding: 1rem 1rem;
+  text-align: center;
+  border-radius: 25px;
+  box-shadow: 0 3px 13px 1px rgb(0 0 0 / 9%);
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+.form__publicar label{
+  text-align: left;
+}
+.formpublicar__input{
+  display: flex;
+  align-items: center;
+  border: 1px solid #767676;
+}
+.formpublicar__ubicacion{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.formpublicar__input textarea{
+  width: 100%;
+  border: none;
+}
+.formpublicar__campo{
+  background: transparent;
+  width: 100%;
+  padding: .5rem 1rem;
+  color: #000;
+  border: none;
+  outline: none;
+}
+.boton-publicar{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.formpublicar__boton{
+  width: 25%;
+  border-radius: 10px;
+  padding: 10px;
+  margin: 10px;
+  border: 0;
+  outline: 0;
+  cursor: pointer;
+}
+.imagenes-publicar{
+  display: flex;
+  flex-wrap: wrap;
+}
+.imagenes-publicar img{
+  width: 30%;
+  height: 30%;
+  margin: 5px;
+}
 
 /* INICIO DE SESIÓN Y REGISTRO */
 .contenedor-sesion{

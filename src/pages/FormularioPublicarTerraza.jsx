@@ -201,206 +201,230 @@ function FormularioPublicarTerraza(){
     if(!datos) return <span className="contenedor">Cargando...</span>
 
     return(
-        <form onSubmit={handleSubmit}>
-            <h1>{!idPublicacion ? "Formulario Publicar Terraza" : "Formulario Editar Terraza"}</h1>
-
-            <div>
+        <main className="contenedor-publicar">
+            <form className='form__publicar' onSubmit={handleSubmit}>
+                <h1 className="form__titulo">{!idPublicacion ? "Publicar Terraza" : "Editar Terraza"}</h1>
                 <label htmlFor="nombreTerraza">Nombre de la terraza:</label>
-                <input
-                    name="nombreTerraza"
-                    id="nombreTerraza"
-                    type="text"
-                    onInput={handleInput}
-                    value={datos.nombreTerraza}
-                    required
-                />
-                <p style={{color: "red"}}>{ errores && errores.find(err => err.name == "nombreTerraza")?.msg }</p>
-            </div>
-
-            <div>
-                <label htmlFor="descripcion">Descripción:</label>
-                <textarea
-                    name="descripcion"
-                    id="descripcion"
-                    cols="30"
-                    rows="3"
-                    onInput={handleInput}
-                    value={datos.descripcion}
-                    required
-                ></textarea>
-                <p style={{color: "red"}}>{ errores && errores.find(err => err.name == "descripcion")?.msg }</p>
-            </div>
-
-            <div>
-                <label htmlFor="reglamento">Reglamento:</label>
-                <textarea
-                    name="reglamento"
-                    id="reglamento"
-                    cols="30"
-                    rows="3"
-                    onInput={handleInput}
-                    value={datos.reglamento}
-                ></textarea>
-            </div>
-
-            <div>
-                <label>Dirección de la terraza:</label>
-                {
-                    <SelectorDeUbicacion
-                        name="direccion"
+                <div className="formpublicar__input">
+                    <input
+                        className="formpublicar__campo"
+                        name="nombreTerraza"
+                        id="nombreTerraza"
+                        type="text"
                         onInput={handleInput}
-                        value={datos.direccion}
-                        // Para saber si se cambió de ruta entre publicar y editar
-                        modoEdicion={idPublicacion != undefined}
+                        value={datos.nombreTerraza}
+                        required
+                        placeholder="Ingresa el nombre de la terraza:"
                     />
-                }
-                <p style={{color: "red"}}>{ errores && errores.find(err => err.name == "direccion")?.msg }</p>
-            </div>
+                    <p style={{color: "red"}}>{ errores && errores.find(err => err.name == "nombreTerraza")?.msg }</p>
+                </div>
 
-            <div>
+                <label htmlFor="descripcion">Descripción:</label>
+                <div className="formpublicar__input">
+                    <textarea 
+                        name="descripcion"
+                        id="descripcion"
+                        cols="30"
+                        rows="3"
+                        onInput={handleInput}
+                        value={datos.descripcion}
+                        required
+                        placeholder="Ingresa la descripcion de la terraza:"
+                    ></textarea>
+                    <p style={{color: "red"}}>{ errores && errores.find(err => err.name == "descripcion")?.msg }</p>
+                </div>
+
+                <label htmlFor="reglamento">Reglamento:</label>
+                <div className="formpublicar__input">
+                    <textarea
+                        name="reglamento"
+                        id="reglamento"
+                        cols="30"
+                        rows="3"
+                        onInput={handleInput}
+                        value={datos.reglamento}
+                        placeholder="Ingresa el reglamento de la terraza:"
+                    ></textarea>
+                </div>
+
+                <label>Dirección de la terraza: (Por favor, indique en el mapa la direccion)</label>
+                <div className="formpublicar__ubicacion">
+                    {
+                        <SelectorDeUbicacion
+                            name="direccion"
+                            onInput={handleInput}
+                            value={datos.direccion}
+                            // Para saber si se cambió de ruta entre publicar y editar
+                            modoEdicion={idPublicacion != undefined}
+                        />
+                    }
+                    <p style={{color: "red"}}>{ errores && errores.find(err => err.name == "direccion")?.msg }</p>
+                </div>
+
                 <label htmlFor="telefono">Teléfono:</label>
-                <input
-                    name="telefono"
-                    id="telefono"
-                    type="text"
-                    inputMode="tel"
-                    pattern="\d{10}"
-                    minLength={10}
-                    maxLength={10}
-                    onInput={handleInput}
-                    value={datos.telefono}
-                    required
-                />
-                <p style={{color: "red"}}>{ errores && errores.find(err => err.name == "telefono")?.msg }</p>
-            </div>
+                <div className="formpublicar__input">
+                    <input
+                        className="formpublicar__campo"
+                        name="telefono"
+                        id="telefono"
+                        type="text"
+                        inputMode="tel"
+                        pattern="\d{10}"
+                        minLength={10}
+                        maxLength={10}
+                        onInput={handleInput}
+                        value={datos.telefono}
+                        required
+                        placeholder="Ingresa telefonos para contactar a la terraza:"
+                    />
+                    <p style={{color: "red"}}>{ errores && errores.find(err => err.name == "telefono")?.msg }</p>
+                </div>
 
-            <div>
                 <label htmlFor="redes">Redes sociales:</label>
-                <input
-                    name="redes"
-                    id="redes"
-                    type="text"
-                    onInput={handleInput}
-                    value={datos.redes}
-                />
-            </div>
+                <div className="formpublicar__input">
+                    <input
+                        className="formpublicar__campo"
+                        name="redes"
+                        id="redes"
+                        type="text"
+                        onInput={handleInput}
+                        value={datos.redes}
+                        placeholder="Ingresa las redes sociales de la terraza:"
+                    />
+                </div>
 
-            <div>
                 <label htmlFor="precio">Precio:</label>
-                <input
-                    name="precio"
-                    id="precio"
-                    type="number"
-                    inputMode="numeric"
-                    min={0}
-                    onInput={handleInput}
-                    value={datos.precio}
-                    required
-                />
-                <p style={{color: "red"}}>{ errores && errores.find(err => err.name == "precio")?.msg }</p>
-            </div>
+                <div className="formpublicar__input">
+                    <input
+                        className="formpublicar__campo"
+                        name="precio"
+                        id="precio"
+                        type="number"
+                        inputMode="numeric"
+                        min={0}
+                        onInput={handleInput}
+                        value={datos.precio}
+                        required
+                        placeholder="Ingresa el precio de la terreza:"
+                    />
+                    <p style={{color: "red"}}>{ errores && errores.find(err => err.name == "precio")?.msg }</p>
+                </div>
 
-            <div>
                 <label htmlFor="horarios">Horarios:</label>
-                <input
-                    name="horarios"
-                    id="horarios"
-                    type="text"
-                    onInput={handleInput}
-                    value={datos.horarios}
-                    required
-                />
-                <p style={{color: "red"}}>{ errores && errores.find(err => err.name == "horarios")?.msg }</p>
-            </div>
+                <div  className="formpublicar__input">
+                    <input
+                        className="formpublicar__campo"
+                        name="horarios"
+                        id="horarios"
+                        type="text"
+                        onInput={handleInput}
+                        value={datos.horarios}
+                        required
+                        placeholder="Ingresa el horario de la terraza:"
+                    />
+                    <p style={{color: "red"}}>{ errores && errores.find(err => err.name == "horarios")?.msg }</p>
+                </div>
 
-            <div>
                 <label htmlFor="tamano">Tamaño:</label>
-                <input
-                    name="tamano"
-                    id="tamano"
-                    type="text"
-                    onInput={handleInput}
-                    value={datos.tamano}
-                    required
-                />
-                <p style={{color: "red"}}>{ errores && errores.find(err => err.name == "tamano")?.msg }</p>
-            </div>
+                <div className="formpublicar__input">
+                    <input
+                        className="formpublicar__campo"
+                        name="tamano"
+                        id="tamano"
+                        type="text"
+                        onInput={handleInput}
+                        value={datos.tamano}
+                        required
+                        placeholder="Ingresa el tamaño de la terreza:"
+                    />
+                    <p style={{color: "red"}}>{ errores && errores.find(err => err.name == "tamano")?.msg }</p>
+                </div>
 
-            <div>
                 <label htmlFor="capacidad">Capacidad de personas:</label>
-                <input
-                    name="capacidad"
-                    id="capacidad"
-                    type="number"
-                    inputMode="numeric"
-                    onInput={handleInput}
-                    value={datos.capacidad}
-                    required
-                />
-                <p style={{color: "red"}}>{ errores && errores.find(err => err.name == "capacidad")?.msg }</p>
-            </div>
+                <div className="formpublicar__input">
+                    <input
+                        className="formpublicar__campo"
+                        name="capacidad"
+                        id="capacidad"
+                        type="number"
+                        inputMode="numeric"
+                        onInput={handleInput}
+                        value={datos.capacidad}
+                        required
+                        placeholder="Ingresa la capacidad de personas de la terreza:"
+                    />
+                    <p style={{color: "red"}}>{ errores && errores.find(err => err.name == "capacidad")?.msg }</p>
+                </div>
 
-            <div>
                 <label htmlFor="servicios">Servicios extras:</label>
-                <textarea
-                    name="servicios"
-                    id="servicios"
-                    cols="30"
-                    rows="3"
-                    onInput={handleInput}
-                    value={datos.servicios}
-                ></textarea>
-            </div>
+                <div className="formpublicar__input">
+                    <textarea
+                        name="servicios"
+                        id="servicios"
+                        cols="30"
+                        rows="3"
+                        onInput={handleInput}
+                        value={datos.servicios}
+                        placeholder="Ingresa los servicios extras:"
+                    ></textarea>
+                </div>
 
-            <div>
                 <label htmlFor="etiquetas">Etiquetas (separadas por ","):</label>
-                <input
-                    name="etiquetas"
-                    id="etiquetas"
-                    type="text"
-                    onInput={handleInput}
-                    value={datos.etiquetas}
-                />
-            </div>
+                <div className="formpublicar__input">
+                    <input
+                        className="formpublicar__campo"
+                        name="etiquetas"
+                        id="etiquetas"
+                        type="text"
+                        onInput={handleInput}
+                        value={datos.etiquetas}
+                        placeholder="Ingresa las etiquetas de la terraza:"
+                    />
+                </div>
 
-            <div>
                 <label htmlFor="multimedia">Multimedia:</label>
-                <input
-                    name="multimedia"
-                    id="multimedia"
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    onInput={handleInput}
-                />
-                <h2>Subidas</h2>
+                <div className="formpublicar__input">
+                    <input
+                     className="formpublicar__campo"
+                        name="multimedia"
+                        id="multimedia"
+                        type="file"
+                        multiple
+                        accept="image/*"
+                        onInput={handleInput}
+                    />
+                </div>    
+                    <h2>Subidas</h2>
+                    <div className="imagenes-publicar">
+                    {
+                        imgSubidas.map(imagen => (
+                            !imagen.borrar && (
+                                <img width="100" src={imagen.src} key={imagen.referencia.name} onClick={() => handleBorrarMultimediaStorage(imagen.referencia.name)} />
+                            )
+                        ))
+                    }
+                    </div>
+                    <h2>Nuevas</h2>
+                    <div className="imagenes-publicar">
+                    {
+                        multimedia.map(imagen => (
+                            <img width="100" src={imagen.src} key={imagen.file.name} onClick={() => handleBorrarMultimediaLocal(imagen.file.name)} />
+                        ))
+                    }
+                    </div>
+                <div>
+                    <h4>Falta disponibilidad</h4>
+                </div>
                 {
-                    imgSubidas.map(imagen => (
-                        !imagen.borrar && (
-                            <img width="100" src={imagen.src} key={imagen.referencia.name} onClick={() => handleBorrarMultimediaStorage(imagen.referencia.name)} />
-                        )
-                    ))
+                    idPublicacion && (
+                        <button type="button" onClick={() => handleBorrarPublicacion(datos.id)}>Borrar publicación</button>
+                    )
                 }
-                <h2>Nuevas</h2>
-                {
-                    multimedia.map(imagen => (
-                        <img width="100" src={imagen.src} key={imagen.file.name} onClick={() => handleBorrarMultimediaLocal(imagen.file.name)} />
-                    ))
-                }
-            </div>
-
-            <div>
-                <h4>Falta disponibilidad</h4>
-            </div>
-
-            {
-                idPublicacion && (
-                    <button type="button" onClick={() => handleBorrarPublicacion(datos.id)}>Borrar publicación</button>
-                )
-            }
-
-            <input type="submit" value={`${!idPublicacion ? "Publicar" : "Editar"}`} />
-        </form>
+                <div className="boton-publicar">
+                    <input type="submit" value={`${!idPublicacion ? "Publicar" : "Editar"}`} className="formpublicar__boton boton" />
+                </div>
+            </form>
+        </main>
     )
 }
 
