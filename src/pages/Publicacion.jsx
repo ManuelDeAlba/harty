@@ -142,7 +142,7 @@ function Publicacion(){
                 if(res){
                     let promesa = new Promise(async (res) => {
                         // Eliminar imagenes
-                        await borrarMultimedia(imgSubidas.map(img => img.referencia));
+                        await borrarMultimedia(multimedia.map(img => img.referencia));
                         // Eliminar publicacion
                         await borrarPublicacion(idPublicacion);
                         res();

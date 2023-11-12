@@ -228,9 +228,30 @@ export function obtenerPublicacionesTiempoReal(callback) {
 }
 
 export async function borrarPublicacion(id){
+    // Se borra la publicación
     const docRef = doc(db, "publicaciones", id);
-
     await deleteDoc(docRef);
+
+    // Se borran las favoritas
+    const queryFavoritas = query(collection(db, "favoritas"), where('idPublicacion', "==", id));
+    const documentosFavoritas = await getDocs(queryFavoritas);
+    documentosFavoritas.forEach(async favorita => {
+        await deleteDoc(favorita.ref);
+    })
+
+    // Se borran las calificaciones
+    const queryCalificaciones = query(collection(db, "calificaciones"), where('idPublicacion', "==", id));
+    const documentosCalificaciones = await getDocs(queryCalificaciones);
+    documentosCalificaciones.forEach(async calificacion => {
+        await deleteDoc(calificacion.ref);
+    })
+
+    // Se borran los comentarios
+    const queryComentarios = query(collection(db, "comentarios"), where('idPublicacion', "==", id));
+    const documentosComentarios = await getDocs(queryComentarios);
+    documentosComentarios.forEach(async comentario => {
+        await deleteDoc(comentario.ref);
+    })
 }
 
 export async function guardarFavorita({
