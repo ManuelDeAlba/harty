@@ -3,30 +3,27 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 
 import { useAuth } from "../context/AuthProvider";
-import { obtenerComentario, obtenerPublicacion } from "../firebase";
+import { obtenerPublicacion } from "../firebase";
 
 /*
     names - arreglo con los nombres de permisos o acciones
     type ("route", "component") - Si se protege una ruta, redirige a otro lugar, si se protege un componente, simplemente no lo muestra
     redirect - Ruta a donde redirige si no se tienen los permisos
-    paramURL - Parametro de la url para comparar con la id del usuario y establecer permisos
-    params - Para pasarle parametros extra para realizar operaciones como en el permiso de "comentario/"
+    param - Parametro para comparar con la id del usuario y establecer permisos
 */
 const permisoDefault = false;
 function Protegido({
     names,
     type="route",
     redirect="/", // route
-    paramURL="id", // route y component
-    params={}, // route y component
-    cargandoComponent=<span>Cargando...</span>,
+    param="id", // route y component
     errorComponent=<span>No tienes los permisos suficientes</span>,
     children
 }){
-    const paramsURL = useParams();
+    const params = useParams();
     // Parametro para comparar con el id del usuario
     // Por defecto busca id y si no, busca el parametro que se pase, por ejemplo :id, :etc
-    const parametroURL = paramsURL[paramURL];
+    const parametro = params[param];
 
     const { usuario, usuarioAuth, permisos } = useAuth();
     const navigate = useNavigate();
@@ -52,16 +49,11 @@ function Protegido({
             let autorizado = names.map(async name => {
                 if(name.startsWith("usuario/")){
                     // Si el tipo de permiso es solo para paginas del usuario compara por el rol y por la id del usuario
-                    return permisos[rol]?.[name] && parametroURL == usuario.id;
+                    return permisos[rol]?.[name] && parametro == usuario.id;
                 } else if(name.startsWith("publicacion/")) {
                     // Si se tiene que proteger una publicación para que solo acceda el creador
-                    const publicacion = await obtenerPublicacion(parametroURL);
+                    const publicacion = await obtenerPublicacion(parametro);
                     return permisos[rol]?.[name] && publicacion.idUsuario == usuario.id;
-                } else if(name.startsWith("comentario")) {
-                    // Si solo el dueño del usuario puede hacer un cambio con su propio comentario
-                    // Se necesita un params con { idComentario: ... }
-                    const comentario = await obtenerComentario(params.idComentario);
-                    return permisos[rol]?.[name] && comentario.idUsuario == usuario.id;
                 } else {
                     return permisos[rol]?.[name];
                 }
@@ -101,7 +93,7 @@ function Protegido({
 
     // Manejar la renderización, cuando type="route" no renderiza nada porque tiene que redirigir
     if(cargando){
-        return cargandoComponent;
+        return <span>Cargando...</span>
     } else if(!autorizado && type == "component"){
         return errorComponent;
     } else if(autorizado){

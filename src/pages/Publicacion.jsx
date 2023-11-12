@@ -1,25 +1,19 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import toast from "react-hot-toast";
-
 import { FaBullhorn } from "react-icons/fa";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 
 import { useAuth } from "../context/AuthProvider";
-import { useModal } from "../context/ModalConfirmProvider";
 
-import { borrarComentario, enviarComentario, guardarCalificacion, guardarFavorita, obtenerCalificacion, obtenerCantidadFavoritas, obtenerComentariosTiempoReal, obtenerEstadoFavorita, obtenerMultimedia, obtenerPublicacion } from "../firebase";
+import { guardarCalificacion, guardarFavorita, obtenerCalificacion, obtenerCantidadFavoritas, obtenerEstadoFavorita, obtenerMultimedia, obtenerPublicacion } from "../firebase";
 import { truncarCalificacion } from "../utils";
 
-import SliderPublicacion from "../components/SliderPublicacion";
 import MapaUbicacion from "../components/MapaUbicacion";
-import Protegido from "../components/Protegido";
 
 function Publicacion(){
-    const navigate = useNavigate();
     const { idPublicacion } = useParams();
+    const navigate = useNavigate();
     const { usuario } = useAuth();
-    const { abrirModal, cerrarModal } = useModal();
 
     const [cargando, setCargando] = useState(true);
     const [publicacion, setPublicacion] = useState(null);
@@ -31,7 +25,6 @@ function Publicacion(){
         total: 0,
         usuario: 0
     });
-    const [comentarios, setComentarios] = useState([]);
 
     const handleFavorita = async (estado) => {
         // Si no existe el usuario, envia a iniciar sesión
@@ -83,51 +76,7 @@ function Publicacion(){
         });
     }
 
-    const handleComentario = async (e) => {
-        e.preventDefault();
-
-        // Si no existe el usuario, envia a iniciar sesión
-        if(!usuario){
-            navigate("/iniciar-sesion");
-            return;
-        }
-
-        const comentario = e.target.comentario.value;
-        
-        // Se limpia el formulario
-        e.target.reset();
-
-        toast.promise(enviarComentario({
-            idPublicacion,
-            idUsuario: usuario.id,
-            comentario
-        }), {
-            loading: "Publicando comentario...",
-            success: "Comentario publicado",
-            error: (error) => error.message
-        });
-    }
-
-    const handleBorrarComentario = async (idComentario) => {
-        abrirModal({
-            texto: "¿Realmente quieres borrar el comentario?",
-            onResult: (res) => {
-                if(res){
-                    toast.promise(borrarComentario(idComentario), {
-                        loading: "Borrando comentario...",
-                        success: "Comentario borrado",
-                        error: (error) => error.message
-                    });
-                }
-
-                cerrarModal();
-            }
-        })
-    }
-
     useEffect(() => {
-        let unsubscribe;
-
         const obtenerDatos = async () => {
             setCargando(true);
 
@@ -137,12 +86,7 @@ function Publicacion(){
                 obtenerMultimedia(idPublicacion),
                 obtenerCalificacion({ idPublicacion }),
                 obtenerCantidadFavoritas(idPublicacion)
-            ]);
-
-            // Suscripción para obtener los comentarios en tiempo real
-            unsubscribe = obtenerComentariosTiempoReal(idPublicacion, (comentarios) => {
-                setComentarios(comentarios);
-            });
+            ])
 
             setPublicacion(publicacion);
             setMultimedia(multimedia);
@@ -157,9 +101,6 @@ function Publicacion(){
         }
 
         obtenerDatos();
-
-        // Se desuscribe al cambiar idPublicacion para la siguiente vez que se quiera poner el listener
-        return unsubscribe;
     }, [idPublicacion])
 
     useEffect(() => {
@@ -191,10 +132,10 @@ function Publicacion(){
         <main className="publicacion">
             <section className="publicacion__texto">
                 <h1>{publicacion.nombreTerraza}</h1>
-                <SliderPublicacion multimedia={multimedia} />
                 <p><b>Descripción:</b> {publicacion.descripcion}</p>
                 <p><b>Reglamento:</b> {publicacion.reglamento}</p>
-                <p><b>Dirección:</b></p>
+                {/* Dirección temporal */}
+                <p><b>Direccion:</b></p>
                 <MapaUbicacion ubicacion={publicacion.direccion} />
                 <p><b>Teléfono:</b> {publicacion.telefono}</p>
                 <p><b>Redes sociales:</b> {publicacion.redes}</p>
@@ -204,6 +145,17 @@ function Publicacion(){
                 <p><b>Capacidad de personas:</b> {publicacion.capacidad}</p>
                 <p><b>Servicios extras:</b> {publicacion.servicios}</p>
                 <p><b>Etiquetas:</b> {publicacion.etiquetas.map((etiqueta, indice) => <span key={indice}>{ etiqueta }</span>)}</p>
+                <p><b>Multimedia:</b>
+                    {
+                        multimedia.length > 0 ? (
+                            multimedia.map((imagen, indice) => (
+                                <img width="100" src={imagen.src} key={indice} />
+                            ))    
+                        ) : (
+                            " No hay multimedia para mostrar"
+                        )
+                    }
+                </p>
                 {/* <p><b>Disponibilidad:</b> {publicacion.disponibilidad}</p> */}
             </section>
 
@@ -234,36 +186,12 @@ function Publicacion(){
                 </div>
             </section>
 
-            <section className="comentarios">
+            <section className="publicacion__comentarios">
                 <span><b>Comentarios</b></span>
-                <form className="comentarios__form" onSubmit={handleComentario}>
-                    <textarea
-                        className="comentarios__textarea"
-                        name="comentario"
-                        placeholder="Comentario..."
-                        cols="30"
-                        rows="3"
-                    ></textarea>
-                    <input type="submit" value="Enviar" />
-                </form>
                 <ul>
-                    {
-                        comentarios.map(({id, comentario, usuario: { nombre }}) => (
-                            <div className="comentarios__contenedor-comentario" key={id}>
-                                <span className="comentarios__comentario"><b>{nombre})</b> {comentario}</span>
-                                <Protegido
-                                    // Puede borrar comentario si es admin o el dueño del comentario
-                                    names={["borrar-comentario", "comentario/borrar-comentario"]}
-                                    type="component"
-                                    params={{idComentario: id}}
-                                    cargandoComponent={""}
-                                    errorComponent={""}
-                                >
-                                    <button className="boton boton--rojo" onClick={() => handleBorrarComentario(id)}>Eliminar</button>
-                                </Protegido>
-                            </div>
-                        ))    
-                    }
+                    <li>Lista</li>
+                    <li>de</li>
+                    <li>Comentarios</li>
                 </ul>
             </section>
         </main>
