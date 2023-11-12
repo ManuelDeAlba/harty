@@ -8,6 +8,7 @@
   --color-primario: #FFDE59;
   --color-secundario: #0D004B;
   --color-titulo: #051922;
+  --color-texto:#333;
 
   --color-etiqueta: #69757A;
   --color-etiqueta-hover: #0056b3;
@@ -358,6 +359,7 @@ i {
 }
 .header__contenedor--3{
   align-items: flex-end;
+  text-align: end;
 }
 .header__texto{
   color: var(--color-primario);
@@ -544,13 +546,14 @@ html:has(.modal){ overflow: hidden; }
   left: 15px;
   padding: 10px 20px;
   background-color: #fff;
-  color: var(--color-secundario); /* Color del texto del botón */
+  color: var(--color-secundario); 
   border: none;
   border-radius: 7px;
   cursor: pointer;
   font-family: "Poppins", sans-serif;
   font-weight: 500;
   font-size: medium;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 .previsualizacion__editar:hover{
   background-color:var(--color-primario);
@@ -637,6 +640,48 @@ html:has(.modal){ overflow: hidden; }
   height: 100%;
   object-fit: cover;
 }
+.publicacion{
+  width: 100%;
+  max-width: 1200px;
+  margin: 50px auto;
+  padding: 15px;
+}
+
+.publicacion__texto{
+  color: var(--color-texto);
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.columna-izquierda {/* Título, descripción, etc */
+  flex: 1; 
+  margin-bottom: 20px; 
+}
+
+.columna-derecha {
+  flex-basis: 120px; /* Mapa de Ubicación, teléfono, etc */
+}
+
+.mapa {
+  width: 100%;
+  padding-top: 50%; /* La altura será el 50% del ancho */
+  position: relative;
+  min-height: 200px;
+  min-width: 370px;
+  border-radius: 10px;
+}
+
+@media screen and (min-width: 750px) {
+  .columna-derecha {
+    flex-basis: 300px;
+  }
+  .mapa{
+    padding-top:40% ;
+    width:80%;
+    margin: auto;
+  }
+}
+
 .favoritos{
   display: flex;
   align-items: center;
