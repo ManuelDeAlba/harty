@@ -627,6 +627,10 @@ html:has(.modal){ overflow: hidden; }
   padding: 1.5rem;
   background: transparent;
 }
+
+.swiper-button-prev, .swiper-button-next{
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, .7);
+}
 .swiper-button-prev:hover,
 .swiper-button-next:hover{
   background-color: rgb(0 0 0 / .5);
