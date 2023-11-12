@@ -15,6 +15,7 @@ import { truncarCalificacion } from "../utils";
 import SliderPublicacion from "../components/SliderPublicacion";
 import MapaUbicacion from "../components/MapaUbicacion";
 import Protegido from "../components/Protegido";
+import usePermisos from "../hooks/usePermisos";
 
 function Publicacion(){
     const navigate = useNavigate();
@@ -26,6 +27,11 @@ function Publicacion(){
     const [publicacion, setPublicacion] = useState(null);
     const [multimedia, setMultimedia] = useState([]);
 
+    // Obtiene permisos por rol para permitir o proteger las acciones
+    const { permiso: permisoFavorita, error: errorFavorita } = usePermisos(["accion/favorita-terraza"]);
+    const { permiso: permisoCalificar, error: errorCalificar } = usePermisos(["accion/calificar-terraza"]);
+    const { permiso: permisoComentar, error: errorComentar } = usePermisos(["accion/comentar-terraza"]);
+
     const [cantidadFavoritas, setCantidadFavoritas] = useState(0);
     const [favorita, setFavorita] = useState(false);
     const [calificaciones, setCalificaciones] = useState({
@@ -35,9 +41,10 @@ function Publicacion(){
     const [comentarios, setComentarios] = useState([]);
 
     const handleFavorita = async (estado) => {
-        // Si no existe el usuario, envia a iniciar sesión
-        if(!usuario){
-            navigate("/iniciar-sesion");
+        // Si no tiene permisos para realizar esa acción
+        if(!permisoFavorita){
+            toast.error(errorFavorita.message);
+            if(errorFavorita.code != "harty/unverified-account" && errorFavorita.code != "harty/disabled-account") navigate("/iniciar-sesion");
             return;
         }
 
@@ -56,9 +63,10 @@ function Publicacion(){
     }
 
     const handleCalificacion = async cal => {
-        // Si no existe el usuario, envia a iniciar sesión
-        if(!usuario){
-            navigate("/iniciar-sesion");
+        // Si no tiene permisos para realizar esa acción
+        if(!permisoCalificar){
+            toast.error(errorCalificar.message);
+            if(errorCalificar.code != "harty/unverified-account" && errorCalificar.code != "harty/disabled-account") navigate("/iniciar-sesion");
             return;
         }
         
@@ -87,9 +95,10 @@ function Publicacion(){
     const handleComentario = async (e) => {
         e.preventDefault();
 
-        // Si no existe el usuario, envia a iniciar sesión
-        if(!usuario){
-            navigate("/iniciar-sesion");
+        // Si no tiene permisos para realizar esa acción
+        if(!permisoComentar){
+            toast.error(errorComentar.message);
+            if(errorComentar.code != "harty/unverified-account" && errorComentar.code != "harty/disabled-account") navigate("/iniciar-sesion");
             return;
         }
 

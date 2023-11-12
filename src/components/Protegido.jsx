@@ -4,6 +4,7 @@ import { toast } from 'react-hot-toast';
 
 import { useAuth } from "../context/AuthProvider";
 import { obtenerComentario, obtenerPublicacion } from "../firebase";
+import { obtenerRol } from "../utils";
 
 /*
     names - arreglo con los nombres de permisos o acciones
@@ -39,17 +40,12 @@ function Protegido({
             setCargando(true);
 
             //? ROL
-            // Se obtiene el rol del usuario actual
-            let rol = usuario?.rol ?? "anonimo"; // (admin o usuario, si no existe, es anonimo)
+            const rol = obtenerRol({ usuario, usuarioAuth });
 
-            // Si el email no está verificado o el usuario está deshabilitado, se regresa a anonimo en lugar de usuario
-            // Solo puede bajar el rol a anonimo si no es admin (admin tiene más peso que la verificación o estar deshabilitado)
-            if(rol != "admin" && (!usuarioAuth?.emailVerified || !usuario?.habilitado)) rol = "anonimo";
-
-            //? PERMISOS
+            //? LÓGICA DE PERMISOS
             // Obtenemos los permisos de firebase (true o false), si no existe pone permisoDefault por defecto
             // Si hay algún permiso que cumpla, entonces autoriza (permiso de usuario o por rol)
-            let autorizado = names.map(async name => {
+            let autorizado = Array.isArray(names) ? names.map(async name => {
                 if(name.startsWith("usuario/")){
                     // Si el tipo de permiso es solo para paginas del usuario compara por el rol y por la id del usuario
                     return permisos[rol]?.[name] && parametroURL == usuario.id;
@@ -65,7 +61,7 @@ function Protegido({
                 } else {
                     return permisos[rol]?.[name];
                 }
-            }) ?? permisoDefault;
+            }) : [permisoDefault];
 
             autorizado = (await Promise.all(autorizado)).includes(true);
 
