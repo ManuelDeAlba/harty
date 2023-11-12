@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 
 import { FaBullhorn } from "react-icons/fa";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
+import { FaClock, FaUsers, FaRuler, FaPhone, FaShareAlt } from 'react-icons/fa';
 
 import { useAuth } from "../context/AuthProvider";
 import { useModal } from "../context/ModalConfirmProvider";
@@ -189,43 +190,52 @@ function Publicacion(){
 
     return(
         <main className="publicacion">
-            <section className="publicacion__texto">
             <h3>{publicacion.nombreTerraza}</h3>
             <SliderPublicacion multimedia={multimedia} />
+            <section className="publicacion__acciones texto-overflow">
+                <span><b>Reportar terraza</b> <FaBullhorn /></span>
+                <div className="favoritos">
+                        <span><b>{cantidadFavoritas}</b> </span>
+                        <span onClick={() => handleFavorita(!favorita)} className="favoritos__corazon">
+                            {
+                                favorita ?
+                                    <AiFillHeart /> :
+                                    <AiOutlineHeart />
+                            }
+                        </span>
+                </div>
+            </section>
+            <section className="publicacion__texto">
                 <div className="columna-izquierda">
-                    <p><b>Capacidad:</b> {publicacion.capacidad}</p>
-                    <p><b>Precio:</b> {publicacion.precio}</p>
-                    <p><b>Tamaño:</b> {publicacion.tamano}</p>
+                    <div className="column">
+                        <FaClock style={{ fontSize: '1.5em',marginRight:'.5em'}}/>
+                        <p className="footer texto-overflow">{publicacion.horarios}</p>
+                        <FaRuler style={{ fontSize: '2em', margin: '0 0.5em 0 1em' }} />
+                        <p className="footer texto-overflow">{publicacion.tamano}</p>
+                        <FaUsers style={{ fontSize: '1.8em', margin: '0 0.5em 0 1em' }} />
+                        <p className="footer texto-overflow">{publicacion.capacidad}</p>
+                    </div>
                     <p>{publicacion.descripcion}</p>
-                    <p><b>Etiquetas:</b> {publicacion.etiquetas.map((etiqueta, indice) => <span key={indice}>{ etiqueta }</span>)}</p>
+                    <p>{publicacion.etiquetas.map((etiqueta, indice) => <span className="previsualizacion__etiqueta" key={indice}>{ etiqueta }</span>)}</p>
                     <p><b>Reglamento:</b> {publicacion.reglamento}</p>
+                    <hr className="line" />
                     <p><b>Servicios extras:</b> {publicacion.servicios}</p>
                        {/* <p><b>Disponibilidad:</b> {publicacion.disponibilidad}</p> */}
                 </div>
                 <div className="columna-derecha">
-                    <p><b>Teléfono:</b> {publicacion.telefono}</p>
-                    <p><b>Redes sociales:</b> {publicacion.redes}</p>
+                    <span className="previsualizacion__precio"><b>$</b> {publicacion.precio}</span>
+                    <p> <FaPhone style={{ fontSize: '1.8em', verticalAlign: 'middle', marginRight: '0.5em' }} />{publicacion.telefono}</p>
+                    <p className="texto-overflow"><b>Redes sociales:</b> {publicacion.redes}</p>
+                    <div className="llama-ahora">
+                        <a href={`tel:${publicacion.telefono}`}>Llama ahora</a>
+                    </div>
                     {/* Añade más elementos según sea necesario */}
                 </div>
             </section>
-            <MapaUbicacion ubicacion={publicacion.direccion} />
-            <section className="publicacion__acciones">
-                <span><b>Acciones</b></span>
-
-                <span><b>Reportar terraza</b> <FaBullhorn /></span>
-
-                <div className="favoritos">
-                    <span><b>Marcar como favoritos</b></span>
-                    <span>{cantidadFavoritas} persona/s la han marcado como favorita</span>
-                    <span onClick={() => handleFavorita(!favorita)} className="favoritos__corazon">
-                        {
-                            favorita ?
-                                <AiFillHeart /> :
-                                <AiOutlineHeart />
-                        }
-                    </span>
-                </div>
-
+            <hr className="line" />
+            <section className="publicacion__inferior">
+                <span><b>Ubicación </b></span>
+                <MapaUbicacion ubicacion={publicacion.direccion} />
                 <div className="calificacion">
                     <span className="calificacion__titulo"><b>Calificacion total:</b> {truncarCalificacion(calificaciones.total)}</span>
                     <span className={`calificacion__estrella${calificaciones.usuario >= 1 ? " calificacion__estrella--activa" : ""}`} onClick={() => handleCalificacion(1)}>&#9733;</span>
@@ -234,39 +244,38 @@ function Publicacion(){
                     <span className={`calificacion__estrella${calificaciones.usuario >= 4 ? " calificacion__estrella--activa" : ""}`} onClick={() => handleCalificacion(4)}>&#9733;</span>
                     <span className={`calificacion__estrella${calificaciones.usuario >= 5 ? " calificacion__estrella--activa" : ""}`} onClick={() => handleCalificacion(5)}>&#9733;</span>
                 </div>
-            </section>
-
-            <section className="comentarios">
-                <span><b>Comentarios</b></span>
-                <form className="comentarios__form" onSubmit={handleComentario}>
-                    <textarea
-                        className="comentarios__textarea"
-                        name="comentario"
-                        placeholder="Comentario..."
-                        cols="30"
-                        rows="3"
-                    ></textarea>
-                    <input type="submit" value="Enviar" />
-                </form>
-                <ul>
-                    {
-                        comentarios.map(({id, comentario, usuario: { nombre }}) => (
-                            <div className="comentarios__contenedor-comentario" key={id}>
-                                <span className="comentarios__comentario"><b>{nombre})</b> {comentario}</span>
-                                <Protegido
-                                    // Puede borrar comentario si es admin o el dueño del comentario
-                                    names={["borrar-comentario", "comentario/borrar-comentario"]}
-                                    type="component"
-                                    params={{idComentario: id}}
-                                    cargandoComponent={""}
-                                    errorComponent={""}
-                                >
-                                    <button className="boton boton--rojo" onClick={() => handleBorrarComentario(id)}>Eliminar</button>
-                                </Protegido>
-                            </div>
-                        ))    
-                    }
-                </ul>
+                <section className="comentarios">
+                    <span><b>Comentarios</b></span>
+                    <form className="comentarios__form" onSubmit={handleComentario}>
+                        <textarea
+                            className="comentarios__textarea"
+                            name="comentario"
+                            placeholder="Comentario..."
+                            cols="30"
+                            rows="3"
+                        ></textarea>
+                        <input type="submit" value="Enviar" />
+                    </form>
+                    <ul>
+                        {
+                            comentarios.map(({id, comentario, usuario: { nombre }}) => (
+                                <div className="comentarios__contenedor-comentario" key={id}>
+                                    <span className="comentarios__comentario"><b>{nombre})</b> {comentario}</span>
+                                    <Protegido
+                                        // Puede borrar comentario si es admin o el dueño del comentario
+                                        names={["borrar-comentario", "comentario/borrar-comentario"]}
+                                        type="component"
+                                        params={{idComentario: id}}
+                                        cargandoComponent={""}
+                                        errorComponent={""}
+                                    >
+                                        <button className="boton boton--rojo" onClick={() => handleBorrarComentario(id)}>Eliminar</button>
+                                    </Protegido>
+                                </div>
+                            ))    
+                        }
+                    </ul>
+                </section>
             </section>
         </main>
     )
