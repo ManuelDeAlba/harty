@@ -92,7 +92,7 @@ function FormularioPublicarTerraza(){
             toast.promise(editarPublicacion(publicacion), {
                 loading: "Editando terraza...",
                 success: () => {
-                    navigate("/publicaciones"); // Redirige a ver las publicaciones
+                    navigate(`/publicacion/${publicacion.id}`); // Redirige a ver esa publicación
                     return "Terraza editada";
                 },
                 error: (error) => {

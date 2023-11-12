@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
 import { FaBullhorn } from "react-icons/fa";
@@ -9,7 +9,7 @@ import { FaClock, FaUsers, FaRuler, FaPhone, FaShareAlt } from 'react-icons/fa';
 import { useAuth } from "../context/AuthProvider";
 import { useModal } from "../context/ModalConfirmProvider";
 
-import { borrarComentario, enviarComentario, guardarCalificacion, guardarFavorita, obtenerCalificacion, obtenerCantidadFavoritas, obtenerComentariosTiempoReal, obtenerEstadoFavorita, obtenerMultimedia, obtenerPublicacion } from "../firebase";
+import { borrarComentario, borrarMultimedia, borrarPublicacion, enviarComentario, guardarCalificacion, guardarFavorita, obtenerCalificacion, obtenerCantidadFavoritas, obtenerComentariosTiempoReal, obtenerEstadoFavorita, obtenerMultimedia, obtenerPublicacion } from "../firebase";
 import { truncarCalificacion } from "../utils";
 
 import SliderPublicacion from "../components/SliderPublicacion";
@@ -135,6 +135,34 @@ function Publicacion(){
         })
     }
 
+    const handleBorrarPublicacion = (idPublicacion) => {
+        abrirModal({
+            texto: "¿Realmente quieres borrar la publicación?",
+            onResult: (res) => {
+                if(res){
+                    let promesa = new Promise(async (res) => {
+                        // Eliminar imagenes
+                        await borrarMultimedia(imgSubidas.map(img => img.referencia));
+                        // Eliminar publicacion
+                        await borrarPublicacion(idPublicacion);
+                        res();
+                    })
+        
+                    toast.promise(promesa, {
+                        loading: "Borrando terraza...",
+                        success: () => {
+                            navigate("/publicaciones"); // Redirige a ver las publicaciones
+                            return "Terraza borrada";
+                        },
+                        error: "Hubo un error"
+                    });
+                }
+
+                cerrarModal();
+            }
+        })
+    }
+
     useEffect(() => {
         let unsubscribe;
 
@@ -203,6 +231,20 @@ function Publicacion(){
 
             <SliderPublicacion multimedia={multimedia} />
 
+            {/* Boton editar solo para el dueño o un administrador */}
+            <Protegido
+                names={["editar-terraza", "publicacion/editar-terraza"]}
+                paramURL="idPublicacion"
+                type="component"
+                cargandoComponent={""}
+                errorComponent={""}
+            >
+                <section className="publicacion__administracion">
+                    <button className="publicacion__boton boton boton--rojo" type="button" onClick={() => handleBorrarPublicacion(publicacion.id)}>Borrar publicación</button>
+                    <Link to={`/editar-terraza/${publicacion.id}`} className="publicacion__boton boton">Editar</Link>
+                </section>
+            </Protegido>
+
             <section className="publicacion__acciones">
                 <span><b>Reportar terraza</b> <FaBullhorn /></span>
                 <div className="favoritos">
@@ -253,9 +295,8 @@ function Publicacion(){
                         <FaPhone className="publicacion__icono-dibujo publicacion__icono-dibujo--llamar" />
                         <span>{publicacion.telefono}</span>
                     </div>
-                    <p className="texto-overflow"><b>Redes sociales:</b> {publicacion.redes}</p>
+                    <p className="publicacion__redes texto-overflow"><b>Redes sociales:</b> {publicacion.redes}</p>
                     <a className="publicacion__cta-llamar boton" href={`tel:${publicacion.telefono}`}>Llama ahora</a>
-                    {/* Añade más elementos según sea necesario */}
                 </div>
             </section>
 
