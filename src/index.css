@@ -614,16 +614,18 @@ html:has(.modal){ overflow: hidden; }
 /* PUBLICACION (DETALLES) */
 .publicacion__slider{
   height: 500px;
+  width: 100%;
+  margin-top: 0;
 }
 .swiper-button-prev,
 .swiper-button-next{
   --swiper-navigation-sides-offset: 0;
   color: white;
-  background: rgb(0 0 0 / .3);
   height: 100%;
   top: 0;
   margin: 0;
-  padding: 0 1.5rem;
+  padding: 1.5rem;
+  background: transparent;
 }
 .swiper-button-prev:hover,
 .swiper-button-next:hover{
@@ -634,11 +636,13 @@ html:has(.modal){ overflow: hidden; }
   --swiper-pagination-bullet-height: .75rem;
   --swiper-pagination-bullet-inactive-opacity: .4;
   outline: 2px solid rgb(200 200 200 / .4);
+  background-color: #00000092;
 }
 .publicacion__img{
-  width: 100%;
+  width: 1170px;
   height: 100%;
   object-fit: cover;
+  border-radius: 10px;
 }
 .publicacion{
   width: 100%;
@@ -647,10 +651,14 @@ html:has(.modal){ overflow: hidden; }
   padding: 15px;
 }
 
-.publicacion__texto{
+.publicacion__texto p{
   color: var(--color-texto);
   display: flex;
   flex-wrap: wrap;
+}
+
+.publicacion__texto h3{
+  margin-bottom: 50px;
 }
 
 .columna-izquierda {/* Título, descripción, etc */

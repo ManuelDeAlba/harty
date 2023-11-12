@@ -176,23 +176,25 @@ function Publicacion(){
     return(
         <main className="publicacion">
             <section className="publicacion__texto">
-                <h1>{publicacion.nombreTerraza}</h1>
-                <SliderPublicacion multimedia={multimedia} />
-                <p><b>Descripción:</b> {publicacion.descripcion}</p>
-                <p><b>Reglamento:</b> {publicacion.reglamento}</p>
-                <p><b>Dirección:</b></p>
-                <MapaUbicacion ubicacion={publicacion.direccion} />
-                <p><b>Teléfono:</b> {publicacion.telefono}</p>
-                <p><b>Redes sociales:</b> {publicacion.redes}</p>
-                <p><b>Precio:</b> {publicacion.precio}</p>
-                <p><b>Horarios:</b> {publicacion.horarios}</p>
-                <p><b>Tamaño:</b> {publicacion.tamano}</p>
-                <p><b>Capacidad de personas:</b> {publicacion.capacidad}</p>
-                <p><b>Servicios extras:</b> {publicacion.servicios}</p>
-                <p><b>Etiquetas:</b> {publicacion.etiquetas.map((etiqueta, indice) => <span key={indice}>{ etiqueta }</span>)}</p>
-                {/* <p><b>Disponibilidad:</b> {publicacion.disponibilidad}</p> */}
+            <h3>{publicacion.nombreTerraza}</h3>
+            <SliderPublicacion multimedia={multimedia} />
+                <div className="columna-izquierda">
+                    <p><b>Capacidad:</b> {publicacion.capacidad}</p>
+                    <p><b>Precio:</b> {publicacion.precio}</p>
+                    <p><b>Tamaño:</b> {publicacion.tamano}</p>
+                    <p>{publicacion.descripcion}</p>
+                    <p><b>Etiquetas:</b> {publicacion.etiquetas.map((etiqueta, indice) => <span key={indice}>{ etiqueta }</span>)}</p>
+                    <p><b>Reglamento:</b> {publicacion.reglamento}</p>
+                    <p><b>Servicios extras:</b> {publicacion.servicios}</p>
+                       {/* <p><b>Disponibilidad:</b> {publicacion.disponibilidad}</p> */}
+                </div>
+                <div className="columna-derecha">
+                    <p><b>Teléfono:</b> {publicacion.telefono}</p>
+                    <p><b>Redes sociales:</b> {publicacion.redes}</p>
+                    {/* Añade más elementos según sea necesario */}
+                </div>
             </section>
-
+            <MapaUbicacion ubicacion={publicacion.direccion} />
             <section className="publicacion__acciones">
                 <span><b>Acciones</b></span>
 
