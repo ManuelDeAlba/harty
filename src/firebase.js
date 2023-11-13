@@ -415,6 +415,58 @@ export async function borrarComentario(idComentario){
     await deleteDoc(docRef);
 }
 
+export async function solicitarCertificacion({ idPublicacion, idUsuario, nuevoEstado }){
+    const docRef = doc(db, "solicitudes-certificaciones", idPublicacion);
+
+    if(!nuevoEstado){
+        await deleteDoc(docRef);
+        return;
+    }
+
+    await setDoc(docRef, {
+        id: Date.now(),
+        idPublicacion,
+        idUsuario
+    });
+}
+
+export async function obtenerSolicitudCertificacion(idPublicacion){
+    const docRef = doc(db, "solicitudes-certificaciones", idPublicacion);
+
+    const documento = await getDoc(docRef);
+
+    return documento?.data();
+}
+
+export async function obtenerSolicitudesCertificacion(){
+    const querySolicitudes = query(collection(db, "solicitudes-certificaciones"), orderBy("id", "desc"));
+    const solicitudes = (await getDocs(querySolicitudes)).docs.map(doc => doc.data());
+
+    // Si no hay solicitudes, no devuelve nada
+    if(solicitudes.length == 0){
+        return null;
+    }
+
+    const idUsuarios = solicitudes.map(doc => doc.idUsuario);
+    const idPublicaciones = solicitudes.map(doc => doc.idPublicacion);
+
+    const queryUsuarios = query(collection(db, "usuarios"), where("id", "in", idUsuarios));
+    const usuarios = (await getDocs(queryUsuarios)).docs.map(doc => doc.data());
+
+    const queryPublicaciones = query(collection(db, "publicaciones"), where("id", "in", idPublicaciones));
+    const publicaciones = (await getDocs(queryPublicaciones)).docs.map(doc => doc.data());
+
+    const data = solicitudes.map(solicitud => {
+        return {
+            solicitud,
+            usuario: usuarios.find(usuario => usuario.id === solicitud.idUsuario),
+            publicacion: publicaciones.find(publicacion => publicacion.id === solicitud.idPublicacion)
+        }
+    });
+
+    return data;
+}
+
 //! STORAGE
 export async function subirMultimedia(carpeta, multimedia){
     const promesas = multimedia.map(file => {

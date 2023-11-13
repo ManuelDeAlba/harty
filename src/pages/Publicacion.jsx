@@ -9,7 +9,7 @@ import { FaClock, FaUsers, FaRuler, FaPhone, FaShareAlt } from 'react-icons/fa';
 import { useAuth } from "../context/AuthProvider";
 import { useModal } from "../context/ModalConfirmProvider";
 
-import { borrarComentario, borrarMultimedia, borrarPublicacion, enviarComentario, guardarCalificacion, guardarFavorita, obtenerCalificacion, obtenerCantidadFavoritas, obtenerComentariosTiempoReal, obtenerEstadoFavorita, obtenerMultimedia, obtenerPublicacion } from "../firebase";
+import { borrarComentario, borrarMultimedia, borrarPublicacion, enviarComentario, guardarCalificacion, guardarFavorita, obtenerCalificacion, obtenerCantidadFavoritas, obtenerComentariosTiempoReal, obtenerEstadoFavorita, obtenerMultimedia, obtenerPublicacion, obtenerSolicitudCertificacion, solicitarCertificacion } from "../firebase";
 import { truncarCalificacion } from "../utils";
 
 import SliderPublicacion from "../components/SliderPublicacion";
@@ -26,6 +26,7 @@ function Publicacion(){
     const [cargando, setCargando] = useState(true);
     const [publicacion, setPublicacion] = useState(null);
     const [multimedia, setMultimedia] = useState([]);
+    const [solicitudCertificacion, setSolicitudCertificacion] = useState(undefined);
 
     // Obtiene permisos por rol para permitir o proteger las acciones
     const { permiso: permisoFavorita, error: errorFavorita } = usePermisos(["accion/favorita-terraza"]);
@@ -135,7 +136,7 @@ function Publicacion(){
         })
     }
 
-    const handleBorrarPublicacion = (idPublicacion) => {
+    const handleBorrarPublicacion = () => {
         abrirModal({
             texto: "¿Realmente quieres borrar la publicación?",
             onResult: (res) => {
@@ -163,6 +164,14 @@ function Publicacion(){
         })
     }
 
+    const handleSolicitarCertificacion = async () => {
+        const existeSolicitud = solicitudCertificacion ? true : false;
+        await solicitarCertificacion({ idPublicacion, idUsuario: publicacion.idUsuario, nuevoEstado: !existeSolicitud });
+
+        const solicitud = await obtenerSolicitudCertificacion(idPublicacion);
+        setSolicitudCertificacion(solicitud);
+    }
+
     useEffect(() => {
         let unsubscribe;
 
@@ -170,11 +179,12 @@ function Publicacion(){
             setCargando(true);
 
             // Se obtienen los datos en paralelo
-            let [publicacion, multimedia, { calificacionTotal }, cantidadFavoritas] = await Promise.all([
+            let [publicacion, multimedia, { calificacionTotal }, cantidadFavoritas, solicitudCertificacion] = await Promise.all([
                 obtenerPublicacion(idPublicacion),
                 obtenerMultimedia(idPublicacion),
                 obtenerCalificacion({ idPublicacion }),
-                obtenerCantidadFavoritas(idPublicacion)
+                obtenerCantidadFavoritas(idPublicacion),
+                obtenerSolicitudCertificacion(idPublicacion)
             ]);
 
             // Suscripción para obtener los comentarios en tiempo real
@@ -190,6 +200,7 @@ function Publicacion(){
                 total: calificacionTotal
             }));
             setCantidadFavoritas(cantidadFavoritas);
+            setSolicitudCertificacion(solicitudCertificacion);
 
             setCargando(false);
         }
@@ -240,8 +251,9 @@ function Publicacion(){
                 errorComponent={""}
             >
                 <section className="publicacion__administracion">
-                    <button className="publicacion__boton boton boton--rojo" type="button" onClick={() => handleBorrarPublicacion(publicacion.id)}>Borrar publicación</button>
+                    <button className="publicacion__boton boton boton--rojo" type="button" onClick={() => handleBorrarPublicacion()}>Borrar publicación</button>
                     <Link to={`/editar-terraza/${publicacion.id}`} className="publicacion__boton boton">Editar</Link>
+                    <button className="publicacion__boton boton" type="button" onClick={() => handleSolicitarCertificacion()}>{ !solicitudCertificacion ? "Solicitar certificación" : "Cancelar solicitud de certificación" }</button>
                 </section>
             </Protegido>
 

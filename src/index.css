@@ -199,7 +199,9 @@ i {
 
 /* BOTONES */
 .boton{
-  display: inline-block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: 5px 20px;
   background-color: var(--boton-bg, #09f);
   color: var(--boton-color, #fff);
@@ -661,11 +663,13 @@ html:has(.modal){ overflow: hidden; }
 
 .publicacion__administracion{
   display: flex;
+  flex-wrap: wrap;
   justify-content: end;
   gap: 1rem;
   margin-bottom: 1.5rem;
 }
 .publicacion__boton{
+  flex: 1;
   font-size: 16px;
 }
 
