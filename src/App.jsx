@@ -16,6 +16,7 @@ import FormularioIniciarSesion from "./pages/FormularioIniciarSesion";
 import Perfil from "./pages/Perfil";
 import FormularioEditarPerfil from "./pages/FormularioEditarPerfil";
 import ListaUsuarios from "./pages/admin/ListaUsuarios";
+import SolicitudesCertificacion from "./pages/admin/SolicitudesCertificacion";
 
 // Componentes
 import Navbar from "./components/Navbar";
@@ -67,6 +68,11 @@ function App() {
                             <Route path="/admin/lista-usuarios" element={
                                 <Protegido names={["lista-usuarios"]}>
                                     <ListaUsuarios />
+                                </Protegido>
+                            } />
+                            <Route path="/admin/lista-certificaciones" element={
+                                <Protegido names={["certificar-terraza"]}>
+                                    <SolicitudesCertificacion />
                                 </Protegido>
                             } />
 

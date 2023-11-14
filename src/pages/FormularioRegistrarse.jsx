@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthProvider";
 import { ERRORES_FIREBASE } from "../utils";
 import toast from "react-hot-toast";
-import { FaUser} from 'react-icons/fa';
+import { FaEye, FaUser} from 'react-icons/fa';
 import { FaEnvelope} from 'react-icons/fa';
 import { FaLock} from 'react-icons/fa';
 
@@ -44,6 +44,12 @@ function FormularioRegistrarse(){
             ...datos,
             [e.target.name]: e.target.value
         });
+    }
+
+    const handleOjo = () => {
+        let input = document.getElementById('contrasena');
+        if(input.type == "password") input.type = "text";
+        else input.type = "password";
     }
 
     return(
@@ -93,6 +99,11 @@ function FormularioRegistrarse(){
                         required
                         placeholder="Contraseña:"
                     />
+                    <button
+                        className="form__icono form__ojo"
+                        type="button"
+                        onClick={handleOjo}
+                    ><FaEye /></button>
                 </div>
                 <input type="submit" value="Registrarse" className="form__boton boton" />
             </form>

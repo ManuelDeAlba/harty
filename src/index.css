@@ -199,7 +199,9 @@ i {
 
 /* BOTONES */
 .boton{
-  display: inline-block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: 5px 20px;
   background-color: var(--boton-bg, #09f);
   color: var(--boton-color, #fff);
@@ -659,6 +661,18 @@ html:has(.modal){ overflow: hidden; }
   object-fit: cover;
 }
 
+.publicacion__administracion{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: end;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.publicacion__boton{
+  flex: 1;
+  font-size: 16px;
+}
+
 .publicacion__acciones{
   display: flex;
   flex-wrap: wrap;
@@ -668,7 +682,6 @@ html:has(.modal){ overflow: hidden; }
   row-gap: .5rem;
   margin-bottom: 1rem;
 }
-
 .favoritos {
   display: flex;
   align-items: center;
@@ -737,6 +750,10 @@ html:has(.modal){ overflow: hidden; }
   color: #333;
   font-size: 1.5rem;
 }
+.publicacion__redes{
+  display: flex;
+  flex-direction: column;
+}
 .publicacion__cta-llamar{
   width: 70%;
   min-width: min(100%, 150px);
@@ -794,33 +811,47 @@ html:has(.modal){ overflow: hidden; }
 
 .comentarios__form{
   display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
 }
 .comentarios__textarea{
-  flex: 1;
+  min-width: min(100%, 200px);
+  flex: 10;
   resize: none;
 }
 .comentarios__boton{
   min-width: 150px;
+  flex: 1;
   align-self: end;
   height: max-content;
 }
 .comentarios__lista{
   display: flex;
   flex-direction: column;
-  margin: 1rem;
+  margin: 1rem auto;
   gap: 1rem;
 }
 .comentarios__contenedor-comentario{
   display: flex;
   justify-content: space-between;
   align-items: start;
+  gap: 1rem;
   background-color: #eee;
   padding: .5rem 1rem;
   border-radius: 3px;
 }
 .comentarios__comentario-boton{
   border-radius: 3px;
+}
+
+@media screen and (max-width: 768px){
+  .comentarios__contenedor-comentario{
+    flex-direction: column;
+  }
+
+  .comentarios__comentario-boton{
+    align-self: flex-end;
+  }
 }
 
 /* Publicar terraza*/
@@ -897,6 +928,17 @@ html:has(.modal){ overflow: hidden; }
 .form__icono{
   margin: 0 .25rem;
   color: var(--color-primario);
+}
+.form__ojo{
+  display: flex;
+  padding: .5rem;
+  background-color: transparent;
+  color: #000;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
 }
 .form__campo{
   width: 100%;

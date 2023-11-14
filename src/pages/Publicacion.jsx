@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
 import { FaBullhorn } from "react-icons/fa";
@@ -9,7 +9,7 @@ import { FaClock, FaUsers, FaRuler, FaPhone, FaShareAlt } from 'react-icons/fa';
 import { useAuth } from "../context/AuthProvider";
 import { useModal } from "../context/ModalConfirmProvider";
 
-import { borrarComentario, enviarComentario, guardarCalificacion, guardarFavorita, obtenerCalificacion, obtenerCantidadFavoritas, obtenerComentariosTiempoReal, obtenerEstadoFavorita, obtenerMultimedia, obtenerPublicacion } from "../firebase";
+import { borrarComentario, borrarMultimedia, borrarPublicacion, enviarComentario, guardarCalificacion, guardarFavorita, obtenerCalificacion, obtenerCantidadFavoritas, obtenerComentariosTiempoReal, obtenerEstadoFavorita, obtenerMultimedia, obtenerPublicacion, obtenerSolicitudCertificacion, solicitarCertificacion } from "../firebase";
 import { truncarCalificacion } from "../utils";
 
 import SliderPublicacion from "../components/SliderPublicacion";
@@ -26,6 +26,7 @@ function Publicacion(){
     const [cargando, setCargando] = useState(true);
     const [publicacion, setPublicacion] = useState(null);
     const [multimedia, setMultimedia] = useState([]);
+    const [solicitudCertificacion, setSolicitudCertificacion] = useState(undefined);
 
     // Obtiene permisos por rol para permitir o proteger las acciones
     const { permiso: permisoFavorita, error: errorFavorita } = usePermisos(["accion/favorita-terraza"]);
@@ -135,6 +136,42 @@ function Publicacion(){
         })
     }
 
+    const handleBorrarPublicacion = () => {
+        abrirModal({
+            texto: "¿Realmente quieres borrar la publicación?",
+            onResult: (res) => {
+                if(res){
+                    let promesa = new Promise(async (res) => {
+                        // Eliminar imagenes
+                        await borrarMultimedia(multimedia.map(img => img.referencia));
+                        // Eliminar publicacion
+                        await borrarPublicacion(idPublicacion);
+                        res();
+                    })
+        
+                    toast.promise(promesa, {
+                        loading: "Borrando terraza...",
+                        success: () => {
+                            navigate("/publicaciones"); // Redirige a ver las publicaciones
+                            return "Terraza borrada";
+                        },
+                        error: "Hubo un error"
+                    });
+                }
+
+                cerrarModal();
+            }
+        })
+    }
+
+    const handleSolicitarCertificacion = async () => {
+        const existeSolicitud = solicitudCertificacion ? true : false;
+        await solicitarCertificacion({ idPublicacion, idUsuario: publicacion.idUsuario, nuevoEstado: !existeSolicitud });
+
+        const solicitud = await obtenerSolicitudCertificacion(idPublicacion);
+        setSolicitudCertificacion(solicitud);
+    }
+
     useEffect(() => {
         let unsubscribe;
 
@@ -142,11 +179,12 @@ function Publicacion(){
             setCargando(true);
 
             // Se obtienen los datos en paralelo
-            let [publicacion, multimedia, { calificacionTotal }, cantidadFavoritas] = await Promise.all([
+            let [publicacion, multimedia, { calificacionTotal }, cantidadFavoritas, solicitudCertificacion] = await Promise.all([
                 obtenerPublicacion(idPublicacion),
                 obtenerMultimedia(idPublicacion),
                 obtenerCalificacion({ idPublicacion }),
-                obtenerCantidadFavoritas(idPublicacion)
+                obtenerCantidadFavoritas(idPublicacion),
+                obtenerSolicitudCertificacion(idPublicacion)
             ]);
 
             // Suscripción para obtener los comentarios en tiempo real
@@ -162,6 +200,7 @@ function Publicacion(){
                 total: calificacionTotal
             }));
             setCantidadFavoritas(cantidadFavoritas);
+            setSolicitudCertificacion(solicitudCertificacion);
 
             setCargando(false);
         }
@@ -202,6 +241,21 @@ function Publicacion(){
             <h3 className="titulo">{publicacion.nombreTerraza}</h3>
 
             <SliderPublicacion multimedia={multimedia} />
+
+            {/* Boton editar solo para el dueño o un administrador */}
+            <Protegido
+                names={["editar-terraza", "publicacion/editar-terraza"]}
+                paramURL="idPublicacion"
+                type="component"
+                cargandoComponent={""}
+                errorComponent={""}
+            >
+                <section className="publicacion__administracion">
+                    <button className="publicacion__boton boton boton--rojo" type="button" onClick={() => handleBorrarPublicacion()}>Borrar publicación</button>
+                    <Link to={`/editar-terraza/${publicacion.id}`} className="publicacion__boton boton">Editar</Link>
+                    <button className="publicacion__boton boton" type="button" onClick={() => handleSolicitarCertificacion()}>{ !solicitudCertificacion ? "Solicitar certificación" : "Cancelar solicitud de certificación" }</button>
+                </section>
+            </Protegido>
 
             <section className="publicacion__acciones">
                 <span><b>Reportar terraza</b> <FaBullhorn /></span>
@@ -253,9 +307,8 @@ function Publicacion(){
                         <FaPhone className="publicacion__icono-dibujo publicacion__icono-dibujo--llamar" />
                         <span>{publicacion.telefono}</span>
                     </div>
-                    <p className="texto-overflow"><b>Redes sociales:</b> {publicacion.redes}</p>
+                    <p className="publicacion__redes texto-overflow"><b>Redes sociales:</b> {publicacion.redes}</p>
                     <a className="publicacion__cta-llamar boton" href={`tel:${publicacion.telefono}`}>Llama ahora</a>
-                    {/* Añade más elementos según sea necesario */}
                 </div>
             </section>
 

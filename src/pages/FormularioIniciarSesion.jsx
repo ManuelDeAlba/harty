@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthProvider";
 import { ERRORES_FIREBASE } from "../utils";
 import toast from "react-hot-toast";
-import { FaEnvelope} from 'react-icons/fa';
+import { FaEnvelope, FaEye} from 'react-icons/fa';
 import { FaLock} from 'react-icons/fa';
 
 function FormularioIniciarSesion(){
@@ -47,6 +47,12 @@ function FormularioIniciarSesion(){
         });
     }
 
+    const handleOjo = () => {
+        let input = document.getElementById('contrasena');
+        if(input.type == "password") input.type = "text";
+        else input.type = "password";
+    }
+
     return(
         <main className="contenedor-sesion">
             <form className="form__sesion" onSubmit={handleSubmit}>
@@ -77,6 +83,11 @@ function FormularioIniciarSesion(){
                         required
                         placeholder="Contraseña:"
                     />
+                    <button
+                        className="form__icono form__ojo"
+                        type="button"
+                        onClick={handleOjo}
+                    ><FaEye /></button>
                 </div>
                 <input type="submit" value="Iniciar sesión" className="form__boton boton" />
                 <span className="form__restablecer" onClick={restablecer}>Olvidé mi contraseña</span>

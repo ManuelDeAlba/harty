@@ -228,9 +228,30 @@ export function obtenerPublicacionesTiempoReal(callback) {
 }
 
 export async function borrarPublicacion(id){
+    // Se borra la publicación
     const docRef = doc(db, "publicaciones", id);
-
     await deleteDoc(docRef);
+
+    // Se borran las favoritas
+    const queryFavoritas = query(collection(db, "favoritas"), where('idPublicacion', "==", id));
+    const documentosFavoritas = await getDocs(queryFavoritas);
+    documentosFavoritas.forEach(async favorita => {
+        await deleteDoc(favorita.ref);
+    })
+
+    // Se borran las calificaciones
+    const queryCalificaciones = query(collection(db, "calificaciones"), where('idPublicacion', "==", id));
+    const documentosCalificaciones = await getDocs(queryCalificaciones);
+    documentosCalificaciones.forEach(async calificacion => {
+        await deleteDoc(calificacion.ref);
+    })
+
+    // Se borran los comentarios
+    const queryComentarios = query(collection(db, "comentarios"), where('idPublicacion', "==", id));
+    const documentosComentarios = await getDocs(queryComentarios);
+    documentosComentarios.forEach(async comentario => {
+        await deleteDoc(comentario.ref);
+    })
 }
 
 export async function guardarFavorita({
@@ -392,6 +413,58 @@ export async function borrarComentario(idComentario){
     const docRef = doc(db, "comentarios", idComentario);
 
     await deleteDoc(docRef);
+}
+
+export async function solicitarCertificacion({ idPublicacion, idUsuario, nuevoEstado }){
+    const docRef = doc(db, "solicitudes-certificaciones", idPublicacion);
+
+    if(!nuevoEstado){
+        await deleteDoc(docRef);
+        return;
+    }
+
+    await setDoc(docRef, {
+        id: Date.now(),
+        idPublicacion,
+        idUsuario
+    });
+}
+
+export async function obtenerSolicitudCertificacion(idPublicacion){
+    const docRef = doc(db, "solicitudes-certificaciones", idPublicacion);
+
+    const documento = await getDoc(docRef);
+
+    return documento?.data();
+}
+
+export async function obtenerSolicitudesCertificacion(){
+    const querySolicitudes = query(collection(db, "solicitudes-certificaciones"), orderBy("id", "desc"));
+    const solicitudes = (await getDocs(querySolicitudes)).docs.map(doc => doc.data());
+
+    // Si no hay solicitudes, no devuelve nada
+    if(solicitudes.length == 0){
+        return null;
+    }
+
+    const idUsuarios = solicitudes.map(doc => doc.idUsuario);
+    const idPublicaciones = solicitudes.map(doc => doc.idPublicacion);
+
+    const queryUsuarios = query(collection(db, "usuarios"), where("id", "in", idUsuarios));
+    const usuarios = (await getDocs(queryUsuarios)).docs.map(doc => doc.data());
+
+    const queryPublicaciones = query(collection(db, "publicaciones"), where("id", "in", idPublicaciones));
+    const publicaciones = (await getDocs(queryPublicaciones)).docs.map(doc => doc.data());
+
+    const data = solicitudes.map(solicitud => {
+        return {
+            solicitud,
+            usuario: usuarios.find(usuario => usuario.id === solicitud.idUsuario),
+            publicacion: publicaciones.find(publicacion => publicacion.id === solicitud.idPublicacion)
+        }
+    });
+
+    return data;
 }
 
 //! STORAGE
