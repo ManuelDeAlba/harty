@@ -352,6 +352,28 @@ export async function obtenerCalificacion({
     }
 }
 
+//FUNCIONES PARA EL MANEJO DE LOS REPORTES
+function verificarExistenciaReporte(idPublicacion, idUsuario) { //auxiliar p/ saber si hay que agregar un nuevo reporte
+    const reportesPublicacionRef = collection(db, 'reportesPublicacion');
+    const q = query(reportesPublicacionRef, 
+      where('idpublicacion', '==', idPublicacion),
+      where('idusuario', '==', idUsuario)
+    );
+    const querySnapshot = getDocs(q);
+    // Si querySnapshot está vacío, significa que no hay documentos que cumplan con las condiciones
+    return !querySnapshot.empty; //regresa false si no existe el reporte
+}
+export async function agregarReporte(idPublicacion, idUsuario){
+    if(!verificarExistenciaReporte(idPublicacion, idUsuario)){
+        addDoc(collection(db,"reportesPublicaciones"),{
+            idPublicacion,
+            idUsuario
+        });
+    }else{// ya existe este reporte
+
+    }
+}
+
 export async function enviarComentario({
     idPublicacion,
     idUsuario,

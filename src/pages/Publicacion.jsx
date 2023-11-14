@@ -9,7 +9,7 @@ import { FaClock, FaUsers, FaRuler, FaPhone, FaShareAlt } from 'react-icons/fa';
 import { useAuth } from "../context/AuthProvider";
 import { useModal } from "../context/ModalConfirmProvider";
 
-import { borrarComentario, borrarMultimedia, borrarPublicacion, enviarComentario, guardarCalificacion, guardarFavorita, obtenerCalificacion, obtenerCantidadFavoritas, obtenerComentariosTiempoReal, obtenerEstadoFavorita, obtenerMultimedia, obtenerPublicacion, obtenerSolicitudCertificacion, solicitarCertificacion } from "../firebase";
+import { borrarComentario, borrarMultimedia, borrarPublicacion, enviarComentario, guardarCalificacion, guardarFavorita, obtenerCalificacion, obtenerCantidadFavoritas, obtenerComentariosTiempoReal, obtenerEstadoFavorita, obtenerMultimedia, obtenerPublicacion, obtenerSolicitudCertificacion, solicitarCertificacion } from "../]";
 import { truncarCalificacion } from "../utils";
 
 import SliderPublicacion from "../components/SliderPublicacion";
@@ -172,6 +172,26 @@ function Publicacion(){
         setSolicitudCertificacion(solicitud);
     }
 
+    const handleReporte = () =>{
+        console.log("boton reportar");
+
+        // Si no tiene permisos para realizar esa acción
+        if(!permisoComentar){
+            toast.error(errorComentar.message);
+            if(errorComentar.code != "harty/unverified-account" && errorComentar.code != "harty/disabled-account") navigate("/iniciar-sesion");
+            return;
+        }
+        
+        toast.promise(enviarReporte({ //crear la funcion
+            idPublicacion,
+            idUsuario: usuario.id
+        }), {
+            loading: "Reportando...",
+            success: "Reporte hecho",
+            error: (error) => error.message
+        });
+    }
+
     useEffect(() => {
         let unsubscribe;
 
@@ -256,9 +276,9 @@ function Publicacion(){
                     <button className="publicacion__boton boton" type="button" onClick={() => handleSolicitarCertificacion()}>{ !solicitudCertificacion ? "Solicitar certificación" : "Cancelar solicitud de certificación" }</button>
                 </section>
             </Protegido>
-
+            
             <section className="publicacion__acciones">
-                <span><b>Reportar terraza</b> <FaBullhorn /></span>
+                <span onClick={handleReporte}><b>Reportar terraza</b> <FaBullhorn /></span>
                 <div className="favoritos">
                     <span><b>{cantidadFavoritas}</b> </span>
                     <span onClick={() => handleFavorita(!favorita)} className="favoritos__corazon">
