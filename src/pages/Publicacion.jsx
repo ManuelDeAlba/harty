@@ -9,7 +9,7 @@ import { FaClock, FaUsers, FaRuler, FaPhone, FaShareAlt } from 'react-icons/fa';
 import { useAuth } from "../context/AuthProvider";
 import { useModal } from "../context/ModalConfirmProvider";
 
-import { borrarComentario, borrarMultimedia, borrarPublicacion, cambiarEstadoCertificacion, enviarComentario, guardarCalificacion, guardarFavorita, obtenerCalificacion, obtenerCantidadFavoritas, obtenerComentariosTiempoReal, obtenerEstadoFavorita, obtenerMultimedia, obtenerPublicacion, obtenerSolicitudCertificacion, solicitarCertificacion } from "../firebase";
+import { borrarComentario, borrarMultimedia, borrarPublicacion, cambiarEstadoCertificacion, enviarComentario, guardarCalificacion, guardarFavorita, obtenerCalificacion, obtenerCantidadFavoritas, obtenerComentariosTiempoReal, obtenerEstadoFavorita, obtenerMultimedia, obtenerPublicacion, obtenerSolicitudCertificacion, solicitarCertificacion, agregarReporte } from "../firebase";
 import { truncarCalificacion } from "../utils";
 
 import SliderPublicacion from "../components/SliderPublicacion";
@@ -187,6 +187,24 @@ function Publicacion(){
         // await obtenerPublicacion(idPublicacion);
     }
 
+    const handleReporte = () =>{
+        // Si no tiene permisos para realizar esa acción
+        if(!permisoComentar){
+            toast.error(errorComentar.message);
+            if(errorComentar.code != "harty/unverified-account" && errorComentar.code != "harty/disabled-account") navigate("/iniciar-sesion");
+            return;
+        }
+
+        toast.promise(agregarReporte({ 
+            idPublicacion,
+            idUsuario: usuario.id
+        }), {
+            loading: "Reportando...",
+            success: "Reporte hecho", //MANDA ESTE MENSAJE AUNQUE EL REPORTE NO SE HAYA MANDADO PQ YA HAY UNO EXISTENTE CON LOS MISMOS idPublicacion y idUsuario
+            error: (error) => error.message
+        });
+    }
+
     useEffect(() => {
         let unsubscribe;
 
@@ -281,9 +299,9 @@ function Publicacion(){
                     </Protegido>
                 </section>
             </Protegido>
-
+            
             <section className="publicacion__acciones">
-                <span><b>Reportar terraza</b> <FaBullhorn /></span>
+                <span onClick={handleReporte}><b>Reportar terraza</b> <FaBullhorn /></span>
                 <div className="favoritos">
                     <span><b>{cantidadFavoritas}</b> </span>
                     <span onClick={() => handleFavorita(!favorita)} className="favoritos__corazon">
