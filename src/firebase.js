@@ -227,6 +227,47 @@ export function obtenerPublicacionesTiempoReal(callback) {
     return unsubscribe;
 }
 
+export async function obtenerPublicacionesRecomendadasCertificadas(){
+    const limiteCertificadas = 3;
+
+    const queryRecomendadas = query(collection(db, "publicaciones"), where("certificada", "==", true));
+    const documentos = (await getDocs(queryRecomendadas)).docs.map(doc => doc.data());
+
+    if(documentos.empty) return null;
+
+    let recomendadas = [];
+
+    if(documentos.length <= limiteCertificadas) recomendadas = documentos;
+    else {
+        while(recomendadas.length < limiteCertificadas){
+            let indice = Math.floor(Math.random() * documentos.length);
+
+            if(!recomendadas.some(recomendada => recomendada.id == documentos[indice].id)){
+                recomendadas.push(documentos[indice]);
+            }
+        }
+    }
+
+    return recomendadas;
+}
+
+export async function obtenerPublicacionesRecomendadasFavoritas(){
+    const limiteFavoritas = 3;
+
+    let documentos = await getDocs(collection(db, "publicaciones"));
+    if(documentos.empty) return null;
+
+    // Se obtiene la cantidad de favoritos
+    documentos = documentos.docs.map(async doc => ({
+        ...doc.data(),
+        cantFavoritas: await obtenerCantidadFavoritas(doc.id)
+    }));
+    documentos = await Promise.all(documentos);
+    documentos = documentos.toSorted((a,b) => b.cantFavoritas - a.cantFavoritas);
+
+    return documentos.slice(0, limiteFavoritas);
+}
+
 export async function borrarPublicacion(id){
     // Se borra la publicación
     const docRef = doc(db, "publicaciones", id);
