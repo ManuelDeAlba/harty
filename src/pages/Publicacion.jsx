@@ -9,14 +9,15 @@ import { RiVerifiedBadgeFill } from "react-icons/ri";
 
 import { useAuth } from "../context/AuthProvider";
 import { useModal } from "../context/ModalConfirmProvider";
+import usePermisos from "../hooks/usePermisos";
 
 import { borrarComentario, borrarMultimedia, borrarPublicacion, cambiarEstadoCertificacion, enviarComentario, guardarCalificacion, guardarFavorita, obtenerCalificacion, obtenerCantidadFavoritas, obtenerComentariosTiempoReal, obtenerEstadoFavorita, obtenerMultimedia, obtenerPublicacion, obtenerSolicitudCertificacion, solicitarCertificacion, agregarReporte } from "../firebase";
 import { truncarCalificacion } from "../utils";
 
+import Protegido from "../components/Protegido";
 import SliderPublicacion from "../components/SliderPublicacion";
 import MapaUbicacion from "../components/MapaUbicacion";
-import Protegido from "../components/Protegido";
-import usePermisos from "../hooks/usePermisos";
+import CalendarioDisponibilidad from "../components/CalendarioDisponibilidad";
 
 function Publicacion(){
     const navigate = useNavigate();
@@ -372,6 +373,11 @@ function Publicacion(){
 
             <section className="publicacion__inferior">
                 <MapaUbicacion ubicacion={publicacion.direccion} />
+
+                <div className="publicacion__disponibilidad">
+                    <span className="publicacion__disponibilidad-titulo titulo">Disponibilidad</span>
+                    <CalendarioDisponibilidad className="publicacion__disponibilidad-calendario" value={publicacion.disponibilidad} readonly />
+                </div>
                 <div className="calificacion">
                     <span className="calificacion__titulo"><b>Calificacion total:</b> {truncarCalificacion(calificaciones.total)}</span>
                     <div className="calificacion__estrellas">

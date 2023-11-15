@@ -7,6 +7,7 @@ import { useAuth } from "../context/AuthProvider";
 import { useModal } from "../context/ModalConfirmProvider";
 
 import SelectorDeUbicacion from "../components/SelectorDeUbicacion";
+import CalendarioDisponibilidad from "../components/CalendarioDisponibilidad";
 
 const datosDefault = {
     nombreTerraza: "", // string
@@ -21,8 +22,7 @@ const datosDefault = {
     capacidad: "", // number
     servicios: "", // string - opcional
     etiquetas: "", // string - opcional
-
-    disponibilidad: "", // ? (ver como poner en el HTML)
+    disponibilidad: [] // array - opcional
 }
 
 function FormularioPublicarTerraza(){
@@ -32,8 +32,10 @@ function FormularioPublicarTerraza(){
     const { abrirModal, cerrarModal } = useModal();
 
     const [datos, setDatos] = useState(null);
+
     const [imgSubidas, setImgSubidas] = useState([]);
     const [multimedia, setMultimedia] = useState([]);
+
     const [errores, setErrores] = useState(null);
 
     // Para cambiar entre creación y edición
@@ -375,6 +377,14 @@ function FormularioPublicarTerraza(){
                     />
                 </div>
 
+                <label>Disponibilidad (seleccione los días apartados):</label>
+                <CalendarioDisponibilidad
+                    className="form__publicar-calendario"
+                    name="disponibilidad"
+                    value={datos.disponibilidad}
+                    onInput={handleInput}
+                />
+
                 <label htmlFor="multimedia">Multimedia:</label>
                 <div className="form__input">
                     <input
@@ -404,9 +414,6 @@ function FormularioPublicarTerraza(){
                             <img className="form__img" src={imagen.src} key={imagen.file.name} onClick={() => handleBorrarMultimediaLocal(imagen.file.name)} />
                         ))
                     }
-                    </div>
-                <div>
-                    <h4>Falta disponibilidad</h4>
                 </div>
 
                 <div className="form__botones">

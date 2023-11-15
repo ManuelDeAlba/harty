@@ -6,6 +6,7 @@ import { Autoplay } from 'swiper/modules';
 import 'swiper/css';
 
 import { obtenerPublicacionesRecomendadasCertificadas, obtenerPublicacionesRecomendadasFavoritas } from '../firebase';
+
 import PrevisualizacionPublicacion from '../components/PrevisualizacionPublicacion';
 
 const fondos = ["/assets/img/hero-bg.jpg", "/assets/img/hero-bg-2.png", "/assets/img/hero-bg-3.png"];
@@ -74,7 +75,7 @@ const Inicio = () => {
                     <div className='recomendadas__publicaciones contenedor'>
                         {
                             recomendadasCertificadas && recomendadasCertificadas.map(recomendada => (
-                                <PrevisualizacionPublicacion publicacion={recomendada} />
+                                <PrevisualizacionPublicacion publicacion={recomendada} key={recomendada.id} />
                             ))
                         }
                     </div>
@@ -86,7 +87,7 @@ const Inicio = () => {
                     <div className="recomendadas__publicaciones contenedor">
                         {
                             recomendadasFavoritas && recomendadasFavoritas.map(recomendada => (
-                                <PrevisualizacionPublicacion publicacion={recomendada} />
+                                <PrevisualizacionPublicacion publicacion={recomendada} key={recomendada.id} />
                             ))
                         }
                     </div>
