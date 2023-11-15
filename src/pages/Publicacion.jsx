@@ -4,7 +4,8 @@ import toast from "react-hot-toast";
 
 import { FaBullhorn } from "react-icons/fa";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
-import { FaClock, FaUsers, FaRuler, FaPhone, FaShareAlt } from 'react-icons/fa';
+import { FaClock, FaUsers, FaRuler, FaPhone } from 'react-icons/fa';
+import { RiVerifiedBadgeFill } from "react-icons/ri";
 
 import { useAuth } from "../context/AuthProvider";
 import { useModal } from "../context/ModalConfirmProvider";
@@ -275,6 +276,15 @@ function Publicacion(){
 
             <SliderPublicacion multimedia={multimedia} />
 
+            {
+                publicacion.certificada && (
+                    <section className="publicacion__certificacion">
+                        <RiVerifiedBadgeFill className="publicacion__certificacion-icono" />
+                        <span>Terraza certificada por Harty</span>
+                    </section>
+                )
+            }
+
             {/* Boton editar solo para el dueño o un administrador */}
             <Protegido
                 names={["editar-terraza", "publicacion/editar-terraza"]}
@@ -301,9 +311,12 @@ function Publicacion(){
             </Protegido>
             
             <section className="publicacion__acciones">
-                <span onClick={handleReporte}><b>Reportar terraza</b> <FaBullhorn /></span>
+                <button className="publicacion__reportar boton boton--rojo" onClick={handleReporte}>
+                    Reportar
+                    <FaBullhorn className="publicacion__reportar-boton" />
+                </button>
                 <div className="favoritos">
-                    <span><b>{cantidadFavoritas}</b> </span>
+                    <span><b>{cantidadFavoritas}</b></span>
                     <span onClick={() => handleFavorita(!favorita)} className="favoritos__corazon">
                         {
                             favorita ?
