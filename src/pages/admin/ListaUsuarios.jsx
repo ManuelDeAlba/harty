@@ -8,7 +8,10 @@ function ListaUsuarios(){
 
     useEffect(() => {
         obtenerUsuariosPaginacion()
-        .then(({ ultimo, usuarios }) => {
+        .then(res => {
+            if(!res) return;
+            
+            let { ultimo, usuarios } = res;
             if(usuarios.length){
                 setUltimoDocumento(ultimo);
                 setUsuarios(usuarios);
@@ -18,7 +21,10 @@ function ListaUsuarios(){
 
     const handleCargarUsuarios = () => {
         obtenerUsuariosPaginacion({ ref: ultimoDocumento })
-        .then(({ ultimo, usuarios }) => {
+        .then(res => {
+            if(!res) return;
+            
+            let { ultimo, usuarios } = res;
             if(usuarios.length){
                 setUltimoDocumento(ultimo);
                 setUsuarios(prev => ([

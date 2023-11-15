@@ -32,17 +32,21 @@ export async function obtenerUsuario(uid){
 
     let documento = await getDoc(docRef);
 
-    return documento.data();
+    if(!documento.exists()) return;
+
+    return documento?.data();
 }
 
 export async function obtenerUsuariosPaginacion({ ref=null, cantidad=10 } = {}){
 	let q = query(collection(db, "usuarios"), orderBy("rol"), orderBy("nombre"), startAfter(ref), limit(cantidad));
 
-	const docs = (await getDocs(q)).docs;
+	let documentos = await getDocs(q);
+
+    if(documentos.empty) return;
     
     return {
-        ultimo: docs[docs.length - 1],
-        usuarios: docs.map(doc => doc.data())
+        ultimo: documentos.docs[documentos.size - 1],
+        usuarios: documentos.docs.map(doc => doc.data())
     };
 }
 
@@ -56,6 +60,8 @@ export async function estadoUsuario(uid, habilitado=false){
 
 export async function obtenerPermisos(){
     const { docs } = await getDocs(collection(db, "permisos"));
+
+    if(docs.length == 0) return;
 
     const permisos = {}
     
@@ -187,7 +193,7 @@ export async function editarPublicacion({
 export async function obtenerPublicacion(id){
     const docRef = doc(db, "publicaciones", id);
 
-    return (await getDoc(docRef)).data();
+    return (await getDoc(docRef))?.data();
 }
 
 export async function obtenerPublicaciones(){
@@ -196,6 +202,8 @@ export async function obtenerPublicaciones(){
 
     // Se obtienen los documentos
     const querySnapshot = await getDocs(q);
+
+    if(querySnapshot.empty) return;
     
     // Se recorre para obtener la información de cada documento
     return querySnapshot.docs.map(doc => doc.data());
@@ -207,6 +215,8 @@ export async function obtenerPublicacionesUsuario(uid){
 
     // Se obtienen los documentos
     const querySnapshot = await getDocs(q);
+
+    if(querySnapshot.empty) return;
     
     // Se recorre para obtener la información de cada documento
     return querySnapshot.docs.map(doc => doc.data());
@@ -218,6 +228,8 @@ export function obtenerPublicacionesTiempoReal(callback) {
 
     // Establecer una suscripción a los cambios en la base de datos
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        if(querySnapshot.empty) callback(undefined);
+
         const publicaciones = querySnapshot.docs.map(doc => doc.data());
 
         callback(publicaciones);
@@ -233,7 +245,7 @@ export async function obtenerPublicacionesRecomendadasCertificadas(){
     const queryRecomendadas = query(collection(db, "publicaciones"), where("certificada", "==", true));
     const documentos = (await getDocs(queryRecomendadas)).docs.map(doc => doc.data());
 
-    if(documentos.empty) return null;
+    if(documentos.empty) return;
 
     let recomendadas = [];
 
@@ -255,7 +267,7 @@ export async function obtenerPublicacionesRecomendadasFavoritas(){
     const limiteFavoritas = 3;
 
     let documentos = await getDocs(collection(db, "publicaciones"));
-    if(documentos.empty) return null;
+    if(documentos.empty) return;
 
     // Se obtiene la cantidad de favoritos
     documentos = documentos.docs.map(async doc => ({
@@ -335,6 +347,8 @@ export async function obtenerEstadoFavorita({
     const docRef = doc(db, "favoritas", `${idPublicacion}-${idUsuario}`);
 
     const documento = await getDoc(docRef);
+
+    if(documento.exists()) return;
 
     return documento.exists();
 }
