@@ -4,12 +4,13 @@ import toast from "react-hot-toast";
 
 import { FaBullhorn } from "react-icons/fa";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
-import { FaClock, FaUsers, FaRuler, FaPhone, FaShareAlt } from 'react-icons/fa';
+import { FaClock, FaUsers, FaRuler, FaPhone } from 'react-icons/fa';
+import { RiVerifiedBadgeFill } from "react-icons/ri";
 
 import { useAuth } from "../context/AuthProvider";
 import { useModal } from "../context/ModalConfirmProvider";
 
-import { borrarComentario, borrarMultimedia, borrarPublicacion, enviarComentario, guardarCalificacion, guardarFavorita, obtenerCalificacion, obtenerCantidadFavoritas, obtenerComentariosTiempoReal, obtenerEstadoFavorita, obtenerMultimedia, obtenerPublicacion, obtenerSolicitudCertificacion, solicitarCertificacion } from "../firebase";
+import { borrarComentario, borrarMultimedia, borrarPublicacion, cambiarEstadoCertificacion, enviarComentario, guardarCalificacion, guardarFavorita, obtenerCalificacion, obtenerCantidadFavoritas, obtenerComentariosTiempoReal, obtenerEstadoFavorita, obtenerMultimedia, obtenerPublicacion, obtenerSolicitudCertificacion, solicitarCertificacion, agregarReporte } from "../firebase";
 import { truncarCalificacion } from "../utils";
 
 import SliderPublicacion from "../components/SliderPublicacion";
@@ -172,6 +173,39 @@ function Publicacion(){
         setSolicitudCertificacion(solicitud);
     }
 
+    const handleCertificar = async () => {
+        await cambiarEstadoCertificacion({
+            idPublicacion,
+            nuevoEstado: !publicacion?.certificada ?? true // Si no está certificada el nuevo estado es true
+        });
+
+        // Se cambia el estado para el renderizado
+        setPublicacion(prev => ({
+            ...prev,
+            certificada: !publicacion?.certificada ?? true
+        }))
+
+        // await obtenerPublicacion(idPublicacion);
+    }
+
+    const handleReporte = () =>{
+        // Si no tiene permisos para realizar esa acción
+        if(!permisoComentar){
+            toast.error(errorComentar.message);
+            if(errorComentar.code != "harty/unverified-account" && errorComentar.code != "harty/disabled-account") navigate("/iniciar-sesion");
+            return;
+        }
+
+        toast.promise(agregarReporte({ 
+            idPublicacion,
+            idUsuario: usuario.id
+        }), {
+            loading: "Reportando...",
+            success: "Reporte hecho", //MANDA ESTE MENSAJE AUNQUE EL REPORTE NO SE HAYA MANDADO PQ YA HAY UNO EXISTENTE CON LOS MISMOS idPublicacion y idUsuario
+            error: (error) => error.message
+        });
+    }
+
     useEffect(() => {
         let unsubscribe;
 
@@ -242,6 +276,15 @@ function Publicacion(){
 
             <SliderPublicacion multimedia={multimedia} />
 
+            {
+                publicacion.certificada && (
+                    <section className="publicacion__certificacion">
+                        <RiVerifiedBadgeFill className="publicacion__certificacion-icono" />
+                        <span>Terraza certificada por Harty</span>
+                    </section>
+                )
+            }
+
             {/* Boton editar solo para el dueño o un administrador */}
             <Protegido
                 names={["editar-terraza", "publicacion/editar-terraza"]}
@@ -253,14 +296,27 @@ function Publicacion(){
                 <section className="publicacion__administracion">
                     <button className="publicacion__boton boton boton--rojo" type="button" onClick={() => handleBorrarPublicacion()}>Borrar publicación</button>
                     <Link to={`/editar-terraza/${publicacion.id}`} className="publicacion__boton boton">Editar</Link>
-                    <button className="publicacion__boton boton" type="button" onClick={() => handleSolicitarCertificacion()}>{ !solicitudCertificacion ? "Solicitar certificación" : "Cancelar solicitud de certificación" }</button>
+                    {
+                        !publicacion?.certificada && (
+                            <button className="publicacion__boton boton" type="button" onClick={() => handleSolicitarCertificacion()}>{ !solicitudCertificacion ? "Solicitar certificación" : "Cancelar solicitud de certificación" }</button>
+                        )
+                    }
+                    <Protegido
+                        names={["certificar-terraza"]}
+                        type="component"
+                    >
+                        <button className="publicacion__boton boton" type="button" onClick={handleCertificar}>{ !publicacion?.certificada ? "Certificar" : "Quitar certificación" }</button>
+                    </Protegido>
                 </section>
             </Protegido>
-
+            
             <section className="publicacion__acciones">
-                <span><b>Reportar terraza</b> <FaBullhorn /></span>
+                <button className="publicacion__reportar boton boton--rojo" onClick={handleReporte}>
+                    Reportar
+                    <FaBullhorn className="publicacion__reportar-boton" />
+                </button>
                 <div className="favoritos">
-                    <span><b>{cantidadFavoritas}</b> </span>
+                    <span><b>{cantidadFavoritas}</b></span>
                     <span onClick={() => handleFavorita(!favorita)} className="favoritos__corazon">
                         {
                             favorita ?

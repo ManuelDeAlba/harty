@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FaClock, FaUsers } from 'react-icons/fa';
+import { RiVerifiedBadgeFill } from "react-icons/ri";
 
 import { useAuth } from "../context/AuthProvider";
 
@@ -30,6 +31,12 @@ function PrevisualizacionPublicacion({ publicacion }){
                 // Solo muestra el boton para editar si es admin o el dueño de la publicación
                 usuario && (publicacion.idUsuario == usuario.id || usuario.rol == "admin") && (
                     <Link to={`/editar-terraza/${publicacion.id}`} className="previsualizacion__editar">Editar</Link>
+                )
+            }
+            {
+                // Insignia de verificación
+                publicacion.certificada && (
+                    <RiVerifiedBadgeFill className="previsualizacion__certificada" />
                 )
             }
             <Link className="previsualizacion__portada" to={`/publicacion/${publicacion.id}`}>
