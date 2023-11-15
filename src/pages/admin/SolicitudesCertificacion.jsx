@@ -29,10 +29,11 @@ function SolicitudesCertificacion(){
             {
                 solicitudes.map(({solicitud, usuario, publicacion}) => (
                     <div className="solicitud" key={solicitud.id}>
+                        <Link className="solicitud__link boton" to={`/publicacion/${publicacion.id}`}>{publicacion.nombreTerraza}</Link>
+                        <b>Datos de contacto</b>
                         <span className="solicitud__nombre">{usuario.nombre}</span>
                         <span className="solicitud__correo">{usuario.correo}</span>
-                        <span className="solicitud__telefono">{usuario.telefono}</span>
-                        <Link className="solicitud__link" to={`/publicacion/${publicacion.id}`}>{publicacion.nombreTerraza}</Link>
+                        <span className="solicitud__telefono">{publicacion.telefono}</span>
                     </div>
                 ))
             }

@@ -1029,3 +1029,13 @@ html:has(.modal){ overflow: hidden; }
 .publicaciones--perfil{
   margin: 3rem auto;
 }
+
+/* ESTILOS PÁGINAS ADMINISTRADOR */
+.solicitud{
+  display: flex;
+  flex-direction: column;
+  gap: .25rem;
+  padding: 1rem;
+  border-radius: 3px;
+  background-color: #ddd;
+}
