@@ -53,7 +53,19 @@ function CalendarioDisponibilidad({ name, className, value, onInput: handleInput
 
     // Cada que cambie el value del componente, se actualiza el estado para renderizar los días seleccionados
     useEffect(() => {
-        setDiasSeleccionados(value);
+        // Para limpiar la base de datos, solo se aceptan fechas de el año actual
+        // y también en el onInput se envian las fechas válidas
+        const fechasValidas = value.filter(fecha => {
+            const anioActual = new Date().getFullYear();
+            const anio = fecha.split("-")[2];
+
+            return anio >= anioActual;
+        })
+
+        // Si no hay cambios, no hace nada (esto corta el ciclo infinito)
+        if(JSON.stringify(fechasValidas) == JSON.stringify(diasSeleccionados)) return;
+
+        setDiasSeleccionados(fechasValidas);
     }, [value])
 
     // Cada que se actualice con el click, se envia la información al componente padre
