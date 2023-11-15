@@ -1031,6 +1031,11 @@ html:has(.modal){ overflow: hidden; }
 }
 
 /* ESTILOS PÁGINAS ADMINISTRADOR */
+.solicitudes{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
 .solicitud{
   display: flex;
   flex-direction: column;

@@ -24,19 +24,21 @@ function SolicitudesCertificacion(){
     if(!solicitudes) return <span>No hay solicitudes de certificación</span>
 
     return(
-        <main className="solicitudes contenedor">
+        <main className="contenedor">
             <h1 className="solicitudes__titulo titulo">Solicitudes de Certificación</h1>
-            {
-                solicitudes.map(({solicitud, usuario, publicacion}) => (
-                    <div className="solicitud" key={solicitud.id}>
-                        <Link className="solicitud__link boton" to={`/publicacion/${publicacion.id}`}>{publicacion.nombreTerraza}</Link>
-                        <b>Datos de contacto</b>
-                        <span className="solicitud__nombre">{usuario.nombre}</span>
-                        <span className="solicitud__correo">{usuario.correo}</span>
-                        <span className="solicitud__telefono">{publicacion.telefono}</span>
-                    </div>
-                ))
-            }
+            <div className="solicitudes">
+                {
+                    solicitudes.map(({solicitud, usuario, publicacion}) => (
+                        <div className="solicitud" key={solicitud.id}>
+                            <Link className="solicitud__link boton" to={`/publicacion/${publicacion.id}`}>{publicacion.nombreTerraza}</Link>
+                            <b>Datos de contacto</b>
+                            <span className="solicitud__nombre texto-overflow">{usuario.nombre}</span>
+                            <span className="solicitud__correo texto-overflow">{usuario.correo}</span>
+                            <span className="solicitud__telefono">{publicacion.telefono}</span>
+                        </div>
+                    ))
+                }
+            </div>
         </main>
     )
 }
