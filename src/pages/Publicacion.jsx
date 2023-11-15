@@ -200,8 +200,8 @@ function Publicacion(){
             idPublicacion,
             idUsuario: usuario.id
         }), {
-            loading: "Reportando...",
-            success: "Reporte hecho", //MANDA ESTE MENSAJE AUNQUE EL REPORTE NO SE HAYA MANDADO PQ YA HAY UNO EXISTENTE CON LOS MISMOS idPublicacion y idUsuario
+            loading: "Reportando publicación...",
+            success: "Publicación reportada", //MANDA ESTE MENSAJE AUNQUE EL REPORTE NO SE HAYA MANDADO PQ YA HAY UNO EXISTENTE CON LOS MISMOS idPublicacion y idUsuario
             error: (error) => error.message
         });
     }

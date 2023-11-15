@@ -385,13 +385,41 @@ export async function agregarReporte({ idPublicacion, idUsuario }){
     if(existeReporte) throw ERRORES_HARTY.PUBLICATION_REPORTED;
 
     try {
-        await addDoc(collection(db, "reportes-publicaciones"), {
+        const id = `${idPublicacion}-${idUsuario}`;
+        const docRef = doc(db, "reportes-publicaciones", id);
+
+        await setDoc(docRef, {
+            id,
             idPublicacion,
             idUsuario,
         });
     } catch (error) {
         throw error;
     }
+}
+
+export async function obtenerReportes(){
+    let documentosReportes = await getDocs(collection(db, "reportes-publicaciones"));
+    if(documentosReportes.empty) return;
+
+    documentosReportes = documentosReportes.docs.map(doc => doc.data());
+    const idPublicaciones = documentosReportes.map(doc => doc.idPublicacion);
+    const idUsuarios = documentosReportes.map(doc => doc.idUsuario);
+
+    const queryPublicaciones = query(collection(db, "publicaciones"), where("id", "in", idPublicaciones));
+    const documentosPublicaciones = (await getDocs(queryPublicaciones)).docs.map(doc => doc.data());
+
+    const queryUsuarios = query(collection(db, "usuarios"), where("id", "in", idUsuarios));
+    const documentosUsuarios = (await getDocs(queryUsuarios)).docs.map(doc => doc.data());
+
+    return documentosPublicaciones.map(publicacion => {
+        const reportesPublicacion = documentosReportes.filter(reporte => reporte.idPublicacion == publicacion.id);
+        return {
+            publicacion,
+            reportes: reportesPublicacion,
+            usuarios: documentosUsuarios.filter(usuario => reportesPublicacion.some(reporte => reporte.idUsuario == usuario.id)),
+        }
+    })
 }
 
 export async function enviarComentario({

@@ -22,6 +22,7 @@ import SolicitudesCertificacion from "./pages/admin/SolicitudesCertificacion";
 import Navbar from "./components/Navbar";
 import Protegido from "./components/Protegido";
 import ScrollToTop from "./components/ScrollToTop";
+import ReportesPublicaciones from "./pages/admin/ReportesPublicaciones";
 
 function App() {
     return (
@@ -73,6 +74,11 @@ function App() {
                             <Route path="/admin/lista-certificaciones" element={
                                 <Protegido names={["certificar-terraza"]}>
                                     <SolicitudesCertificacion />
+                                </Protegido>
+                            } />
+                            <Route path="/admin/lista-reportes" element={
+                                <Protegido names={["lista-reportes"]}>
+                                    <ReportesPublicaciones />
                                 </Protegido>
                             } />
 
