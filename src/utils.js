@@ -20,6 +20,7 @@ export const ERRORES_HARTY = {
     MISSING_SESSION: new HartyError({ code: "harty/missing-session", message: "Registrate o inicia sesión y verifica tu cuenta" }),
     UNVERIFIED_ACCOUNT: new HartyError({ code: "harty/unverified-account", message: "Verifica tu correo electrónico" }),
     DISABLED_ACCOUNT: new HartyError({ code: "harty/disabled-account", message: "La cuenta está deshabilitada" }),
+    PUBLICATION_REPORTED: new HartyError({ code: "harty/publication-reported", message: "No puedes volver a reportar la publicación" }),
     INVALID_DATA: (message) => new HartyError({ code: "harty/invalid-data", message }),
     CUSTOM_ERROR: (message) => new HartyError({ code: "harty/custom-error", message }),
 }
