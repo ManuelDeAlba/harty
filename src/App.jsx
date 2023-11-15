@@ -17,12 +17,13 @@ import Perfil from "./pages/Perfil";
 import FormularioEditarPerfil from "./pages/FormularioEditarPerfil";
 import ListaUsuarios from "./pages/admin/ListaUsuarios";
 import SolicitudesCertificacion from "./pages/admin/SolicitudesCertificacion";
+import ReportesPublicaciones from "./pages/admin/ReportesPublicaciones";
+import MenuAdministracion from "./pages/admin/MenuAdministracion";
 
 // Componentes
 import Navbar from "./components/Navbar";
 import Protegido from "./components/Protegido";
 import ScrollToTop from "./components/ScrollToTop";
-import ReportesPublicaciones from "./pages/admin/ReportesPublicaciones";
 
 function App() {
     return (
@@ -66,18 +67,23 @@ function App() {
                             } />
 
                             {/* Administración */}
+                            <Route path="/admin" element={
+                                <Protegido names={["administracion"]}>
+                                    <MenuAdministracion />
+                                </Protegido>
+                            } />
                             <Route path="/admin/lista-usuarios" element={
-                                <Protegido names={["lista-usuarios"]}>
+                                <Protegido names={["administracion"]}>
                                     <ListaUsuarios />
                                 </Protegido>
                             } />
                             <Route path="/admin/lista-certificaciones" element={
-                                <Protegido names={["certificar-terraza"]}>
+                                <Protegido names={["administracion"]}>
                                     <SolicitudesCertificacion />
                                 </Protegido>
                             } />
                             <Route path="/admin/lista-reportes" element={
-                                <Protegido names={["lista-reportes"]}>
+                                <Protegido names={["administracion"]}>
                                     <ReportesPublicaciones />
                                 </Protegido>
                             } />

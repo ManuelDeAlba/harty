@@ -52,13 +52,9 @@ function Navbar() {
                             usuario ? (
                                 <>
                                     {/* Muestra este boton solo a los usuarios permitidos (administradores) */}
-                                    <Protegido names={["certificar-terraza"]} type="component" errorComponent={""}>
-                                        <NavLink className='nav__link' to="/admin/lista-certificaciones">Solicitudes</NavLink>
+                                    <Protegido names={["administracion"]} type="component" errorComponent={""}>
+                                        <NavLink className='nav__link' to="/admin">Administración</NavLink>
                                     </Protegido>
-                                    <Protegido names={["lista-usuarios"]} type="component" errorComponent={""}>
-                                        <NavLink className='nav__link' to="/admin/lista-usuarios">Usuarios</NavLink>
-                                    </Protegido>
-
                                     <NavLink className='nav__link' to={`/perfil/${usuario.id}`}>Mi perfil</NavLink>
                                     <NavLink className='nav__link' to="/" onClick={cerrarSesion}>Cerrar sesión</NavLink>
                                 </>

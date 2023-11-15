@@ -27,7 +27,7 @@ function ReportesPublicaciones(){
             <div className="reportes">
                 {
                     reportes.map(({ publicacion, reportes, usuarios }) => (
-                        <div className="reporte">
+                        <div className="reporte" key={publicacion.id}>
                             <Link className="reporte__link" to={`/publicacion/${publicacion.id}`}>{publicacion.nombreTerraza}</Link>
                             <b>{reportes.length} {reportes.length == 1 ? "reporte" : "reportes"}</b>
                             <ul className="reporte__usuarios">

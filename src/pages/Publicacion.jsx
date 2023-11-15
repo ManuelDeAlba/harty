@@ -302,7 +302,7 @@ function Publicacion(){
                         )
                     }
                     <Protegido
-                        names={["certificar-terraza"]}
+                        names={["administracion"]}
                         type="component"
                     >
                         <button className="publicacion__boton boton" type="button" onClick={handleCertificar}>{ !publicacion?.certificada ? "Certificar" : "Quitar certificación" }</button>
