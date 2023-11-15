@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getFirestore, doc, setDoc, getDocs, collection, query, orderBy, onSnapshot, getDoc, startAt, limit, startAfter, updateDoc, where, deleteDoc, getCountFromServer, addDoc } from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDocs, collection, query, orderBy, onSnapshot, getDoc, startAt, limit, startAfter, updateDoc, where, deleteDoc, getCountFromServer, addDoc, deleteField } from "firebase/firestore";
 import { getAuth } from 'firebase/auth';
 import { getStorage, ref, uploadBytes, getDownloadURL, listAll, deleteObject } from 'firebase/storage';
 
@@ -465,6 +465,27 @@ export async function obtenerSolicitudesCertificacion(){
     });
 
     return data;
+}
+
+export async function cambiarEstadoCertificacion({ idPublicacion, nuevoEstado }){
+    const docRef = doc(db, "publicaciones", idPublicacion);
+
+    // Se elimina la solicitud de certificación
+    const docRefSolicitud = doc(db, "solicitudes-certificaciones", idPublicacion);
+
+    await deleteDoc(docRefSolicitud);
+
+    // Si se quita la certificacion, se borra el campo
+    if(!nuevoEstado){
+        await updateDoc(docRef, {
+            certificada: deleteField()
+        });
+        return;
+    }
+
+    await updateDoc(docRef, {
+        certificada: true
+    });
 }
 
 //! STORAGE

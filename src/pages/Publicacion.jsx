@@ -9,7 +9,7 @@ import { FaClock, FaUsers, FaRuler, FaPhone, FaShareAlt } from 'react-icons/fa';
 import { useAuth } from "../context/AuthProvider";
 import { useModal } from "../context/ModalConfirmProvider";
 
-import { borrarComentario, borrarMultimedia, borrarPublicacion, enviarComentario, guardarCalificacion, guardarFavorita, obtenerCalificacion, obtenerCantidadFavoritas, obtenerComentariosTiempoReal, obtenerEstadoFavorita, obtenerMultimedia, obtenerPublicacion, obtenerSolicitudCertificacion, solicitarCertificacion } from "../firebase";
+import { borrarComentario, borrarMultimedia, borrarPublicacion, cambiarEstadoCertificacion, enviarComentario, guardarCalificacion, guardarFavorita, obtenerCalificacion, obtenerCantidadFavoritas, obtenerComentariosTiempoReal, obtenerEstadoFavorita, obtenerMultimedia, obtenerPublicacion, obtenerSolicitudCertificacion, solicitarCertificacion } from "../firebase";
 import { truncarCalificacion } from "../utils";
 
 import SliderPublicacion from "../components/SliderPublicacion";
@@ -172,6 +172,21 @@ function Publicacion(){
         setSolicitudCertificacion(solicitud);
     }
 
+    const handleCertificar = async () => {
+        await cambiarEstadoCertificacion({
+            idPublicacion,
+            nuevoEstado: !publicacion?.certificada ?? true // Si no está certificada el nuevo estado es true
+        });
+
+        // Se cambia el estado para el renderizado
+        setPublicacion(prev => ({
+            ...prev,
+            certificada: !publicacion?.certificada ?? true
+        }))
+
+        // await obtenerPublicacion(idPublicacion);
+    }
+
     useEffect(() => {
         let unsubscribe;
 
@@ -253,7 +268,17 @@ function Publicacion(){
                 <section className="publicacion__administracion">
                     <button className="publicacion__boton boton boton--rojo" type="button" onClick={() => handleBorrarPublicacion()}>Borrar publicación</button>
                     <Link to={`/editar-terraza/${publicacion.id}`} className="publicacion__boton boton">Editar</Link>
-                    <button className="publicacion__boton boton" type="button" onClick={() => handleSolicitarCertificacion()}>{ !solicitudCertificacion ? "Solicitar certificación" : "Cancelar solicitud de certificación" }</button>
+                    {
+                        !publicacion?.certificada && (
+                            <button className="publicacion__boton boton" type="button" onClick={() => handleSolicitarCertificacion()}>{ !solicitudCertificacion ? "Solicitar certificación" : "Cancelar solicitud de certificación" }</button>
+                        )
+                    }
+                    <Protegido
+                        names={["certificar-terraza"]}
+                        type="component"
+                    >
+                        <button className="publicacion__boton boton" type="button" onClick={handleCertificar}>{ !publicacion?.certificada ? "Certificar" : "Quitar certificación" }</button>
+                    </Protegido>
                 </section>
             </Protegido>
 
