@@ -50,7 +50,7 @@ function PrevisualizacionPublicacion({ publicacion }){
                 <Link to={`/publicacion/${publicacion.id}`}>
                     <h5 className="texto-overflow">{publicacion.nombreTerraza}</h5>
                 </Link>
-                <div className="row">
+                <div className="row previsualizacion__wrap">
                     <div className="column texto-overflow">
                         <FaClock style={{ fontSize: '.85em', marginRight: '0.5em' }}/>
                         <p className="column-font">{publicacion.horarios}</p>

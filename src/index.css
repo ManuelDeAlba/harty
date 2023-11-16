@@ -222,14 +222,81 @@ i {
 .boton--amarillo{ background: rgb(255, 255, 0); color: #000; }
 .boton--amarillo:hover{ background: rgb(205, 205, 0); }
 
-
 .line {
   border-top: 0.1px solid #c4c4c454; 
   border-left: none;
   border-bottom: none;
-
 }
 
+/* CALENDARIO */
+.calendario{
+  width: 90%;
+  max-width: 1000px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(30px, 1fr));
+  background-color: #fff;
+  overflow: auto;
+}
+/* CALENDARIO HEADER */
+.calendario__fecha{
+  grid-column: 1/-1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+}
+.calendario__boton{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: .5rem 1rem;
+  background-color: var(--color-boton, #555);
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  font-size: 2rem;
+  cursor: pointer;
+  user-select: none;
+}
+.calendario__boton:hover{ background-color: var(--color-boton-hover, #333); }
+.calendario__mes{
+  margin: 0;
+  font-size: clamp(1rem, 5vw, 2rem);
+  text-align: center;
+}
+.calendario__titulo{
+  padding: 10px 0;
+  background-color: var(--color-boton, #555);
+  color: #fff;
+  text-align: center;
+  font-weight: bold;
+}
+/* CALENDARIO MAIN */
+.calendario__dia{
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  aspect-ratio: 1/1;
+  background: #fff;
+  font-size: clamp(1rem, 3vw, 1.5rem);
+  text-decoration: none;
+}
+.calendario__dia:hover{ background: #eee; }
+.calendario__dia::before{ content: attr(data-dia); }
+.calendario__hoy{
+  text-decoration: underline green 3px;
+}
+.calendario__seleccionado{
+  background-color: var(--color-seleccionado, rgb(150 0 0));
+  color: #fff;
+}
+.calendario__seleccionado:hover{
+  background-color: var(--color-seleccionado, rgb(130 0 0));
+}
 
 /* NAVBAR */
 .nav{
@@ -420,6 +487,22 @@ i {
   color: var(--color-secundario);
 }
 
+.recomendadas__titulo{
+  margin: 2rem auto;
+}
+.recomendadas{
+  padding: 1rem 0;
+}
+.recomendadas:nth-child(odd){
+  background-color: #ddd;
+}
+.recomendadas__publicaciones{
+  margin: 2rem auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
+  gap: 30px;
+}
+
 @media (max-width: 800px) {
   .header__contenedor{
     align-items: center;
@@ -532,6 +615,7 @@ html:has(.modal){ overflow: hidden; }
   position: relative;
   border-radius: 10px 10px 0px 0px;
   border: none;
+  background-color: #fff;
   box-shadow: 0 0 20px #cecdcd;
   transition: box-shadow 0.5s;
   overflow: hidden;
@@ -583,6 +667,11 @@ html:has(.modal){ overflow: hidden; }
 }
 .previsualizacion__texto{
   padding: 25px;
+}
+.previsualizacion__wrap{
+  display: flex;
+  gap: .5rem;
+  flex-wrap: wrap;
 }
 .previsualizacion__precio{
   font-weight: bold;
@@ -758,7 +847,7 @@ html:has(.modal){ overflow: hidden; }
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  min-width: 50%;
+  min-width: 55%;
   flex: 2;
 }
 .publicacion__etiquetas{
@@ -771,7 +860,7 @@ html:has(.modal){ overflow: hidden; }
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  min-width: 45%;
+  min-width: 40%;
   flex: 1;
   height: max-content;
   padding: 2rem;
@@ -802,6 +891,14 @@ html:has(.modal){ overflow: hidden; }
 }
 .publicacion__inferior {
   margin-top: 50px;
+}
+.publicacion__disponibilidad{
+  max-width: 500px;
+  margin: 30px auto;
+}
+.publicacion__disponibilidad-titulo{
+  display: block;
+  font-size: 1.5rem;
 }
 
 .mapa {
@@ -910,6 +1007,7 @@ html:has(.modal){ overflow: hidden; }
   align-items: center;
   justify-content: center;
 }
+
 .form__galeria{
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -920,6 +1018,10 @@ html:has(.modal){ overflow: hidden; }
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+.form__publicar-calendario{
+  width: 90%;
+  max-width: 500px;
 }
 
 /* INICIO DE SESIÓN Y REGISTRO */
@@ -1031,6 +1133,11 @@ html:has(.modal){ overflow: hidden; }
 }
 
 /* ESTILOS PÁGINAS ADMINISTRADOR */
+.administracion__links{
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
 .solicitudes{
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));

@@ -9,14 +9,15 @@ import { RiVerifiedBadgeFill } from "react-icons/ri";
 
 import { useAuth } from "../context/AuthProvider";
 import { useModal } from "../context/ModalConfirmProvider";
+import usePermisos from "../hooks/usePermisos";
 
 import { borrarComentario, borrarMultimedia, borrarPublicacion, cambiarEstadoCertificacion, enviarComentario, guardarCalificacion, guardarFavorita, obtenerCalificacion, obtenerCantidadFavoritas, obtenerComentariosTiempoReal, obtenerEstadoFavorita, obtenerMultimedia, obtenerPublicacion, obtenerSolicitudCertificacion, solicitarCertificacion, agregarReporte } from "../firebase";
 import { truncarCalificacion } from "../utils";
 
+import Protegido from "../components/Protegido";
 import SliderPublicacion from "../components/SliderPublicacion";
 import MapaUbicacion from "../components/MapaUbicacion";
-import Protegido from "../components/Protegido";
-import usePermisos from "../hooks/usePermisos";
+import CalendarioDisponibilidad from "../components/CalendarioDisponibilidad";
 
 function Publicacion(){
     const navigate = useNavigate();
@@ -200,8 +201,8 @@ function Publicacion(){
             idPublicacion,
             idUsuario: usuario.id
         }), {
-            loading: "Reportando...",
-            success: "Reporte hecho", //MANDA ESTE MENSAJE AUNQUE EL REPORTE NO SE HAYA MANDADO PQ YA HAY UNO EXISTENTE CON LOS MISMOS idPublicacion y idUsuario
+            loading: "Reportando publicación...",
+            success: "Publicación reportada", //MANDA ESTE MENSAJE AUNQUE EL REPORTE NO SE HAYA MANDADO PQ YA HAY UNO EXISTENTE CON LOS MISMOS idPublicacion y idUsuario
             error: (error) => error.message
         });
     }
@@ -302,7 +303,7 @@ function Publicacion(){
                         )
                     }
                     <Protegido
-                        names={["certificar-terraza"]}
+                        names={["administracion"]}
                         type="component"
                     >
                         <button className="publicacion__boton boton" type="button" onClick={handleCertificar}>{ !publicacion?.certificada ? "Certificar" : "Quitar certificación" }</button>
@@ -372,6 +373,11 @@ function Publicacion(){
 
             <section className="publicacion__inferior">
                 <MapaUbicacion ubicacion={publicacion.direccion} />
+
+                <div className="publicacion__disponibilidad">
+                    <span className="publicacion__disponibilidad-titulo titulo">Disponibilidad</span>
+                    <CalendarioDisponibilidad className="publicacion__disponibilidad-calendario" value={publicacion.disponibilidad} readonly />
+                </div>
                 <div className="calificacion">
                     <span className="calificacion__titulo"><b>Calificacion total:</b> {truncarCalificacion(calificaciones.total)}</span>
                     <div className="calificacion__estrellas">

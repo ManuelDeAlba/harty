@@ -32,17 +32,21 @@ export async function obtenerUsuario(uid){
 
     let documento = await getDoc(docRef);
 
-    return documento.data();
+    if(!documento.exists()) return;
+
+    return documento?.data();
 }
 
 export async function obtenerUsuariosPaginacion({ ref=null, cantidad=10 } = {}){
 	let q = query(collection(db, "usuarios"), orderBy("rol"), orderBy("nombre"), startAfter(ref), limit(cantidad));
 
-	const docs = (await getDocs(q)).docs;
+	let documentos = await getDocs(q);
+
+    if(documentos.empty) return;
     
     return {
-        ultimo: docs[docs.length - 1],
-        usuarios: docs.map(doc => doc.data())
+        ultimo: documentos.docs[documentos.size - 1],
+        usuarios: documentos.docs.map(doc => doc.data())
     };
 }
 
@@ -56,6 +60,8 @@ export async function estadoUsuario(uid, habilitado=false){
 
 export async function obtenerPermisos(){
     const { docs } = await getDocs(collection(db, "permisos"));
+
+    if(docs.length == 0) return;
 
     const permisos = {}
     
@@ -187,7 +193,7 @@ export async function editarPublicacion({
 export async function obtenerPublicacion(id){
     const docRef = doc(db, "publicaciones", id);
 
-    return (await getDoc(docRef)).data();
+    return (await getDoc(docRef))?.data();
 }
 
 export async function obtenerPublicaciones(){
@@ -196,6 +202,8 @@ export async function obtenerPublicaciones(){
 
     // Se obtienen los documentos
     const querySnapshot = await getDocs(q);
+
+    if(querySnapshot.empty) return;
     
     // Se recorre para obtener la información de cada documento
     return querySnapshot.docs.map(doc => doc.data());
@@ -207,6 +215,8 @@ export async function obtenerPublicacionesUsuario(uid){
 
     // Se obtienen los documentos
     const querySnapshot = await getDocs(q);
+
+    if(querySnapshot.empty) return;
     
     // Se recorre para obtener la información de cada documento
     return querySnapshot.docs.map(doc => doc.data());
@@ -218,6 +228,8 @@ export function obtenerPublicacionesTiempoReal(callback) {
 
     // Establecer una suscripción a los cambios en la base de datos
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        if(querySnapshot.empty) callback(undefined);
+
         const publicaciones = querySnapshot.docs.map(doc => doc.data());
 
         callback(publicaciones);
@@ -225,6 +237,47 @@ export function obtenerPublicacionesTiempoReal(callback) {
 
     // Retorna una función para detener la suscripción cuando sea necesario
     return unsubscribe;
+}
+
+export async function obtenerPublicacionesRecomendadasCertificadas(){
+    const limiteCertificadas = 3;
+
+    const queryRecomendadas = query(collection(db, "publicaciones"), where("certificada", "==", true));
+    const documentos = (await getDocs(queryRecomendadas)).docs.map(doc => doc.data());
+
+    if(documentos.empty) return;
+
+    let recomendadas = [];
+
+    if(documentos.length <= limiteCertificadas) recomendadas = documentos;
+    else {
+        while(recomendadas.length < limiteCertificadas){
+            let indice = Math.floor(Math.random() * documentos.length);
+
+            if(!recomendadas.some(recomendada => recomendada.id == documentos[indice].id)){
+                recomendadas.push(documentos[indice]);
+            }
+        }
+    }
+
+    return recomendadas;
+}
+
+export async function obtenerPublicacionesRecomendadasFavoritas(){
+    const limiteFavoritas = 3;
+
+    let documentos = await getDocs(collection(db, "publicaciones"));
+    if(documentos.empty) return;
+
+    // Se obtiene la cantidad de favoritos
+    documentos = documentos.docs.map(async doc => ({
+        ...doc.data(),
+        cantFavoritas: await obtenerCantidadFavoritas(doc.id)
+    }));
+    documentos = await Promise.all(documentos);
+    documentos = documentos.toSorted((a,b) => b.cantFavoritas - a.cantFavoritas);
+
+    return documentos.slice(0, limiteFavoritas);
 }
 
 export async function borrarPublicacion(id){
@@ -294,6 +347,8 @@ export async function obtenerEstadoFavorita({
     const docRef = doc(db, "favoritas", `${idPublicacion}-${idUsuario}`);
 
     const documento = await getDoc(docRef);
+
+    if(documento.exists()) return;
 
     return documento.exists();
 }
@@ -385,13 +440,41 @@ export async function agregarReporte({ idPublicacion, idUsuario }){
     if(existeReporte) throw ERRORES_HARTY.PUBLICATION_REPORTED;
 
     try {
-        await addDoc(collection(db, "reportes-publicaciones"), {
+        const id = `${idPublicacion}-${idUsuario}`;
+        const docRef = doc(db, "reportes-publicaciones", id);
+
+        await setDoc(docRef, {
+            id,
             idPublicacion,
             idUsuario,
         });
     } catch (error) {
         throw error;
     }
+}
+
+export async function obtenerReportes(){
+    let documentosReportes = await getDocs(collection(db, "reportes-publicaciones"));
+    if(documentosReportes.empty) return;
+
+    documentosReportes = documentosReportes.docs.map(doc => doc.data());
+    const idPublicaciones = documentosReportes.map(doc => doc.idPublicacion);
+    const idUsuarios = documentosReportes.map(doc => doc.idUsuario);
+
+    const queryPublicaciones = query(collection(db, "publicaciones"), where("id", "in", idPublicaciones));
+    const documentosPublicaciones = (await getDocs(queryPublicaciones)).docs.map(doc => doc.data());
+
+    const queryUsuarios = query(collection(db, "usuarios"), where("id", "in", idUsuarios));
+    const documentosUsuarios = (await getDocs(queryUsuarios)).docs.map(doc => doc.data());
+
+    return documentosPublicaciones.map(publicacion => {
+        const reportesPublicacion = documentosReportes.filter(reporte => reporte.idPublicacion == publicacion.id);
+        return {
+            publicacion,
+            reportes: reportesPublicacion,
+            usuarios: documentosUsuarios.filter(usuario => reportesPublicacion.some(reporte => reporte.idUsuario == usuario.id)),
+        }
+    })
 }
 
 export async function enviarComentario({
