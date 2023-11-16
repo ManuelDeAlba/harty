@@ -560,45 +560,67 @@ html:has(.modal){ overflow: hidden; }
   text-align: center;
 }
 
-.header__searchbar {
+.filtros{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+.filtros__input{
+  background-color: #f0f0f0;
+  border: none;
+  border-radius: 30px;
+  padding: .5rem 1rem;
+}
+.filtros__searchbar {
   display: grid;
   grid-template-columns: 1fr max-content;
-  width: 80%;
-  padding: 5px 10px;
+  width: 100%;
   background-color: #f0f0f0;
-  border-radius: 30px;
   box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.8);
 }
-
-.header__searchbar input {
+.filtros__searchbar input {
   width: 100%;
   background-color: transparent;
   border: none;
   outline: none;
   font-size: 1rem;
 }
-
-.header__searchbar button {
+.filtros__searchbar button {
   background-color: transparent;
-  padding: 5px;
   color:var(--color-secundario);
   border: none;
   outline: none;
-  cursor: pointer;
 }
-
-.header__searchbar:hover {
+.filtros__searchbar:hover {
   background-color: #fff;
 }
-
-.header__searchbar button svg {
+.filtros__searchbar button svg {
   font-size: 18px;
+}
+.filtros__precio{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+.filtros__precio input{
+  flex: 1;
+}
+.filtros__capacidad{
+  width: 100%;
+}
+.filtros__limpiar{
+  font-size: 1rem;
+  border-radius: 3px;
 }
 
 .publicaciones {
   width: 90%;
   max-width: 1200px;
-  margin: 10rem auto;
+  margin: 5rem auto;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
   gap: 30px;

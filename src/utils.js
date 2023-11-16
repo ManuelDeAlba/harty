@@ -53,6 +53,30 @@ export function truncarCalificacion(calificacion, decimales=1){
     return parseFloat(punto != -1 ? cal.substring(0, punto + 1 + decimales) : calificacion);
 }
 
+const ACENTOS = {'á':'a','é':'e','í':'i','ó':'o','ú':'u'};
+export function eliminarAcentos(str){
+    return str.split("").map(letra => ACENTOS[letra] || letra).join("");
+}
+
+export function filtrarElementos(textoFiltro, elemento, propiedad){
+    // Obtenemos cada palabra del nombre o la propiedad del elemento y de lo buscado
+    // Quitamos acentos para que sea menos estricto el filtrado
+    let texto = elemento?.[propiedad]?.toLowerCase();
+    // Si texto no existe porque la propiedad es inválida, ningún elemento será válido
+    if(!texto) return false;
+
+    let palabras = eliminarAcentos(texto).split(/\s+/);
+    let buscado = eliminarAcentos(textoFiltro.toLowerCase()).split(/\s+/);
+
+    // Si todas las palabras buscadas tienen algo en común con alguna de las de los nombres,
+    // se muestra el elemento
+    return buscado.every(palabraB => {
+        if(!palabraB) return true;
+
+        return palabras.some(palabra => palabra.includes(palabraB));
+    });
+}
+
 export async function obtenerUbicacion(){
     return await new Promise((res) => {
         navigator.geolocation.getCurrentPosition(geolocation => {
