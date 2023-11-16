@@ -44,7 +44,7 @@ function Perfil(){
             <section className="contenedor-publicaciones">
                 <h2 className="publicaciones__titulo">Publicaciones</h2>
                 {
-                    publicaciones.length > 0 ? (
+                    publicaciones && publicaciones.length > 0 ? ( //para verificar que el perfil tenga publicaciones
                         <div className="publicaciones publicaciones--perfil">
                             {
                                 publicaciones.map(publicacion => (
