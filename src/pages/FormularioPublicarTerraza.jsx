@@ -419,7 +419,7 @@ function FormularioPublicarTerraza(){
                 <div className="form__botones">
                     {
                         idPublicacion && (
-                            <button className="form__boton boton boton--rojo" type="button" onClick={() => handleBorrarPublicacion(datos.id)}>Borrar publicación</button>
+                            <button className="form__boton boton boton--outlined" type="button" onClick={() => handleBorrarPublicacion(datos.id)}>Borrar publicación</button>
                         )
                     }
 

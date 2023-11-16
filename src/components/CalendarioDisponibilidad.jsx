@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
-import { FaArrowLeft, FaArrowRight, FaCalendarAlt } from "react-icons/fa";
+import { FaCalendarAlt } from "react-icons/fa";
+import { GoChevronRight,GoChevronLeft } from "react-icons/go";
 
 
 const MESES = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
@@ -157,19 +158,19 @@ function CalendarioDisponibilidad({ name, className, value, onInput: handleInput
         <div className={`calendario ${className}`}>
             {/* Mes con los botones para recorrer */}
             <div className="calendario__fecha">
-                <button type="button" className="calendario__boton" onClick={() => cambiarMes(-1)}><FaArrowLeft /></button>
+                <button type="button" className="calendario__boton" onClick={() => cambiarMes(-1)}><GoChevronLeft /></button>
                 <h2 className="calendario__mes">{MESES[fechaCalendario.getMonth()]} {fechaCalendario.getFullYear()}</h2>
-                <button type="button" className="calendario__boton" onClick={() => cambiarMes(1)}><FaArrowRight /></button>
+                <button type="button" className="calendario__boton" onClick={() => cambiarMes(1)}><GoChevronRight /></button>
             </div>
 
             {/* Titulos de dia */}
-            <div className="calendario__titulo">DOM</div>
-            <div className="calendario__titulo">LUN</div>
-            <div className="calendario__titulo">MAR</div>
-            <div className="calendario__titulo">MIÉ</div>
-            <div className="calendario__titulo">JUE</div>
-            <div className="calendario__titulo">VIE</div>
-            <div className="calendario__titulo">SÁB</div>
+            <div className="calendario__titulo">Do</div>
+            <div className="calendario__titulo">Lu</div>
+            <div className="calendario__titulo">Ma</div>
+            <div className="calendario__titulo">Mi</div>
+            <div className="calendario__titulo">Ju</div>
+            <div className="calendario__titulo">Vi</div>
+            <div className="calendario__titulo">Sá</div>
 
             {/* Días del mes */}
             { elementos }
