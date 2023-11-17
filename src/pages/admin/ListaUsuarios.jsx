@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link } from 'react-router-dom';
+import toast from "react-hot-toast";
+
+import { HiIdentification } from "react-icons/hi";
+
 import { estadoUsuario, obtenerUsuariosPaginacion } from "../../firebase";
 
 function ListaUsuarios(){
@@ -7,7 +11,7 @@ function ListaUsuarios(){
     const [ultimoDocumento, setUltimoDocumento] = useState(null);
 
     useEffect(() => {
-        obtenerUsuariosPaginacion()
+        obtenerUsuariosPaginacion({ cantidad: 5 })
         .then(res => {
             if(!res) return;
             
@@ -20,9 +24,12 @@ function ListaUsuarios(){
     }, [])
 
     const handleCargarUsuarios = () => {
-        obtenerUsuariosPaginacion({ ref: ultimoDocumento })
+        obtenerUsuariosPaginacion({ ref: ultimoDocumento, cantidad: 5 })
         .then(res => {
-            if(!res) return;
+            if(!res){
+                toast.error("Ya no hay más usuarios");
+                return;
+            }
             
             let { ultimo, usuarios } = res;
             if(usuarios.length){
@@ -48,22 +55,25 @@ function ListaUsuarios(){
     }
 
     return(
-        <main>
-            <h1>Administración de usuarios</h1>
+        <main className="contenedor">
+            <h1 className="lista-usuarios__titulo titulo">Administración de usuarios</h1>
 
-            <section>
+            <section className="lista-usuarios">
                 {
                     usuarios && usuarios.map(usuario => (
-                        <div style={{margin: "2rem 0"}} key={usuario.id}>
-                            <p><b>ID.-</b> {usuario.id}</p>
-                            <p>{usuario.rol} - {usuario.nombre}</p>
-                            <p>{usuario.correo}</p>
-                            <Link to={`/perfil/${usuario.id}`}>Perfil</Link>
-                            <button onClick={() => handleDeshabilitar(usuario.id, !usuario.habilitado)}>{usuario.habilitado ? "Deshabilitar" : "Habilitar"}</button>
+                        <div className="lista-usuarios__usuario" key={usuario.id}>
+                            <span className="lista-usuarios__rol">{usuario.rol}</span>
+                            <div className="lista-usuarios__identificacion">
+                                <HiIdentification className="lista-usuarios__icono" />
+                                <Link className={`lista-usuarios__nombre ${!usuario.habilitado ? "lista-usuarios__nombre--deshabilitado" : ""}`} to={`/perfil/${usuario.id}`}>{ usuario.nombre }</Link>
+                                <span className="lista-usuarios__id"><b>ID:</b> {usuario.id}</span>
+                            </div>
+                            <span className="lista-usuarios__correo"><b>Correo:</b> {usuario.correo}</span>
+                            <button className="lista-usuarios__boton boton" onClick={() => handleDeshabilitar(usuario.id, !usuario.habilitado)}>{usuario.habilitado ? "Deshabilitar" : "Habilitar"}</button>
                         </div>
                     ))
                 }
-                <button onClick={handleCargarUsuarios}>Cargar más usuarios</button>
+                <button className="lista-usuarios__boton boton" onClick={handleCargarUsuarios}>Cargar más usuarios</button>
             </section>
         </main>
     )

@@ -1275,3 +1275,59 @@ html:has(.modal){ overflow: hidden; }
   border-radius: 3px;
   background-color: #ddd;
 }
+
+/* LISTA DE USUARIOS */
+.lista-usuarios__titulo{
+  font-size: clamp(2rem, 5vw, 3.5rem)
+}
+.lista-usuarios{
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.lista-usuarios__usuario{
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  padding: 1rem;
+  background-color: #eee;
+}
+.lista-usuarios__rol{
+  text-transform: uppercase;
+  font-weight: bold;
+  color: var(--color-secundario)
+}
+.lista-usuarios__identificacion{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: start;
+  align-items: center;
+  gap: 1rem;
+}
+.lista-usuarios__nombre{
+  color: green;
+  text-decoration: underline;
+  font-weight: bold;
+  letter-spacing: .5px;
+}
+.lista-usuarios__nombre--deshabilitado{
+  color: red;
+}
+.lista-usuarios__icono{
+  color: var(--color-titulo);
+  font-size: 2rem;
+}
+.lista-usuarios__id,
+.lista-usuarios__correo{
+  word-break: break-all;
+}
+.lista-usuarios__boton{
+  font-size: 1rem;
+  background-color: transparent;
+  border: 2px solid var(--color-secundario);
+  color: var(--color-secundario);
+}
+.lista-usuarios__boton:hover{
+  background-color: var(--color-secundario);
+  color: #fff;
+}
