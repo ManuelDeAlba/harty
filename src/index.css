@@ -259,7 +259,7 @@ i {
   background-color: #fff;
   overflow: auto;
   grid-gap: 5px;
-  padding-bottom:.5 rem;
+  padding-bottom: 1rem;
 }
 /* CALENDARIO HEADER */
 .calendario__fecha{
@@ -311,15 +311,14 @@ i {
 }
 .calendario__dia:hover{ border: 1px solid var(--color-texto) }
 .calendario__dia::before{ content: attr(data-dia); }
-.calendario__hoy{
-  border: 2px solid var(--color-texto);
-}
+.calendario__hoy, .calendario__hoy:hover{ border: 2px solid var(--color-texto); }
 .calendario__seleccionado{
   background-color: var(--color-texto);
   color: #fff;
 }
 .calendario__seleccionado:hover{
-  background-color: var(--color-seleccionado, rgb(130 0 0));border: 1px solid var(--color-seleccionado, rgb(130 0 0));
+  background-color: var(--color-seleccionado, rgb(130 0 0));
+  border: 1px solid var(--color-seleccionado, rgb(130 0 0));
 }
 
 /* NAVBAR */
@@ -548,8 +547,8 @@ i {
 }
 html:has(.modal){ overflow: hidden; }
 .modal__contenedor{
-  width: 65%;
-  max-width: 1000px;
+  width: 90%;
+  max-width: 700px;
   padding: 3em;
   border-radius: 3px;
   background-color: #fff;
@@ -566,7 +565,7 @@ html:has(.modal){ overflow: hidden; }
   gap: 20px;
 }
 .modal__boton{
-  min-width: 200px;
+  min-width: min(100%, 200px);
   font-size: 1rem;
 }
 
@@ -763,6 +762,7 @@ html:has(.modal){ overflow: hidden; }
 .publicacion__titulo {
   display: flex;
   flex-wrap: wrap;
+  gap: 1rem;
   justify-content: center;
   align-items: center;
   padding-bottom: 1rem;
@@ -831,7 +831,6 @@ html:has(.modal){ overflow: hidden; }
   }
 }
 .publicacion__certificacion-icono {
-  margin-right: 10px;
   font-size: 3rem;
   animation: shine 2s infinite; /* Aplica la animación durante 2 segundos y se repite infinitamente */
 }

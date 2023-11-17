@@ -348,8 +348,6 @@ export async function obtenerEstadoFavorita({
 
     const documento = await getDoc(docRef);
 
-    if(documento.exists()) return;
-
     return documento.exists();
 }
 
@@ -367,7 +365,7 @@ export async function obtenerPublicacionesFavoritas(idUsuario){
 
     const idPublicaciones = favoritas.map(doc => doc.idPublicacion);
 
-    if(idPublicaciones.length <= 0) return [];
+    if(idPublicaciones.length <= 0) return;
 
     const q2 = query(collection(db, "publicaciones"), where("id", "in", idPublicaciones));
     const publicacionesFavoritas = (await getDocs(q2)).docs.map(doc => doc.data());

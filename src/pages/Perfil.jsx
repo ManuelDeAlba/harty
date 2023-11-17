@@ -61,7 +61,7 @@ function Perfil(){
             <section className="contenedor-publicaciones">
                 <h2 className="publicaciones__titulo">Publicaciones favoritas</h2>
                 {
-                    publicacionesFavoritas.length > 0 ? (
+                    publicacionesFavoritas && publicacionesFavoritas.length > 0 ? (
                         <div className="publicaciones publicaciones--perfil">
                             {
                                 publicacionesFavoritas.map(publicacion => (

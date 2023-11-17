@@ -3,26 +3,57 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
 import { FaBullhorn } from "react-icons/fa";
-import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
-import { GoPaperAirplane, GoTrash} from "react-icons/go";
-import { FaClock, FaUsers, FaRuler, FaPhone, FaRegEdit} from 'react-icons/fa';
+import { GoTrash } from "react-icons/go";
+import { FaClock, FaUsers, FaRuler, FaPhone, FaRegEdit } from 'react-icons/fa';
 import { RiVerifiedBadgeFill } from "react-icons/ri";
 
 import { useAuth } from "../context/AuthProvider";
 import { useModal } from "../context/ModalConfirmProvider";
-import usePermisos from "../hooks/usePermisos";
 
-import { borrarComentario, borrarMultimedia, borrarPublicacion, cambiarEstadoCertificacion, enviarComentario, guardarCalificacion, guardarFavorita, obtenerCalificacion, obtenerCantidadFavoritas, obtenerComentariosTiempoReal, obtenerEstadoFavorita, obtenerMultimedia, obtenerPublicacion, obtenerSolicitudCertificacion, solicitarCertificacion, agregarReporte } from "../firebase";
-import { truncarCalificacion } from "../utils";
+import { borrarMultimedia, borrarPublicacion, cambiarEstadoCertificacion, obtenerCalificacion, obtenerCantidadFavoritas, obtenerComentariosTiempoReal, obtenerEstadoFavorita, obtenerMultimedia, obtenerPublicacion, obtenerSolicitudCertificacion, solicitarCertificacion, agregarReporte } from "../firebase";
 
 import Protegido from "../components/Protegido";
 import SliderPublicacion from "../components/SliderPublicacion";
+import Favorita from "../components/publicacion/Favorita";
 import MapaUbicacion from "../components/MapaUbicacion";
 import CalendarioDisponibilidad from "../components/CalendarioDisponibilidad";
+import Calificacion from "../components/publicacion/Calificacion";
+import Comentarios from "../components/publicacion/Comentarios";
+
+const renderizarSaltos = (texto, tipoLista) => {
+    if (!texto) return null;
+
+    // El texto se divide por los saltos de línea
+    const lineas = texto.split('\n');
+
+    // Renderizar como una lista desordenada o ordenada según el tipo
+    if (tipoLista === 'ul') {
+        return (
+            <ul style={{ paddingLeft: '20px' }}>
+                {
+                    lineas.map((linea, index) => (
+                        <li key={index}>{linea}</li>
+                    ))
+                }
+            </ul>
+        );
+    } else {
+        return (
+            <div>
+                {
+                    lineas.map((linea, index) => (
+                        <p key={index}>{linea}</p>
+                    ))
+                }
+            </div>
+        );
+    }
+};
 
 function Publicacion(){
     const navigate = useNavigate();
     const { idPublicacion } = useParams();
+    
     const { usuario } = useAuth();
     const { abrirModal, cerrarModal } = useModal();
 
@@ -31,11 +62,6 @@ function Publicacion(){
     const [multimedia, setMultimedia] = useState([]);
     const [solicitudCertificacion, setSolicitudCertificacion] = useState(undefined);
 
-    // Obtiene permisos por rol para permitir o proteger las acciones
-    const { permiso: permisoFavorita, error: errorFavorita } = usePermisos(["accion/favorita-terraza"]);
-    const { permiso: permisoCalificar, error: errorCalificar } = usePermisos(["accion/calificar-terraza"]);
-    const { permiso: permisoComentar, error: errorComentar } = usePermisos(["accion/comentar-terraza"]);
-
     const [cantidadFavoritas, setCantidadFavoritas] = useState(0);
     const [favorita, setFavorita] = useState(false);
     const [calificaciones, setCalificaciones] = useState({
@@ -43,101 +69,6 @@ function Publicacion(){
         usuario: 0
     });
     const [comentarios, setComentarios] = useState([]);
-
-    const handleFavorita = async (estado) => {
-        // Si no tiene permisos para realizar esa acción
-        if(!permisoFavorita){
-            toast.error(errorFavorita.message);
-            if(errorFavorita.code != "harty/unverified-account" && errorFavorita.code != "harty/disabled-account") navigate("/iniciar-sesion");
-            return;
-        }
-
-        // Se cambia en la base de datos
-        await guardarFavorita({
-            idPublicacion,
-            idUsuario: usuario.id,
-            favorita: estado
-        })
-
-        // Se actualiza la cantidad de personas que le han dado en favorita
-        const cant = await obtenerCantidadFavoritas(idPublicacion);
-        
-        setFavorita(estado);
-        setCantidadFavoritas(cant);
-    }
-
-    const handleCalificacion = async cal => {
-        // Si no tiene permisos para realizar esa acción
-        if(!permisoCalificar){
-            toast.error(errorCalificar.message);
-            if(errorCalificar.code != "harty/unverified-account" && errorCalificar.code != "harty/disabled-account") navigate("/iniciar-sesion");
-            return;
-        }
-        
-        let nuevaCal = cal == calificaciones.usuario ? 0 : cal;
-
-        // Se cambia en la base de datos
-        await guardarCalificacion({
-            idPublicacion,
-            idUsuario: usuario.id,
-            calificacion: nuevaCal
-        });
-
-        // Se obtienen los nuevos valores
-        const { calificacionTotal, calificacionUsuario } = await obtenerCalificacion({
-            idPublicacion,
-            idUsuario: usuario.id
-        });
-
-        // Se actualiza el estado para el renderizado
-        setCalificaciones({
-            total: calificacionTotal,
-            usuario: calificacionUsuario
-        });
-    }
-
-    const handleComentario = async (e) => {
-        e.preventDefault();
-
-        // Si no tiene permisos para realizar esa acción
-        if(!permisoComentar){
-            toast.error(errorComentar.message);
-            if(errorComentar.code != "harty/unverified-account" && errorComentar.code != "harty/disabled-account") navigate("/iniciar-sesion");
-            return;
-        }
-
-        const comentario = e.target.comentario.value;
-        
-        // Se limpia el formulario
-        e.target.reset();
-
-        toast.promise(enviarComentario({
-            idPublicacion,
-            idUsuario: usuario.id,
-            comentario
-        }), {
-            loading: "Publicando comentario...",
-            success: "Comentario publicado",
-            error: (error) => error.message
-        });
-    }
-
-    const handleBorrarComentario = async (idComentario) => {
-        abrirModal({
-            texto: "¿Realmente quieres borrar el comentario?",
-            onResult: (res) => {
-                if(res){
-                    toast.promise(borrarComentario(idComentario), {
-                        loading: "Borrando comentario...",
-                        success: "Comentario borrado",
-                        error: (error) => error.message
-                    });
-                }
-
-                cerrarModal();
-            }
-        })
-    }
 
     const handleBorrarPublicacion = () => {
         abrirModal({
@@ -272,24 +203,6 @@ function Publicacion(){
 
     if(!publicacion) return <h3>No existe la publicación</h3>
 
-    const renderizarSaltos = (texto, tipoLista) => {
-        if (!texto) {
-          return null;
-        }     
-        // Verificar si la cadena tiene saltos de línea antes de dividirla
-        const lineas = texto.includes('\n') ? texto.split('\n') : [texto];   
-        // Renderizar como una lista desordenada o ordenada según el tipo
-        if (tipoLista === 'ul') {
-          return (
-            <ul style={{ paddingLeft: '20px' }}>{lineas.map((linea, index) => (<li key={index}>{linea}</li>))}</ul>
-          );
-        } else {
-          return (<span>{lineas.map((linea, index) => (<span key={index}>{linea}{index !== lineas.length - 1 && <br />}</span>))}</span>
-          );
-        }
-      };
-
-
     return(
         <main className="publicacion contenedor">
             <section className="publicacion__titulo">
@@ -322,6 +235,8 @@ function Publicacion(){
                     <Protegido
                         names={["administracion"]}
                         type="component"
+                        cargandoComponent={""}
+                        errorComponent={""}
                     >
                         <button className="publicacion__boton boton" type="button" onClick={handleCertificar}>{ !publicacion?.certificada ? "Certificar" : "Quitar certificación" }</button>
                     </Protegido>
@@ -333,16 +248,13 @@ function Publicacion(){
                     Reportar
                     <FaBullhorn className="publicacion__reportar-boton" />
                 </button>
-                <div className="favoritos">
-                    <span><b>{cantidadFavoritas}</b></span>
-                    <span onClick={() => handleFavorita(!favorita)} className="favoritos__corazon">
-                        {
-                            favorita ?
-                                <AiFillHeart /> :
-                                <AiOutlineHeart />
-                        }
-                    </span>
-                </div>
+
+                <Favorita
+                    cantidadFavoritas={cantidadFavoritas}
+                    setCantidadFavoritas={setCantidadFavoritas}
+                    favorita={favorita}
+                    setFavorita={setFavorita}
+                />
             </section>
 
             <section className="publicacion__iconos">
@@ -364,20 +276,29 @@ function Publicacion(){
 
             <section className="publicacion__texto">
                 <div className="publicacion__izquierda">
-                    <br /><h4>{publicacion.nombreTerraza}</h4>
-                    <p>{renderizarSaltos(publicacion.descripcion)}</p>
-                    <p><b>Reglamento:</b> <br/></p>{renderizarSaltos(publicacion.reglamento, 'ul')}
+                    <h4>{publicacion.nombreTerraza}</h4>
+
+                    {renderizarSaltos(publicacion.descripcion)}
+
+                    <p><b>Reglamento:</b></p>
+                    {renderizarSaltos(publicacion.reglamento, 'ul')}
+
                     <hr className="line" />
-                    <p><b>Servicios extras:</b> <br/></p> {renderizarSaltos(publicacion.servicios,'ul')}
-                       
+
+                    <p><b>Servicios extras:</b></p>
+                    {renderizarSaltos(publicacion.servicios, 'ul')}
                 </div>
+
                 <div className="publicacion__derecha">
                     <span className="previsualizacion__precio"><b>$</b> {publicacion.precio}</span>
+
                     <div className="publicacion__icono">
                         <FaPhone className="publicacion__icono-dibujo publicacion__icono-dibujo--llamar" />
                         <span>{publicacion.telefono}</span>
                     </div>
+
                     <p className="publicacion__redes texto-overflow"><b>Redes sociales:</b> {publicacion.redes}</p>
+
                     <a className="publicacion__cta-llamar boton" href={`tel:${publicacion.telefono}`}>Llama ahora</a>
                 </div>
             </section>
@@ -395,63 +316,23 @@ function Publicacion(){
 
                 <div className="publicacion__disponibilidad">
                     <hr className="line" />
-                    <section className="publicacion__disponibilidad-titulo titulo"> Disponibilidad</section>
+                    <span className="publicacion__disponibilidad-titulo titulo">Disponibilidad</span>
                     <CalendarioDisponibilidad className="publicacion__disponibilidad-calendario" value={publicacion.disponibilidad} readonly />
                     <hr className="line" />
                 </div>
 
                 {
                     publicacion.certificada && (
-                        <section className="publicacion__certificacion">
+                        <div className="publicacion__certificacion">
                             <RiVerifiedBadgeFill className="publicacion__certificacion-icono" />
                             <span>Esta publicación ha sido certificada por Harty</span>
-                        </section>
+                        </div>
                     )
                 }
 
-                <div className="calificacion">
-                    <span className="calificacion__titulo"><b>Calificacion:</b> {truncarCalificacion(calificaciones.total)}</span>
-                    <div className="calificacion__estrellas">
-                        <span className={`calificacion__estrella${calificaciones.usuario >= 1 ? " calificacion__estrella--activa" : ""}`} onClick={() => handleCalificacion(1)}>&#9733;</span>
-                        <span className={`calificacion__estrella${calificaciones.usuario >= 2 ? " calificacion__estrella--activa" : ""}`} onClick={() => handleCalificacion(2)}>&#9733;</span>
-                        <span className={`calificacion__estrella${calificaciones.usuario >= 3 ? " calificacion__estrella--activa" : ""}`} onClick={() => handleCalificacion(3)}>&#9733;</span>
-                        <span className={`calificacion__estrella${calificaciones.usuario >= 4 ? " calificacion__estrella--activa" : ""}`} onClick={() => handleCalificacion(4)}>&#9733;</span>
-                        <span className={`calificacion__estrella${calificaciones.usuario >= 5 ? " calificacion__estrella--activa" : ""}`} onClick={() => handleCalificacion(5)}>&#9733;</span>
-                    </div>
-                </div>
-                <section className="comentarios">
-                    <span><b>Comentarios</b></span>
-                    <section className="comentarios__lista">
-                        {
-                            comentarios.map(({id, comentario, usuario: { nombre }}) => (
-                                <div className="comentarios__contenedor-comentario" key={id}>
-                                    <span className="comentarios__comentario"><b>{nombre}<br/></b> {comentario}</span>
-                                    <Protegido
-                                        // Puede borrar comentario si es admin o el dueño del comentario
-                                        names={["borrar-comentario", "comentario/borrar-comentario"]}
-                                        type="component"
-                                        params={{idComentario: id}}
-                                        cargandoComponent={""}
-                                        errorComponent={""}
-                                    >
-                                        <button className="comentarios__comentario-boton boton boton--outlined" onClick={() => handleBorrarComentario(id)}><GoTrash className="publicacion__boton--icono"/>Eliminar</button>
-                                    </Protegido>
-                                </div>
-                            ))    
-                        }
-                    </section>
-                    <form className="comentarios__form" onSubmit={handleComentario}>
-                        <textarea
-                            className="comentarios__textarea"
-                            name="comentario"
-                            placeholder="Deja tu comentario..."
-                            cols="30"
-                            rows="2"
-                            required
-                        ></textarea>
-                        <button className="comentarios__boton boton" type="submit"> Enviar <GoPaperAirplane className="comentarios__boton--icono" /> </button>
-                    </form>
-                </section>
+                <Calificacion calificaciones={calificaciones} setCalificaciones={setCalificaciones} />
+
+                <Comentarios comentarios={comentarios} />
             </section>
         </main>
     )
