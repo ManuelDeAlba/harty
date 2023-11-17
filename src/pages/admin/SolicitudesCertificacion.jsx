@@ -32,9 +32,9 @@ function SolicitudesCertificacion(){
                         <div className="solicitud" key={solicitud.id}>
                             <Link className="solicitud__link boton" to={`/publicacion/${publicacion.id}`}>{publicacion.nombreTerraza}</Link>
                             <b>Datos de contacto</b>
-                            <span className="solicitud__nombre texto-overflow">{usuario.nombre}</span>
-                            <span className="solicitud__correo texto-overflow">{usuario.correo}</span>
-                            <span className="solicitud__telefono">{publicacion.telefono}</span>
+                            <Link className="solicitud__nombre texto-overflow" to={`/perfil/${usuario.id}`}>{usuario.nombre}</Link>
+                            <span className="solicitud__correo texto-overflow"><b>Correo:</b> {usuario.correo}</span>
+                            <span className="solicitud__telefono"><b>Tel:</b> {publicacion.telefono}</span>
                         </div>
                     ))
                 }

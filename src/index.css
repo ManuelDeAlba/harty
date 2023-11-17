@@ -1262,19 +1262,6 @@ html:has(.modal){ overflow: hidden; }
   flex-direction: column;
   gap: .5rem;
 }
-.solicitudes{
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1rem;
-}
-.solicitud{
-  display: flex;
-  flex-direction: column;
-  gap: .25rem;
-  padding: 1rem;
-  border-radius: 3px;
-  background-color: #ddd;
-}
 
 /* LISTA DE USUARIOS */
 .lista-usuarios__titulo{
@@ -1328,6 +1315,32 @@ html:has(.modal){ overflow: hidden; }
   color: var(--color-secundario);
 }
 .lista-usuarios__boton:hover{
+  background-color: var(--color-secundario);
+  color: #fff;
+}
+
+/* SOLICITUDES DE CERTIFICACION */
+.solicitudes{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+.solicitud{
+  display: flex;
+  flex-direction: column;
+  gap: .25rem;
+  padding: 1rem;
+  border-radius: 3px;
+  background-color: #ddd;
+}
+.solicitud__link{
+  text-transform: uppercase;
+  background-color: transparent;
+  color: var(--color-secundario);
+  border: 2px solid var(--color-secundario);
+  font-weight: bold;
+}
+.solicitud__link:hover{
   background-color: var(--color-secundario);
   color: #fff;
 }
