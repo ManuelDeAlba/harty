@@ -33,7 +33,7 @@ function ReportesPublicaciones(){
                             <ul className="reporte__usuarios">
                                 {
                                     usuarios.map(usuario => (
-                                        <li>{ usuario.nombre }</li>
+                                        <li><Link className="reporte__link" to={`/perfil/${usuario.id}`}>{usuario.nombre}</Link></li>
                                     ))
                                 }
                             </ul>

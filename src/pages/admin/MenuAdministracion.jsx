@@ -8,7 +8,8 @@ function MenuAdministracion(){
             <div className="administracion__links">
                 <Link className="administracion__link boton" to="/admin/lista-usuarios">Lista de Usuarios</Link>
                 <Link className="administracion__link boton" to="/admin/lista-certificaciones">Solicitudes de Certificaciones</Link>
-                <Link className="administracion__link boton" to="/admin/lista-reportes">Reportes de Terrazas</Link>
+                <Link className="administracion__link boton" to="/admin/lista-reportes-terrazas">Reportes de Terrazas</Link>
+                <Link className="administracion__link boton" to="/admin/lista-reportes-comentarios">Reportes de Comentarios</Link>
             </div>
         </main>
     )

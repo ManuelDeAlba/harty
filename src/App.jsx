@@ -8,17 +8,19 @@ import ModalConfirmProvider from "./context/ModalConfirmProvider";
 
 // Paginas
 import Inicio from "./pages/Inicio";
-import Publicaciones from "./pages/Publicaciones";
-import Publicacion from "./pages/Publicacion";
-import FormularioPublicarTerraza from "./pages/FormularioPublicarTerraza";
 import FormularioRegistrarse from "./pages/FormularioRegistrarse";
 import FormularioIniciarSesion from "./pages/FormularioIniciarSesion";
+import FormularioPublicarTerraza from "./pages/FormularioPublicarTerraza";
+import Publicaciones from "./pages/Publicaciones";
+import Publicacion from "./pages/Publicacion";
 import Perfil from "./pages/Perfil";
 import FormularioEditarPerfil from "./pages/FormularioEditarPerfil";
+
+import MenuAdministracion from "./pages/admin/MenuAdministracion";
 import ListaUsuarios from "./pages/admin/ListaUsuarios";
 import SolicitudesCertificacion from "./pages/admin/SolicitudesCertificacion";
 import ReportesPublicaciones from "./pages/admin/ReportesPublicaciones";
-import MenuAdministracion from "./pages/admin/MenuAdministracion";
+import ReportesComentarios from "./pages/admin/ReportesComentarios";
 
 // Componentes
 import Navbar from "./components/Navbar";
@@ -82,9 +84,15 @@ function App() {
                                     <SolicitudesCertificacion />
                                 </Protegido>
                             } />
-                            <Route path="/admin/lista-reportes" element={
+                            <Route path="/admin/lista-reportes-terrazas" element={
                                 <Protegido names={["administracion"]}>
                                     <ReportesPublicaciones />
+                                </Protegido>
+                            } />
+
+                            <Route path="/admin/lista-reportes-comentarios" element={
+                                <Protegido names={["administracion"]}>
+                                    <ReportesComentarios />
                                 </Protegido>
                             } />
 

@@ -10,6 +10,7 @@ import { RiVerifiedBadgeFill } from "react-icons/ri";
 
 import { useAuth } from "../context/AuthProvider";
 import { useModal } from "../context/ModalConfirmProvider";
+import usePermisos from "../hooks/usePermisos";
 
 import { borrarMultimedia, borrarPublicacion, cambiarEstadoCertificacion, obtenerCalificacion, obtenerCantidadFavoritas, obtenerComentariosTiempoReal, obtenerEstadoFavorita, obtenerMultimedia, obtenerPublicacion, obtenerSolicitudCertificacion, solicitarCertificacion, agregarReporte, obtenerUsuario } from "../firebase";
 
@@ -57,6 +58,9 @@ function Publicacion(){
     
     const { usuario } = useAuth();
     const { abrirModal, cerrarModal } = useModal();
+
+    // Obtiene permisos por rol para permitir o proteger las acciones
+    const { permiso: permisoComentar, error: errorComentar } = usePermisos(["accion/comentar-terraza"]);
 
     const [creador, setCreador] = useState(null);
 
@@ -132,14 +136,23 @@ function Publicacion(){
             return;
         }
 
-        toast.promise(agregarReporte({ 
-            idPublicacion,
-            idUsuario: usuario.id
-        }), {
-            loading: "Reportando publicación...",
-            success: "Publicación reportada", //MANDA ESTE MENSAJE AUNQUE EL REPORTE NO SE HAYA MANDADO PQ YA HAY UNO EXISTENTE CON LOS MISMOS idPublicacion y idUsuario
-            error: (error) => error.message
-        });
+        abrirModal({
+            texto: "¿Realmente quieres reportar la publicación?",
+            onResult: (res) => {
+                if(res){
+                    toast.promise(agregarReporte({ 
+                        idPublicacion,
+                        idUsuario: usuario.id
+                    }), {
+                        loading: "Reportando publicación...",
+                        success: "Publicación reportada", //MANDA ESTE MENSAJE AUNQUE EL REPORTE NO SE HAYA MANDADO PQ YA HAY UNO EXISTENTE CON LOS MISMOS idPublicacion y idUsuario
+                        error: (error) => error.message
+                    });
+                }
+
+                cerrarModal();
+            }
+        })
     }
 
     useEffect(() => {

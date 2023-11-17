@@ -480,15 +480,20 @@ export async function enviarComentario({
     idUsuario,
     comentario
 }){
-    addDoc(collection(db, "comentarios"), {
+    const id = `${idUsuario}-${Date.now()}`;
+    const docRef = doc(db, "comentarios", id);
+
+    await setDoc(docRef, {
+        id,
         idPublicacion,
         idUsuario,
+        fecha: Date.now(),
         comentario
     });
 }
 
 export function obtenerComentariosTiempoReal(idPublicacion, callback){
-    const queryComentarios = query(collection(db, "comentarios"), where("idPublicacion", "==", idPublicacion));
+    const queryComentarios = query(collection(db, "comentarios"), where("idPublicacion", "==", idPublicacion), orderBy("fecha", "desc"));
 
     // Establecer una suscripción a los cambios en la base de datos
     const unsubscribe = onSnapshot(queryComentarios, async (querySnapshot) => {
@@ -536,6 +541,54 @@ export async function borrarComentario(idComentario){
     const docRef = doc(db, "comentarios", idComentario);
 
     await deleteDoc(docRef);
+
+    await cancelarReportesComentario(idComentario);
+}
+
+export async function reportarComentario({ idComentario, idUsuario }){
+    const id = `${idComentario}-${idUsuario}`;
+    const docRef = doc(db, "reportes-comentarios", id);
+
+    await setDoc(docRef, {
+        id,
+        idComentario,
+        idUsuario,
+    });
+}
+
+export async function obtenerReportesComentarios(){
+    let documentosReportes = await getDocs(collection(db, "reportes-comentarios"));
+    if(documentosReportes.empty) return;
+
+    documentosReportes = documentosReportes.docs.map(doc => doc.data());
+    const idComentarios = documentosReportes.map(doc => doc.idComentario);
+    const idUsuarios = documentosReportes.map(doc => doc.idUsuario);
+
+    const queryComentarios = query(collection(db, "comentarios"), where("id", "in", idComentarios));
+    const documentosComentarios = (await getDocs(queryComentarios)).docs.map(doc => doc.data());
+
+    const queryUsuarios = query(collection(db, "usuarios"), where("id", "in", idUsuarios));
+    const documentosUsuarios = (await getDocs(queryUsuarios)).docs.map(doc => doc.data());
+
+    return documentosComentarios.map(comentario => {
+        const reportesComentario = documentosReportes.filter(reporte => reporte.idComentario == comentario.id);
+
+        return {
+            comentario,
+            reportes: reportesComentario,
+            usuarios: documentosUsuarios.filter(usuario => reportesComentario.some(reporte => reporte.idUsuario == usuario.id)),
+        }
+    });;
+}
+
+export async function cancelarReportesComentario(idComentario){
+    const queryReportes = query(collection(db, "reportes-comentarios"), where("idComentario", "==", idComentario));
+
+    const documentosReportes = await getDocs(queryReportes);
+
+    documentosReportes.forEach(async doc => {
+        await deleteDoc(doc.ref);
+    })
 }
 
 export async function solicitarCertificacion({ idPublicacion, idUsuario, nuevoEstado }){

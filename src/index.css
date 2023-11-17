@@ -311,7 +311,10 @@ i {
 }
 .calendario__dia:hover{ border: 1px solid var(--color-texto) }
 .calendario__dia::before{ content: attr(data-dia); }
-.calendario__hoy, .calendario__hoy:hover{ border: 2px solid var(--color-texto); }
+.calendario__hoy, .calendario__hoy:hover{ 
+  border: 2px solid var(--color-texto);
+  text-decoration: underline 2px;
+}
 .calendario__seleccionado{
   background-color: var(--color-texto);
   color: #fff;
@@ -1053,10 +1056,17 @@ html:has(.modal){ overflow: hidden; }
   align-items: start;
   gap: 1rem;
   background-color: #f5f5f5;
-  padding: .5rem 1rem;
+  padding: .75rem 1rem;
   border-radius: 3px;
 }
+.comentarios__botones{
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  gap: .5rem;
+}
 .comentarios__comentario-boton{
+  width: 100%;
   border-radius: 3px;
   margin: auto 5px;
 }
@@ -1066,8 +1076,14 @@ html:has(.modal){ overflow: hidden; }
     flex-direction: column;
   }
 
+  .comentarios__botones{
+    flex-direction: row;
+    margin-left: auto;
+  }
+
   .comentarios__comentario-boton{
-    align-self: flex-end;
+    width: auto;
+    flex: 1;
   }
 }
 

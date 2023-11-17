@@ -7,9 +7,10 @@ import { useAuth } from "../../context/AuthProvider";
 import { useModal } from "../../context/ModalConfirmProvider";
 import usePermisos from "../../hooks/usePermisos";
 
-import { borrarComentario, enviarComentario } from "../../firebase";
+import { borrarComentario, enviarComentario, reportarComentario } from "../../firebase";
 
 import Protegido from "../Protegido";
+import { FaBullhorn } from "react-icons/fa";
 
 function Comentarios({ comentarios }){
     const { idPublicacion } = useParams();
@@ -47,6 +48,26 @@ function Comentarios({ comentarios }){
         });
     }
 
+    const handleReportarComentario = async (idComentario) => {
+        abrirModal({
+            texto: "¿Realmente quieres reportar el comentario?",
+            onResult: (res) => {
+                if(res){
+                    toast.promise(reportarComentario({
+                        idComentario,
+                        idUsuario: usuario.id
+                    }), {
+                        loading: "Reportando comentario...",
+                        success: "Comentario reportado",
+                        error: (error) => error.message
+                    });
+                }
+
+                cerrarModal();
+            }
+        })
+    }
+
     const handleBorrarComentario = async (idComentario) => {
         abrirModal({
             texto: "¿Realmente quieres borrar el comentario?",
@@ -82,17 +103,30 @@ function Comentarios({ comentarios }){
                 {
                     comentarios.map(({id, comentario, usuario: { nombre }}) => (
                         <div className="comentarios__contenedor-comentario" key={id}>
-                            <span className="comentarios__comentario"><b>{nombre}<br/></b> {comentario}</span>
-                            <Protegido
-                                // Puede borrar comentario si es admin o el dueño del comentario
-                                names={["borrar-comentario", "comentario/borrar-comentario"]}
-                                type="component"
-                                params={{idComentario: id}}
-                                cargandoComponent={""}
-                                errorComponent={""}
-                            >
-                                <button className="comentarios__comentario-boton boton boton--outlined" onClick={() => handleBorrarComentario(id)}><GoTrash className="publicacion__boton--icono"/>Eliminar</button>
-                            </Protegido>
+                            <div className="comentarios__comentario">
+                                <b>{nombre}</b>
+                                <p>{comentario}</p>
+                            </div>
+                            <div className="comentarios__botones">
+                                <button className="comentarios__comentario-boton boton boton--outlined" onClick={() => handleReportarComentario(id)}>
+                                    <FaBullhorn className="publicacion__boton--icono"/>
+                                    Reportar
+                                </button>
+
+                                <Protegido
+                                    // Puede borrar comentario si es admin o el dueño del comentario
+                                    names={["borrar-comentario", "comentario/borrar-comentario"]}
+                                    type="component"
+                                    params={{idComentario: id}}
+                                    cargandoComponent={""}
+                                    errorComponent={""}
+                                >
+                                    <button className="comentarios__comentario-boton boton boton--outlined" onClick={() => handleBorrarComentario(id)}>
+                                        <GoTrash className="publicacion__boton--icono"/>
+                                        Eliminar
+                                    </button>
+                                </Protegido>
+                            </div>
                         </div>
                     ))    
                 }
