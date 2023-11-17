@@ -22,13 +22,13 @@ function ReportesPublicaciones(){
 
     return(
         <main className="contenedor">
-            <h1>Reportes de publicaciones</h1>
+            <h1 className="titulo">Reportes de publicaciones</h1>
 
             <div className="reportes">
                 {
                     reportes.map(({ publicacion, reportes, usuarios }) => (
                         <div className="reporte" key={publicacion.id}>
-                            <Link className="reporte__link" to={`/publicacion/${publicacion.id}`}>{publicacion.nombreTerraza}</Link>
+                            <Link className="reporte__nombre boton" to={`/publicacion/${publicacion.id}`}>{publicacion.nombreTerraza}</Link>
                             <b>{reportes.length} {reportes.length == 1 ? "reporte" : "reportes"}</b>
                             <ul className="reporte__usuarios">
                                 {
