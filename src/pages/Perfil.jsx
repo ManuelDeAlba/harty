@@ -1,18 +1,24 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
-import { useAuth } from "../context/AuthProvider";
-
-import { obtenerPublicacionesFavoritas, obtenerPublicacionesUsuario, obtenerUsuario } from "../firebase";
+import { estadoUsuario, obtenerPublicacionesFavoritas, obtenerPublicacionesUsuario, obtenerUsuario } from "../firebase";
 import PrevisualizacionPublicacion from "../components/PrevisualizacionPublicacion";
+import Protegido from "../components/Protegido";
 
 function Perfil(){
     const { idUsuario } = useParams();
-    const { usuario } = useAuth();
 
     const [datosPerfil, setDatosPerfil] = useState(null);
     const [publicaciones, setPublicaciones] = useState([]);
     const [publicacionesFavoritas, setPublicacionesFavoritas] = useState([]);
+
+    const handleDeshabilitar = async (id, habilitado) => {
+        await estadoUsuario(id, habilitado);
+
+        // Se vuelven a obtener los datos del perfil
+        obtenerUsuario(idUsuario)
+        .then(setDatosPerfil);
+    }
 
     // Al cambiar la url (id del usuario) se vuelve a obtener todo
     useEffect(() => {
@@ -33,12 +39,29 @@ function Perfil(){
             <section className="perfil__datos contenedor">
                 <h1 className="perfil__nombre">{ datosPerfil.nombre }</h1>
                 <span className="perfil__correo"><b>Correo:</b> { datosPerfil.correo }</span>
-                {
-                    usuario && usuario.rol == "admin" && (
-                        <span className="perfil__rol"><b>Rol:</b> { datosPerfil.rol }</span>
-                    )
-                }
-                <Link className="perfil__editar boton" to={`/editar-perfil/${datosPerfil.id}`}>Editar perfil</Link>
+
+                {/* Solo el administrador puede ver el rol y su estado */}
+                <Protegido
+                    names={["administracion"]}
+                    type="component"
+                    cargandoComponent={""}
+                    errorComponent={""}
+                >
+                    <span className="perfil__rol"><b>Rol:</b> { datosPerfil.rol }</span>
+                    <span className="perfil__estado"><b>Estado:</b> { datosPerfil.habilitado ? "Habilitado" : "Deshabilitado" }</span>
+                </Protegido>
+
+                <div className="perfil__botones">
+                    <Link className="perfil__boton boton" to={`/editar-perfil/${datosPerfil.id}`}>Editar perfil</Link>
+                    <Protegido
+                        names={["administracion"]}
+                        type="component"
+                        cargandoComponent={""}
+                        errorComponent={""}
+                    >
+                        <button className="perfil__boton boton" onClick={() => handleDeshabilitar(datosPerfil.id, !datosPerfil.habilitado)}>{datosPerfil.habilitado ? "Deshabilitar" : "Habilitar"}</button>
+                    </Protegido>
+                </div>
             </section>
 
             <section className="contenedor-publicaciones">

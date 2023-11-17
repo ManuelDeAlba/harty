@@ -65,10 +65,10 @@ function FormularioEditarPerfil(){
     }
 
     return(
-        <form onSubmit={handleSubmit}>
-            <h1>Editar perfil</h1>
+        <form className="contenedor form-editar" onSubmit={handleSubmit}>
+            <h1 className="form-editar__titulo titulo">Editar perfil</h1>
 
-            <div>
+            <div className="form-editar__input">
                 <label htmlFor="nombre">Nombre:</label>
                 <input
                     name="nombre"
@@ -82,13 +82,21 @@ function FormularioEditarPerfil(){
 
             {/* Solo los que pueden editar todos los perfiles (administradores) */}
             <Protegido names={["editar-perfil"]} type="component" errorComponent={""}>
-                <select name="rol" onInput={handleInput} value={datosPerfil.rol}>
-                    <option value="usuario">Usuario</option>
-                    <option value="admin">Administrador</option>
-                </select>
+                <div className="form-editar__input">
+                    <label htmlFor="rol">Rol:</label>
+                    <select
+                        name="rol"
+                        id="rol"
+                        onInput={handleInput}
+                        value={datosPerfil.rol}
+                    >
+                        <option value="usuario">Usuario</option>
+                        <option value="admin">Administrador</option>
+                    </select>
+                </div>
             </Protegido>
 
-            <input type="submit" value="Editar perfil" />
+            <input className="form-editar__input boton" type="submit" value="Editar perfil" />
         </form>
     )
 }

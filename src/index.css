@@ -150,7 +150,7 @@ p, ul{
   color: var(--color-texto);
 }
 
-input, textarea{
+input, textarea, select{
   font-size: 1em;
   font-family: "Poppins", sans-serif;
   padding: .25rem .5rem;
@@ -1224,14 +1224,36 @@ html:has(.modal){ overflow: hidden; }
 .perfil__nombre{
   text-align: center;
 }
-.perfil__editar{
-  align-self: flex-start;
+.perfil__botones{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.perfil__boton{
+  flex: 1;
+  min-width: 200px;
+  font-size: 1rem;
 }
 .contenedor-publicaciones{
   margin: 3rem auto;
 }
 .publicaciones--perfil{
   margin: 3rem auto;
+}
+
+/* EDITAR PERFIL */
+.form-editar{
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.form-editar__titulo{
+  margin: 0 auto;
+}
+.form-editar__input{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ESTILOS PÁGINAS ADMINISTRADOR */
