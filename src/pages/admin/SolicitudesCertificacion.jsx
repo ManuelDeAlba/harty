@@ -19,9 +19,9 @@ function SolicitudesCertificacion(){
         obtenerSolicitudes();
     }, [])
 
-    if(cargando) return <span>Cargando...</span>
+    if(cargando) return <span className="contenedor">Cargando...</span>
 
-    if(!solicitudes) return <span>No hay solicitudes de certificación</span>
+    if(!solicitudes) return <span className="contenedor">No hay solicitudes de certificación</span>
 
     return(
         <main className="contenedor">

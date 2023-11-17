@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
 import { FaBullhorn } from "react-icons/fa";
+import { BsPersonFillGear } from "react-icons/bs";
 import { GoTrash } from "react-icons/go";
 import { FaClock, FaUsers, FaRuler, FaPhone, FaRegEdit } from 'react-icons/fa';
 import { RiVerifiedBadgeFill } from "react-icons/ri";
@@ -10,7 +11,7 @@ import { RiVerifiedBadgeFill } from "react-icons/ri";
 import { useAuth } from "../context/AuthProvider";
 import { useModal } from "../context/ModalConfirmProvider";
 
-import { borrarMultimedia, borrarPublicacion, cambiarEstadoCertificacion, obtenerCalificacion, obtenerCantidadFavoritas, obtenerComentariosTiempoReal, obtenerEstadoFavorita, obtenerMultimedia, obtenerPublicacion, obtenerSolicitudCertificacion, solicitarCertificacion, agregarReporte } from "../firebase";
+import { borrarMultimedia, borrarPublicacion, cambiarEstadoCertificacion, obtenerCalificacion, obtenerCantidadFavoritas, obtenerComentariosTiempoReal, obtenerEstadoFavorita, obtenerMultimedia, obtenerPublicacion, obtenerSolicitudCertificacion, solicitarCertificacion, agregarReporte, obtenerUsuario } from "../firebase";
 
 import Protegido from "../components/Protegido";
 import SliderPublicacion from "../components/SliderPublicacion";
@@ -56,6 +57,8 @@ function Publicacion(){
     
     const { usuario } = useAuth();
     const { abrirModal, cerrarModal } = useModal();
+
+    const [creador, setCreador] = useState(null);
 
     const [cargando, setCargando] = useState(true);
     const [publicacion, setPublicacion] = useState(null);
@@ -154,11 +157,15 @@ function Publicacion(){
                 obtenerSolicitudCertificacion(idPublicacion)
             ]);
 
+            // Se obtiene el creador para que el admin pueda ver sus datos
+            const creador = await obtenerUsuario(publicacion.idUsuario);
+
             // Suscripción para obtener los comentarios en tiempo real
             unsubscribe = obtenerComentariosTiempoReal(idPublicacion, (comentarios) => {
                 setComentarios(comentarios);
             });
 
+            setCreador(creador);
             setPublicacion(publicacion);
             setMultimedia(multimedia);
             // Aquí solo se guarda la calificación total por si no existe el usuario
@@ -224,6 +231,19 @@ function Publicacion(){
                 cargandoComponent={""}
                 errorComponent={""}
             >
+                {/* Solo el administrador puede ver los datos del creador */}
+                <Protegido
+                    names={["administracion"]}
+                    type="component"
+                    cargandoComponent={""}
+                    errorComponent={""}
+                >
+                    <div className="publicacion__creador">
+                        <BsPersonFillGear className="publicacion__icono-dibujo" />
+                        <Link to={`/perfil/${creador.id}`}>{ creador.nombre }</Link>
+                    </div>
+                </Protegido>
+
                 <section className="publicacion__administracion">
                     {
                         !publicacion?.certificada && (

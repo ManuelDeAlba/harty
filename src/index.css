@@ -849,6 +849,12 @@ html:has(.modal){ overflow: hidden; }
   margin-right: .5rem;
 }
 
+.publicacion__creador{
+  display: flex;
+  justify-content: end;
+  gap: .75rem;
+  margin: 1rem auto;
+}
 .publicacion__acciones{
   display: flex;
   flex-wrap: wrap;
