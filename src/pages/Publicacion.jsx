@@ -4,7 +4,8 @@ import toast from "react-hot-toast";
 
 import { FaBullhorn } from "react-icons/fa";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
-import { FaClock, FaUsers, FaRuler, FaPhone } from 'react-icons/fa';
+import { GoPaperAirplane, GoTrash} from "react-icons/go";
+import { FaClock, FaUsers, FaRuler, FaPhone, FaRegEdit} from 'react-icons/fa';
 import { RiVerifiedBadgeFill } from "react-icons/ri";
 
 import { useAuth } from "../context/AuthProvider";
@@ -271,20 +272,36 @@ function Publicacion(){
 
     if(!publicacion) return <h3>No existe la publicación</h3>
 
+    const renderizarSaltos = (texto, tipoLista) => {
+        if (!texto) {
+          return null;
+        }     
+        // Verificar si la cadena tiene saltos de línea antes de dividirla
+        const lineas = texto.includes('\n') ? texto.split('\n') : [texto];   
+        // Renderizar como una lista desordenada o ordenada según el tipo
+        if (tipoLista === 'ul') {
+          return (
+            <ul style={{ paddingLeft: '20px' }}>{lineas.map((linea, index) => (<li key={index}>{linea}</li>))}</ul>
+          );
+        } else {
+          return (<span>{lineas.map((linea, index) => (<span key={index}>{linea}{index !== lineas.length - 1 && <br />}</span>))}</span>
+          );
+        }
+      };
+
+
     return(
         <main className="publicacion contenedor">
-            <h3 className="titulo">{publicacion.nombreTerraza}</h3>
+            <section className="publicacion__titulo">
+                {
+                    publicacion.certificada && (
+                            <RiVerifiedBadgeFill className="publicacion__certificacion-icono" />
+                    )
+                }
+                <h3 className="titulo">{publicacion.nombreTerraza}</h3>
+            </section>
 
             <SliderPublicacion multimedia={multimedia} />
-
-            {
-                publicacion.certificada && (
-                    <section className="publicacion__certificacion">
-                        <RiVerifiedBadgeFill className="publicacion__certificacion-icono" />
-                        <span>Terraza certificada por Harty</span>
-                    </section>
-                )
-            }
 
             {/* Boton editar solo para el dueño o un administrador */}
             <Protegido
@@ -295,13 +312,13 @@ function Publicacion(){
                 errorComponent={""}
             >
                 <section className="publicacion__administracion">
-                    <button className="publicacion__boton boton boton--rojo" type="button" onClick={() => handleBorrarPublicacion()}>Borrar publicación</button>
-                    <Link to={`/editar-terraza/${publicacion.id}`} className="publicacion__boton boton">Editar</Link>
                     {
                         !publicacion?.certificada && (
-                            <button className="publicacion__boton boton" type="button" onClick={() => handleSolicitarCertificacion()}>{ !solicitudCertificacion ? "Solicitar certificación" : "Cancelar solicitud de certificación" }</button>
+                            <button className="publicacion__boton boton boton--amarillo" type="button" onClick={() => handleSolicitarCertificacion()}> { !solicitudCertificacion ? "Solicitar certificación" : "Cancelar solicitud de certificación" }</button>
                         )
                     }
+                    <Link to={`/editar-terraza/${publicacion.id}`} className="publicacion__boton boton boton--amarillo"> <FaRegEdit className="publicacion__boton--icono"/> Editar</Link>
+                    <button className="publicacion__boton boton boton--outlined" type="button" onClick={() => handleBorrarPublicacion()}> <GoTrash className="publicacion__boton--icono"/> Borrar publicación</button>
                     <Protegido
                         names={["administracion"]}
                         type="component"
@@ -312,7 +329,7 @@ function Publicacion(){
             </Protegido>
             
             <section className="publicacion__acciones">
-                <button className="publicacion__reportar boton boton--rojo" onClick={handleReporte}>
+                <button className="publicacion__reportar" onClick={handleReporte}>
                     Reportar
                     <FaBullhorn className="publicacion__reportar-boton" />
                 </button>
@@ -347,16 +364,12 @@ function Publicacion(){
 
             <section className="publicacion__texto">
                 <div className="publicacion__izquierda">
-                    <p>{publicacion.descripcion}</p>
-                    <div className="publicacion__etiquetas">
-                        {
-                            publicacion.etiquetas.map((etiqueta, indice) => <span className="previsualizacion__etiqueta" key={indice}>{ etiqueta }</span>)
-                        }
-                    </div>
-                    <p><b>Reglamento:</b> {publicacion.reglamento}</p>
+                    <br /><h4>{publicacion.nombreTerraza}</h4>
+                    <p>{renderizarSaltos(publicacion.descripcion)}</p>
+                    <p><b>Reglamento:</b> <br/></p>{renderizarSaltos(publicacion.reglamento, 'ul')}
                     <hr className="line" />
-                    <p><b>Servicios extras:</b> {publicacion.servicios}</p>
-                    {/* <p><b>Disponibilidad:</b> {publicacion.disponibilidad}</p> */}
+                    <p><b>Servicios extras:</b> <br/></p> {renderizarSaltos(publicacion.servicios,'ul')}
+                       
                 </div>
                 <div className="publicacion__derecha">
                     <span className="previsualizacion__precio"><b>$</b> {publicacion.precio}</span>
@@ -372,14 +385,32 @@ function Publicacion(){
             <hr className="line" />
 
             <section className="publicacion__inferior">
+                <div className="publicacion__etiquetas">
+                        {
+                            publicacion.etiquetas.map((etiqueta, indice) => <span className="previsualizacion__etiqueta" key={indice}>#{ etiqueta}</span>)
+                        }
+                </div>
+
                 <MapaUbicacion ubicacion={publicacion.direccion} />
 
                 <div className="publicacion__disponibilidad">
-                    <span className="publicacion__disponibilidad-titulo titulo">Disponibilidad</span>
+                    <hr className="line" />
+                    <section className="publicacion__disponibilidad-titulo titulo"> Disponibilidad</section>
                     <CalendarioDisponibilidad className="publicacion__disponibilidad-calendario" value={publicacion.disponibilidad} readonly />
+                    <hr className="line" />
                 </div>
+
+                {
+                    publicacion.certificada && (
+                        <section className="publicacion__certificacion">
+                            <RiVerifiedBadgeFill className="publicacion__certificacion-icono" />
+                            <span>Esta publicación ha sido certificada por Harty</span>
+                        </section>
+                    )
+                }
+
                 <div className="calificacion">
-                    <span className="calificacion__titulo"><b>Calificacion total:</b> {truncarCalificacion(calificaciones.total)}</span>
+                    <span className="calificacion__titulo"><b>Calificacion:</b> {truncarCalificacion(calificaciones.total)}</span>
                     <div className="calificacion__estrellas">
                         <span className={`calificacion__estrella${calificaciones.usuario >= 1 ? " calificacion__estrella--activa" : ""}`} onClick={() => handleCalificacion(1)}>&#9733;</span>
                         <span className={`calificacion__estrella${calificaciones.usuario >= 2 ? " calificacion__estrella--activa" : ""}`} onClick={() => handleCalificacion(2)}>&#9733;</span>
@@ -390,21 +421,11 @@ function Publicacion(){
                 </div>
                 <section className="comentarios">
                     <span><b>Comentarios</b></span>
-                    <form className="comentarios__form" onSubmit={handleComentario}>
-                        <textarea
-                            className="comentarios__textarea"
-                            name="comentario"
-                            placeholder="Comentario..."
-                            cols="30"
-                            rows="2"
-                        ></textarea>
-                        <input className="comentarios__boton boton" type="submit" value="Enviar" />
-                    </form>
                     <section className="comentarios__lista">
                         {
                             comentarios.map(({id, comentario, usuario: { nombre }}) => (
                                 <div className="comentarios__contenedor-comentario" key={id}>
-                                    <span className="comentarios__comentario"><b>{nombre})</b> {comentario}</span>
+                                    <span className="comentarios__comentario"><b>{nombre}<br/></b> {comentario}</span>
                                     <Protegido
                                         // Puede borrar comentario si es admin o el dueño del comentario
                                         names={["borrar-comentario", "comentario/borrar-comentario"]}
@@ -413,12 +434,23 @@ function Publicacion(){
                                         cargandoComponent={""}
                                         errorComponent={""}
                                     >
-                                        <button className="comentarios__comentario-boton boton boton--rojo" onClick={() => handleBorrarComentario(id)}>Eliminar</button>
+                                        <button className="comentarios__comentario-boton boton boton--outlined" onClick={() => handleBorrarComentario(id)}><GoTrash className="publicacion__boton--icono"/>Eliminar</button>
                                     </Protegido>
                                 </div>
                             ))    
                         }
                     </section>
+                    <form className="comentarios__form" onSubmit={handleComentario}>
+                        <textarea
+                            className="comentarios__textarea"
+                            name="comentario"
+                            placeholder="Deja tu comentario..."
+                            cols="30"
+                            rows="2"
+                            required
+                        ></textarea>
+                        <button className="comentarios__boton boton" type="submit"> Enviar <GoPaperAirplane className="comentarios__boton--icono" /> </button>
+                    </form>
                 </section>
             </section>
         </main>
