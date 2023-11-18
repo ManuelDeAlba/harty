@@ -569,16 +569,20 @@ export async function obtenerReportesComentarios(){
 
     const queryUsuarios = query(collection(db, "usuarios"), where("id", "in", idUsuarios));
     const documentosUsuarios = (await getDocs(queryUsuarios)).docs.map(doc => doc.data());
-
-    return documentosComentarios.map(comentario => {
+    
+    let promesas = documentosComentarios.map(async comentario => {
+        let creador = await obtenerUsuario(comentario.idUsuario);
         const reportesComentario = documentosReportes.filter(reporte => reporte.idComentario == comentario.id);
 
         return {
             comentario,
+            creador,
             reportes: reportesComentario,
             usuarios: documentosUsuarios.filter(usuario => reportesComentario.some(reporte => reporte.idUsuario == usuario.id)),
         }
-    });;
+    });
+
+    return await Promise.all(promesas);
 }
 
 export async function cancelarReportesComentario(idComentario){

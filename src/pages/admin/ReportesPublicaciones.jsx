@@ -32,8 +32,8 @@ function ReportesPublicaciones(){
                             <b>{reportes.length} {reportes.length == 1 ? "reporte" : "reportes"}</b>
                             <ul className="reporte__usuarios">
                                 {
-                                    usuarios.map(usuario => (
-                                        <li><Link className="reporte__link" to={`/perfil/${usuario.id}`}>{usuario.nombre}</Link></li>
+                                    usuarios.map((usuario, indice) => (
+                                        <li key={indice}><Link className="reporte__link" to={`/perfil/${usuario.id}`}>{usuario.nombre}</Link></li>
                                     ))
                                 }
                             </ul>

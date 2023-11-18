@@ -1231,7 +1231,7 @@ html:has(.modal){ overflow: hidden; }
 }
 .perfil__boton{
   flex: 1;
-  min-width: 200px;
+  min-width: min(100%, 200px);
   font-size: 1rem;
 }
 .contenedor-publicaciones{
@@ -1375,7 +1375,7 @@ html:has(.modal){ overflow: hidden; }
 }
 .reporte__usuarios{
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
   grid-auto-rows: 2rem;
   gap: 0 1rem;
   list-style: none;
@@ -1386,4 +1386,16 @@ html:has(.modal){ overflow: hidden; }
   overflow: hidden;
   text-overflow: ellipsis;
   text-align: center;
+}
+
+/* REPORTES DE COMENTARIOS */
+.reporte__botones{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.reporte__boton{
+  flex: 1;
+  min-width: min(100%, 200px);
+  font-size: 1rem;
 }

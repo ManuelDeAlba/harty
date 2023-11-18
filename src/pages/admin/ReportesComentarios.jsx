@@ -83,12 +83,15 @@ function ReportesComentarios(){
 
             <div className="reportes">
                 {
-                    reportes.map(({ comentario, reportes, usuarios }) => (
+                    reportes.map(({ comentario, creador, reportes, usuarios }) => (
                         <div className="reporte" key={comentario.id}>
+                            <Link to={`/perfil/${creador.id}`}>{creador.nombre}</Link>
                             <span>{comentario.comentario}</span>
                             <b>{reportes.length} {reportes.length == 1 ? "reporte" : "reportes"}</b>
-                            <button className="boton boton--rojo" onClick={() => handleBorrarComentario(comentario.id)}>Eliminar</button>
-                            <button className="boton boton--rojo" onClick={() => handleCancelarReportes(comentario.id)}>Cancelar</button>
+                            <div className="reporte__botones">
+                                <button className="reporte__boton boton boton--rojo" onClick={() => handleBorrarComentario(comentario.id)}>Eliminar</button>
+                                <button className="reporte__boton boton" onClick={() => handleCancelarReportes(comentario.id)}>Cancelar</button>
+                            </div>
                             <ul className="reporte__usuarios">
                                 {
                                     usuarios.map((usuario, indice) => (
