@@ -4,6 +4,8 @@ import toast from "react-hot-toast";
 
 import { HiIdentification } from "react-icons/hi";
 
+import useTitle from "../../hooks/useTitle";
+
 import { estadoUsuario, obtenerUsuariosPaginacion } from "../../firebase";
 
 function ListaUsuarios(){
@@ -53,6 +55,8 @@ function ListaUsuarios(){
             })
         })
     }
+
+    useTitle("Harty | Lista de usuarios");
 
     return(
         <main className="contenedor">

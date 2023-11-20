@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
-import { obtenerSolicitudesCertificacion } from "../../firebase";
 import { Link } from "react-router-dom";
+
+import useTitle from "../../hooks/useTitle";
+
+import { obtenerSolicitudesCertificacion } from "../../firebase";
 
 function SolicitudesCertificacion(){
     const [cargando, setCargando] = useState(false);
@@ -18,6 +21,8 @@ function SolicitudesCertificacion(){
 
         obtenerSolicitudes();
     }, [])
+
+    useTitle("Harty | Solicitudes de certificación");
 
     if(cargando) return <span className="contenedor">Cargando...</span>
 

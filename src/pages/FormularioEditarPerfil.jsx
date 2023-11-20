@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
-import { obtenerUsuario } from "../firebase";
+import { useModal } from "../context/ModalConfirmProvider";
 import { useAuth } from "../context/AuthProvider";
+import useTitle from "../hooks/useTitle";
+
+import { obtenerUsuario } from "../firebase";
 
 import Protegido from "../components/Protegido";
-import { useModal } from "../context/ModalConfirmProvider";
 
 const datosPerfilDefault = {
     nombre: "",
@@ -63,6 +65,8 @@ function FormularioEditarPerfil(){
             [e.target.name]: e.target.value
         })
     }
+
+    useTitle("Harty | Editar perfil");
 
     return(
         <form className="contenedor form-editar" onSubmit={handleSubmit}>

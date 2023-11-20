@@ -1,6 +1,10 @@
 import { Link } from "react-router-dom";
 
+import useTitle from "../../hooks/useTitle";
+
 function MenuAdministracion(){
+    useTitle("Harty | Administración");
+
     return(
         <main className="contenedor">
             <h1 className="titulo">Menu Administracion</h1>

@@ -5,6 +5,8 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper/modules';
 import 'swiper/css';
 
+import useTitle from '../hooks/useTitle';
+
 import { obtenerPublicacionesRecomendadasCertificadas, obtenerPublicacionesRecomendadasFavoritas } from '../firebase';
 
 import PrevisualizacionPublicacion from '../components/PrevisualizacionPublicacion';
@@ -22,6 +24,8 @@ const Inicio = () => {
         obtenerPublicacionesRecomendadasFavoritas()
         .then(setRecomendadasFavoritas)
     }, [])
+
+    useTitle("Harty | Inicio");
 
     return (
         <>

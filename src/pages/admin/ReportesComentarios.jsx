@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 
 import { useModal } from "../../context/ModalConfirmProvider";
+import useTitle from "../../hooks/useTitle";
 
 import { borrarComentario, cancelarReportesComentario, obtenerReportesComentarios } from "../../firebase";
 
@@ -72,6 +73,8 @@ function ReportesComentarios(){
             setCargando(false);
         });
     }, [])
+
+    useTitle("Harty | Reportes de comentarios");
 
     if(cargando) return <span className="contenedor">Cargando...</span>
 

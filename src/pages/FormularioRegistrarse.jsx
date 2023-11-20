@@ -1,11 +1,15 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthProvider";
-import { ERRORES_FIREBASE } from "../utils";
 import toast from "react-hot-toast";
-import { FaEye, FaUser} from 'react-icons/fa';
-import { FaEnvelope} from 'react-icons/fa';
-import { FaLock} from 'react-icons/fa';
+
+import { FaEye, FaUser } from 'react-icons/fa';
+import { FaEnvelope } from 'react-icons/fa';
+import { FaLock } from 'react-icons/fa';
+
+import { useAuth } from "../context/AuthProvider";
+import useTitle from "../hooks/useTitle";
+
+import { ERRORES_FIREBASE } from "../utils";
 
 function FormularioRegistrarse(){
     const { registrarUsuario } = useAuth();
@@ -51,6 +55,8 @@ function FormularioRegistrarse(){
         if(input.type == "password") input.type = "text";
         else input.type = "password";
     }
+
+    useTitle("Harty | Registro");
 
     return(
         <main className="contenedor-sesion">

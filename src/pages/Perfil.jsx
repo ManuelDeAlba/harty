@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
+import useTitle from "../hooks/useTitle";
+
 import { estadoUsuario, obtenerPublicacionesFavoritas, obtenerPublicacionesUsuario, obtenerUsuario } from "../firebase";
+
 import PrevisualizacionPublicacion from "../components/PrevisualizacionPublicacion";
 import Protegido from "../components/Protegido";
 
@@ -31,6 +34,8 @@ function Perfil(){
         obtenerPublicacionesFavoritas(idUsuario)
         .then(setPublicacionesFavoritas);
     }, [idUsuario])
+
+    useTitle(datosPerfil ? `Harty | ${datosPerfil.nombre}` : "Harty");
 
     if(!datosPerfil) return <span className="contenedor">Cargando...</span>
 

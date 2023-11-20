@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 
+import useTitle from "../hooks/useTitle";
+
 import { obtenerPublicacionesTiempoReal } from "../firebase";
 
 import FiltroPublicaciones from "../components/FiltroPublicaciones";
 import PrevisualizacionPublicacion from "../components/PrevisualizacionPublicacion";
 
-function Publicaciones(){   
+function Publicaciones(){
     const [publicaciones, setPublicaciones] = useState([]);
     const [publicacionesFiltradas, setPublicacionesFiltradas] = useState([]);
     const [cargando, setCargando] = useState(true);
@@ -22,6 +24,8 @@ function Publicaciones(){
 
         return unsubscribe;
     }, [])
+
+    useTitle("Harty | Publicaciones");
 
     if(cargando) return <span className="contenedor">Cargando...</span>
 

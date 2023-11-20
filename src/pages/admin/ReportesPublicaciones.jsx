@@ -1,7 +1,9 @@
-import { useEffect } from "react";
-import { obtenerReportes } from "../../firebase";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+
+import useTitle from "../../hooks/useTitle";
+
+import { obtenerReportes } from "../../firebase";
 
 function ReportesPublicaciones(){
     const [cargando, setCargando] = useState(false);
@@ -15,6 +17,8 @@ function ReportesPublicaciones(){
             setCargando(false);
         });
     }, [])
+
+    useTitle("Harty | Reportes de publicaciones");
 
     if(cargando) return <span className="contenedor">Cargando...</span>
 

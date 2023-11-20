@@ -1,10 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthProvider";
-import { ERRORES_FIREBASE } from "../utils";
 import toast from "react-hot-toast";
-import { FaEnvelope, FaEye} from 'react-icons/fa';
-import { FaLock} from 'react-icons/fa';
+
+import { FaEnvelope, FaEye } from 'react-icons/fa';
+import { FaLock } from 'react-icons/fa';
+
+import { useAuth } from "../context/AuthProvider";
+import useTitle from "../hooks/useTitle";
+
+import { ERRORES_FIREBASE } from "../utils";
 
 function FormularioIniciarSesion(){
     const { iniciarSesion, restablecerContrasena } = useAuth();
@@ -52,6 +56,8 @@ function FormularioIniciarSesion(){
         if(input.type == "password") input.type = "text";
         else input.type = "password";
     }
+
+    useTitle("Harty | Inicio de sesión");
 
     return(
         <main className="contenedor-sesion">

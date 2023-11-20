@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
-import { borrarMultimedia, borrarPublicacion, crearPublicacion, editarPublicacion, obtenerMultimedia, obtenerPublicacion } from "../firebase";
 import { useAuth } from "../context/AuthProvider";
 import { useModal } from "../context/ModalConfirmProvider";
+import useTitle from "../hooks/useTitle";
+
+import { borrarMultimedia, borrarPublicacion, crearPublicacion, editarPublicacion, obtenerMultimedia, obtenerPublicacion } from "../firebase";
 
 import SelectorDeUbicacion from "../components/SelectorDeUbicacion";
 import CalendarioDisponibilidad from "../components/CalendarioDisponibilidad";
@@ -199,6 +201,8 @@ function FormularioPublicarTerraza(){
             }
         })
     }
+
+    useTitle(`Harty | ${idPublicacion ? "Editar terraza" : "Publicar terraza"}`);
 
     if(!datos) return <span className="contenedor">Cargando...</span>
 
