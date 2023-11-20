@@ -21,6 +21,7 @@ import MapaUbicacion from "../components/MapaUbicacion";
 import CalendarioDisponibilidad from "../components/CalendarioDisponibilidad";
 import Calificacion from "../components/publicacion/Calificacion";
 import Comentarios from "../components/publicacion/Comentarios";
+import { Helmet } from "react-helmet";
 
 const renderizarSaltos = (texto, tipoLista) => {
     if (!texto) return null;
@@ -224,150 +225,159 @@ function Publicacion(){
     if(!publicacion) return <h3>No existe la publicación</h3>
 
     return(
-        <main className="publicacion contenedor">
-            <section className="publicacion__titulo">
-                {
-                    publicacion.certificada && (
-                            <RiVerifiedBadgeFill className="publicacion__certificacion-icono" />
-                    )
-                }
-                <h3 className="titulo">{publicacion.nombreTerraza}</h3>
-            </section>
+        <>
+            <Helmet>
+                <meta property="og:description" content={publicacion.descripcion} />
+                <meta property="og:image" content={multimedia[0].src} />
+                <meta name="description" content={publicacion.descripcion} />
+                <title>{publicacion.nombreTerraza}</title>
+            </Helmet>
+            
+            <main className="publicacion contenedor">
+                <section className="publicacion__titulo">
+                    {
+                        publicacion.certificada && (
+                                <RiVerifiedBadgeFill className="publicacion__certificacion-icono" />
+                        )
+                    }
+                    <h3 className="titulo">{publicacion.nombreTerraza}</h3>
+                </section>
 
-            <SliderPublicacion multimedia={multimedia} />
+                <SliderPublicacion multimedia={multimedia} />
 
-            {/* Boton editar solo para el dueño o un administrador */}
-            <Protegido
-                names={["editar-terraza", "publicacion/editar-terraza"]}
-                paramURL="idPublicacion"
-                type="component"
-                cargandoComponent={""}
-                errorComponent={""}
-            >
-                {/* Solo el administrador puede ver los datos del creador */}
+                {/* Boton editar solo para el dueño o un administrador */}
                 <Protegido
-                    names={["administracion"]}
+                    names={["editar-terraza", "publicacion/editar-terraza"]}
+                    paramURL="idPublicacion"
                     type="component"
                     cargandoComponent={""}
                     errorComponent={""}
                 >
-                    <div className="publicacion__creador">
-                        <BsPersonFillGear className="publicacion__icono-dibujo" />
-                        <Link to={`/perfil/${creador.id}`}>{ creador.nombre }</Link>
-                    </div>
-                </Protegido>
-
-                <section className="publicacion__administracion">
-                    {
-                        !publicacion?.certificada && (
-                            <button className="publicacion__boton boton boton--amarillo" type="button" onClick={() => handleSolicitarCertificacion()}> { !solicitudCertificacion ? "Solicitar certificación" : "Cancelar solicitud de certificación" }</button>
-                        )
-                    }
-                    <Link to={`/editar-terraza/${publicacion.id}`} className="publicacion__boton boton boton--amarillo"> <FaRegEdit className="publicacion__boton--icono"/> Editar</Link>
-                    <button className="publicacion__boton boton boton--outlined" type="button" onClick={() => handleBorrarPublicacion()}> <GoTrash className="publicacion__boton--icono"/> Borrar publicación</button>
+                    {/* Solo el administrador puede ver los datos del creador */}
                     <Protegido
                         names={["administracion"]}
                         type="component"
                         cargandoComponent={""}
                         errorComponent={""}
                     >
-                        <button className="publicacion__boton boton" type="button" onClick={handleCertificar}>{ !publicacion?.certificada ? "Certificar" : "Quitar certificación" }</button>
+                        <div className="publicacion__creador">
+                            <BsPersonFillGear className="publicacion__icono-dibujo" />
+                            <Link to={`/perfil/${creador.id}`}>{ creador.nombre }</Link>
+                        </div>
                     </Protegido>
+
+                    <section className="publicacion__administracion">
+                        {
+                            !publicacion?.certificada && (
+                                <button className="publicacion__boton boton boton--amarillo" type="button" onClick={() => handleSolicitarCertificacion()}> { !solicitudCertificacion ? "Solicitar certificación" : "Cancelar solicitud de certificación" }</button>
+                            )
+                        }
+                        <Link to={`/editar-terraza/${publicacion.id}`} className="publicacion__boton boton boton--amarillo"> <FaRegEdit className="publicacion__boton--icono"/> Editar</Link>
+                        <button className="publicacion__boton boton boton--outlined" type="button" onClick={() => handleBorrarPublicacion()}> <GoTrash className="publicacion__boton--icono"/> Borrar publicación</button>
+                        <Protegido
+                            names={["administracion"]}
+                            type="component"
+                            cargandoComponent={""}
+                            errorComponent={""}
+                        >
+                            <button className="publicacion__boton boton" type="button" onClick={handleCertificar}>{ !publicacion?.certificada ? "Certificar" : "Quitar certificación" }</button>
+                        </Protegido>
+                    </section>
+                </Protegido>
+                
+                <section className="publicacion__acciones">
+                    <button className="publicacion__reportar" onClick={handleReporte}>
+                        Reportar
+                        <FaBullhorn className="publicacion__reportar-boton" />
+                    </button>
+
+                    <Favorita
+                        cantidadFavoritas={cantidadFavoritas}
+                        setCantidadFavoritas={setCantidadFavoritas}
+                        favorita={favorita}
+                        setFavorita={setFavorita}
+                    />
                 </section>
-            </Protegido>
-            
-            <section className="publicacion__acciones">
-                <button className="publicacion__reportar" onClick={handleReporte}>
-                    Reportar
-                    <FaBullhorn className="publicacion__reportar-boton" />
-                </button>
 
-                <Favorita
-                    cantidadFavoritas={cantidadFavoritas}
-                    setCantidadFavoritas={setCantidadFavoritas}
-                    favorita={favorita}
-                    setFavorita={setFavorita}
-                />
-            </section>
-
-            <section className="publicacion__iconos">
-                <div className="publicacion__icono">
-                    <FaClock className="publicacion__icono-dibujo" />
-                    <p className="texto-overflow">{publicacion.horarios}</p>
-                </div>
-
-                <div className="publicacion__icono">
-                    <FaRuler className="publicacion__icono-dibujo" />
-                    <p className="texto-overflow">{publicacion.tamano}</p>
-                </div>
-
-                <div className="publicacion__icono">
-                    <FaUsers className="publicacion__icono-dibujo" />
-                    <p className="texto-overflow">{publicacion.capacidad}</p>
-                </div>
-            </section>
-
-            <section className="publicacion__texto">
-                <div className="publicacion__izquierda">
-                    <h4>{publicacion.nombreTerraza}</h4>
-
-                    {renderizarSaltos(publicacion.descripcion)}
-
-                    <p><b>Reglamento:</b></p>
-                    {renderizarSaltos(publicacion.reglamento, 'ul')}
-
-                    <hr className="line" />
-
-                    <p><b>Servicios extras:</b></p>
-                    {renderizarSaltos(publicacion.servicios, 'ul')}
-                </div>
-
-                <div className="publicacion__derecha">
-                    <span className="previsualizacion__precio"><b>$</b> {publicacion.precio}</span>
-
+                <section className="publicacion__iconos">
                     <div className="publicacion__icono">
-                        <FaPhone className="publicacion__icono-dibujo publicacion__icono-dibujo--llamar" />
-                        <span>{publicacion.telefono}</span>
+                        <FaClock className="publicacion__icono-dibujo" />
+                        <p className="texto-overflow">{publicacion.horarios}</p>
                     </div>
 
-                    <p className="publicacion__redes texto-overflow"><b>Redes sociales:</b> {publicacion.redes}</p>
+                    <div className="publicacion__icono">
+                        <FaRuler className="publicacion__icono-dibujo" />
+                        <p className="texto-overflow">{publicacion.tamano}</p>
+                    </div>
 
-                    <a className="publicacion__cta-llamar boton" href={`tel:${publicacion.telefono}`}>Llama ahora</a>
-                </div>
-            </section>
+                    <div className="publicacion__icono">
+                        <FaUsers className="publicacion__icono-dibujo" />
+                        <p className="texto-overflow">{publicacion.capacidad}</p>
+                    </div>
+                </section>
 
-            <hr className="line" />
+                <section className="publicacion__texto">
+                    <div className="publicacion__izquierda">
+                        <h4>{publicacion.nombreTerraza}</h4>
 
-            <section className="publicacion__inferior">
-                <div className="publicacion__etiquetas">
-                        {
-                            publicacion.etiquetas.map((etiqueta, indice) => <span className="previsualizacion__etiqueta" key={indice}>#{ etiqueta}</span>)
-                        }
-                </div>
+                        {renderizarSaltos(publicacion.descripcion)}
 
-                <MapaUbicacion ubicacion={publicacion.direccion} />
+                        <p><b>Reglamento:</b></p>
+                        {renderizarSaltos(publicacion.reglamento, 'ul')}
 
-                <div className="publicacion__disponibilidad">
-                    <hr className="line" />
-                    <span className="publicacion__disponibilidad-titulo titulo">Disponibilidad</span>
-                    <CalendarioDisponibilidad className="publicacion__disponibilidad-calendario" value={publicacion.disponibilidad} readonly />
-                    <hr className="line" />
-                </div>
+                        <hr className="line" />
 
-                {
-                    publicacion.certificada && (
-                        <div className="publicacion__certificacion">
-                            <RiVerifiedBadgeFill className="publicacion__certificacion-icono" />
-                            <span>Esta publicación ha sido certificada por Harty</span>
+                        <p><b>Servicios extras:</b></p>
+                        {renderizarSaltos(publicacion.servicios, 'ul')}
+                    </div>
+
+                    <div className="publicacion__derecha">
+                        <span className="previsualizacion__precio"><b>$</b> {publicacion.precio}</span>
+
+                        <div className="publicacion__icono">
+                            <FaPhone className="publicacion__icono-dibujo publicacion__icono-dibujo--llamar" />
+                            <span>{publicacion.telefono}</span>
                         </div>
-                    )
-                }
 
-                <Calificacion calificaciones={calificaciones} setCalificaciones={setCalificaciones} />
+                        <p className="publicacion__redes texto-overflow"><b>Redes sociales:</b> {publicacion.redes}</p>
 
-                <Comentarios comentarios={comentarios} />
-            </section>
-        </main>
+                        <a className="publicacion__cta-llamar boton" href={`tel:${publicacion.telefono}`}>Llama ahora</a>
+                    </div>
+                </section>
+
+                <hr className="line" />
+
+                <section className="publicacion__inferior">
+                    <div className="publicacion__etiquetas">
+                            {
+                                publicacion.etiquetas.map((etiqueta, indice) => <span className="previsualizacion__etiqueta" key={indice}>#{ etiqueta}</span>)
+                            }
+                    </div>
+
+                    <MapaUbicacion ubicacion={publicacion.direccion} />
+
+                    <div className="publicacion__disponibilidad">
+                        <hr className="line" />
+                        <span className="publicacion__disponibilidad-titulo titulo">Disponibilidad</span>
+                        <CalendarioDisponibilidad className="publicacion__disponibilidad-calendario" value={publicacion.disponibilidad} readonly />
+                        <hr className="line" />
+                    </div>
+
+                    {
+                        publicacion.certificada && (
+                            <div className="publicacion__certificacion">
+                                <RiVerifiedBadgeFill className="publicacion__certificacion-icono" />
+                                <span>Esta publicación ha sido certificada por Harty</span>
+                            </div>
+                        )
+                    }
+
+                    <Calificacion calificaciones={calificaciones} setCalificaciones={setCalificaciones} />
+
+                    <Comentarios comentarios={comentarios} />
+                </section>
+            </main>
+        </>
     )
 }
 
