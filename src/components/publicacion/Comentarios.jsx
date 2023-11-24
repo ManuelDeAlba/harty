@@ -1,5 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
+import { formatDistance } from "date-fns";
+import { es } from "date-fns/locale";
 
 import { GoPaperAirplane, GoTrash } from "react-icons/go";
 
@@ -101,10 +103,18 @@ function Comentarios({ comentarios }){
             </form>
             <div className="comentarios__lista">
                 {
-                    comentarios.map(({id, comentario, usuario: { nombre }}) => (
+                    comentarios.map(({id, fecha, comentario, usuario: { nombre }}) => (
                         <div className="comentarios__contenedor-comentario" key={id}>
                             <div className="comentarios__comentario">
-                                <b>{nombre}</b>
+                                <b className="comentarios__comentario-nombre texto-overflow">{nombre}</b>
+                                <small>{ formatDistance(
+                                    new Date(fecha),
+                                    new Date(),
+                                    {
+                                        addSuffix: true,
+                                        locale: es
+                                    }
+                                ) }</small>
                                 <p>{comentario}</p>
                             </div>
                             <div className="comentarios__botones">

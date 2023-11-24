@@ -1059,6 +1059,13 @@ html:has(.modal){ overflow: hidden; }
   padding: .75rem 1rem;
   border-radius: 3px;
 }
+.comentarios__comentario{
+  display: flex;
+  flex-direction: column;
+}
+.comentarios__comentario-nombre{
+  max-width: min(100%, 250px);
+}
 .comentarios__botones{
   display: flex;
   flex-wrap: wrap;

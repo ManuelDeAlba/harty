@@ -515,9 +515,7 @@ export function obtenerComentariosTiempoReal(idPublicacion, callback){
             const usuario = usuarios.find(usuario => usuario.id === comentario.idUsuario);
 
             return {
-                id: comentario.id,
-                idPublicacion: comentario.idPublicacion,
-                comentario: comentario.comentario,
+                ...comentario,
                 usuario
             }
         });
