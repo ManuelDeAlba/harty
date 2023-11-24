@@ -51,6 +51,13 @@ function Comentarios({ comentarios }){
     }
 
     const handleReportarComentario = async (idComentario) => {
+        // Si no tiene permisos para realizar esa acción
+        if(!permisoComentar){
+            toast.error(errorComentar.message);
+            if(errorComentar.code != "harty/unverified-account" && errorComentar.code != "harty/disabled-account") navigate("/iniciar-sesion");
+            return;
+        }
+        
         abrirModal({
             texto: "¿Realmente quieres reportar el comentario?",
             onResult: (res) => {
