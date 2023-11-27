@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
+import { FaTrashAlt } from "react-icons/fa";
+
 import { useAuth } from "../context/AuthProvider";
 import { useModal } from "../context/ModalConfirmProvider";
 import useTitle from "../hooks/useTitle";
@@ -406,7 +408,10 @@ function FormularioPublicarTerraza(){
                     {
                         imgSubidas.map(imagen => (
                             !imagen.borrar && (
-                                <img className="form__img" src={imagen.src} key={imagen.referencia.name} onClick={() => handleBorrarMultimediaStorage(imagen.referencia.name)} />
+                                <div className="form__imagen" key={imagen.referencia.name}>
+                                    <img className="form__img" src={imagen.src} />
+                                    <span className="form__borrar-img" onClick={() => handleBorrarMultimediaStorage(imagen.referencia.name)}><FaTrashAlt /></span>
+                                </div>
                             )
                         ))
                     }
@@ -415,7 +420,10 @@ function FormularioPublicarTerraza(){
                     <div className="form__galeria">
                     {
                         multimedia.map(imagen => (
-                            <img className="form__img" src={imagen.src} key={imagen.file.name} onClick={() => handleBorrarMultimediaLocal(imagen.file.name)} />
+                            <div className="form__imagen" key={imagen.file.name}>
+                                <img className="form__img" src={imagen.src} />
+                                <span className="form__borrar-img" onClick={() => handleBorrarMultimediaLocal(imagen.file.name)}><FaTrashAlt /></span>
+                            </div>
                         ))
                     }
                 </div>
